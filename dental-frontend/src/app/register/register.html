@@ -1,0 +1,14 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Create Your Account</h2>
+    <p>Join Code Smiles to book and track appointments.</p>
+    
+    <input type="text" placeholder="Full Name" [(ngModel)]="user.full_name">
+    <input type="email" placeholder="Email Address" [(ngModel)]="user.email">
+    <input type="password" placeholder="Password" [(ngModel)]="user.password">
+    
+    <button class="auth-btn" (click)="onSubmit()">Register Now</button>
+    
+    <p>Already a member? <a routerLink="/login">Login here</a></p>
+  </div>
+</div>

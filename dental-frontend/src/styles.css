@@ -1,0 +1,61 @@
+/* --- BRAND COLORS --- */
+:root {
+  --azure: #007bff;     /* Signature Blue */
+  --dark: #1a1a1a;      /* Premium Dark */
+}
+
+/* GLOBAL BACKGROUND SYSTEM */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+
+  background: linear-gradient(
+    135deg,
+    #f0f8ff 0%,
+    #e6f2ff 35%,
+    #ffffff 70%
+  );
+
+  background-attachment: fixed;
+  background-size: cover;
+
+  min-height: 100vh;
+  color: var(--dark);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- NAVIGATION BAR --- */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px); /* Glassy header */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-links {
+  display: flex;
+  gap: 35px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--azure);
+}

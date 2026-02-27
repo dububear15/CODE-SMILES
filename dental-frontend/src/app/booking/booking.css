@@ -1,0 +1,428 @@
+/* 1. ALLOW SCROLLING AGAIN */
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+  /* Removed position: fixed and overflow: hidden */
+}
+
+/* 2. THE WRAPPER FIX */
+.booking-page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  padding: 140px 20px 80px; /* Increased top padding to ensure header gap */
+  position: relative;
+  overflow-x: hidden; /* Only hide horizontal scroll */
+}
+
+/* 2. THE GLASS CONTAINER ADJUSTMENT */
+.glass-container {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 40px;
+  width: 95%;
+  max-width: 1200px;
+  /* Remove fixed height: let it grow with content or use a large min-height */
+  min-height: 700px; 
+  padding: 50px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+}
+
+/* 3. RESTORE 3-COLUMN GRID */
+.booking-content {
+  text-align: center; /* This centers the h2 and p tags */
+  flex: 1;
+  margin-top: 20px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* FORCES 3 COLUMNS BACK */
+  gap: 20px;
+}
+
+.service-card {
+  background: white;
+  border-radius: 28px; /* Extra rounded for aesthetics */
+  padding: 35px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+.service-card:hover {
+  transform: translateY(-12px); /* Higher lift */
+  border-color: #3ba5ff;
+  box-shadow: 0 20px 40px rgba(59, 165, 255, 0.15);
+}
+
+/* Style the icon inside the card */
+.service-icon {
+  font-size: 45px;
+  margin-bottom: 20px;
+  display: block;
+}
+/* 4. RESTORE STEPPER STYLES */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.step.active .step-circle {
+  background: #3ba5ff;
+  border-color: #3ba5ff;
+  color: white;
+}
+
+/* 5. SUB-SERVICE BUTTONS (For Step 1.5) */
+/* Styling the 2-column grid for 1.5 */
+.sub-service-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
+  max-width: 850px;
+  margin: 30px auto;
+}
+
+.sub-btn {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 25px 20px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  text-align: center;
+}
+
+.sub-btn:hover {
+  background: #f0f9ff;
+  border-color: #3ba5ff;
+  color: #3ba5ff;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(59, 165, 255, 0.1);
+}
+
+/* Typography */
+.step-title {
+  font-size: 2.2rem; /* Make it a bit bolder */
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+
+.step-subtitle { color: #718096; margin-bottom: 30px; }
+.service-icon { font-size: 35px; margin-bottom: 15px; }
+
+/* THE PEEKING ANIMATION */
+.peek-icon {
+  position: fixed; /* Fixed so they stay relative to the screen, not the glass */
+  font-size: 12rem; /* Big and bold like your sketches */
+  opacity: 0.15;
+  z-index: 1;      /* Behind the glass container (z-index: 10) */
+  pointer-events: none;
+  filter: blur(1px);
+  animation: float-peek 6s infinite ease-in-out;
+}
+
+.tooth-left {
+  left: -60px;    /* Peeking from the left */
+  top: 25%;
+  transform: rotate(-15deg);
+}
+
+.brush-right {
+  right: -50px;   /* Peeking from the right */
+  bottom: 15%;
+  transform: rotate(20deg);
+}
+
+/* 3. SUB-SERVICE GRID (Fixing the "Weird" Button Look) */
+.sub-service-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns so we don't need to scroll! */
+  gap: 15px;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.sparkle-top {
+  right: 10%;
+  top: 15%;
+  font-size: 5rem;
+  opacity: 0.2;
+}
+
+
+.mirror-mid {
+  left: 15%;
+  top: 60%;
+  font-size: 7rem;
+  opacity: 0.1;
+  animation: float-peek 8s infinite ease-in-out reverse; /* Moves opposite to the tooth */
+}
+
+.diamond-bottom {
+  right: 20%;
+  bottom: 5%;
+  font-size: 6rem;
+  opacity: 0.12;
+  animation: float-peek 7s infinite ease-in-out 1s; /* Delayed start */
+}
+
+.cross-left {
+  left: 5%;
+  bottom: 20%;
+  font-size: 5rem;
+  opacity: 0.08;
+  transform: rotate(-10deg);
+  animation: float-peek 10s infinite ease-in-out;
+}
+
+
+@keyframes float-peek {
+  0%, 100% { transform: translateY(0) rotate(-15deg); }
+  50% { transform: translateY(-30px) rotate(-10deg); }
+}
+
+.glass-container {
+  z-index: 10;
+  position: relative;
+  /* This ensures the icons stay behind even if they float "into" the box area */
+}
+
+/* Styling the 'h3' tag inside your service cards */
+.service-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 10px 0 5px;
+}
+
+/* Styling the 'p' tag inside your service cards */
+.service-card p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.select-btn {
+  margin-top: auto;        /* Pushes the button to the bottom of the card */
+  background: #1a1a1a;    /* Matches your premium black theme */
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover .select-btn {
+  background: #3ba5ff;
+  box-shadow: 0 5px 15px rgba(59, 165, 255, 0.3);
+}
+
+.back-link {
+  margin-top: 40px;
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-link:hover {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+/* ADD THIS TO THE VERY BOTTOM */
+.sub-btn.selected {
+  background: #3ba5ff !important;
+  color: white !important;
+  border-color: #3ba5ff;
+  box-shadow: 0 10px 20px rgba(59, 165, 255, 0.3);
+  transform: translateY(-5px);
+}
+
+/* Container for the summary box */
+.selection-summary {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc; /* Light, clean background */
+  border-radius: 20px;
+  border: 1px dashed #3ba5ff; /* Subtle blue dash to show it's a 'zone' */
+  text-align: center;
+}
+
+/* COMPACT SELECTION SUMMARY */
+.selection-summary {
+  margin: 0 auto 20px auto;
+  padding: 10px 15px; /* Shrunk from 20px */
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 15px; /* More subtle rounding */
+  border: 1px solid #e2e8f0; 
+  max-width: 500px; /* Prevents it from stretching too wide */
+  text-align: center;
+}
+
+.selection-summary p {
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  font-size: 0.75rem; /* Smaller text */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* SLEEK MINI-CHIPS */
+.chip-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.service-chip {
+  background: #1a1a1a;
+  color: white;
+  padding: 6px 12px; /* Shrunk padding */
+  border-radius: 8px; /* Square-ish premium look */
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-chip small {
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.service-chip small:hover { color: #ff4d4d; }
+
+/* The 'X' delete button inside the chip */
+.service-chip small {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 10px;
+  transition: 0.2s;
+}
+
+.service-chip small:hover {
+  background: #ff4d4d; /* Red highlight when hovering over the X */
+  color: white;
+}
+
+
+
+.calendar-wrapper {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr; /* Side-by-side layout */
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.calendar-container, .time-container {
+  background: white;
+  padding: 25px;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+}
+
+/* Calendar Grid (Mon-Sat) */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.day-cell {
+  padding: 15px 5px;
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f1f5f9;
+  transition: 0.3s;
+}
+
+.day-cell.selected {
+  background: #3ba5ff;
+  color: white;
+  box-shadow: 0 8px 15px rgba(59, 165, 255, 0.3);
+}
+
+/* Vertical Time Slot List */
+.time-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.time-btn {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.time-btn.active {
+  background: #1a1a1a;
+  color: white;
+  border-color: #1a1a1a;
+}

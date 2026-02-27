@@ -1,0 +1,127 @@
+/* --- THE CRYSTAL CONTAINER --- */
+.luxury-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.7rem 0;
+  background: rgba(255, 255, 255, 0.85); 
+  backdrop-filter: blur(20px) saturate(180%); 
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+  z-index: 9999;
+}
+
+.nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 94%;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* BRANDING & LOGO: RESTORED DESIGN */
+.brand-section {
+  display: flex;
+  align-items: center; 
+  gap: 15px;
+  cursor: pointer;
+  flex: 1; /* Anchors brand to the left */
+}
+
+.main-logo {
+  height: 52px; /* Restored size for impact */
+  width: auto;
+  filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.2));
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.brand-section:hover .main-logo {
+  transform: scale(1.1) rotate(-8deg); /* Bouncy interaction */
+}
+
+.main-name {
+  font-size: 1.6rem;
+  font-weight: 950; /* RESTORED: Bold, premium "Code Smiles" font */
+  color: #1a1a1a; 
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* NAVIGATION MENU: THE "LIT UP" REPAIR */
+.nav-links {
+  display: flex;
+  gap: 10px; 
+  justify-content: center;
+  align-items: center;
+  flex: 2; /* Centers the links */
+}
+
+/* UNIFIED STYLING FOR ALL LINKS */
+.nav-links a {
+  text-decoration: none;
+  color: #444; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  position: relative;
+  padding: 10px 22px; 
+  border-radius: 50px; 
+  border: 2px solid transparent; 
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* THE "PRETTY PLEASE" GLOW EFFECT */
+.nav-links a:hover {
+  color: #007bff; 
+  background: rgba(0, 123, 255, 0.08); 
+  border-color: rgba(0, 123, 255, 0.3); 
+  transform: translateY(-3px); 
+  text-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  border-radius: 50px;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 18px; 
+}
+
+/* CALL TO ACTION BUTTON */
+.action-buttons {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.book-btn {
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 100px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.book-btn:hover {
+  background: #007bff;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+}

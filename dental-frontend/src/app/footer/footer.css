@@ -1,0 +1,102 @@
+/* THE SLIM LUXURY BASE */
+.luxury-footer {
+  display: block !important;
+  background-color: #1a1a1a !important; 
+  color: #ffffff !important;
+  padding: 30px 0 15px 0; /* Heavily reduced padding for a slim profile */
+  width: 100%;
+  border-top: 1px solid rgba(0, 123, 255, 0.1);
+}
+
+/* THE LOCKED 3-COLUMN GRID */
+.footer-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 3-lane alignment */
+  align-items: start; /* Keeps everything locked at the top line */
+  gap: 20px;
+}
+
+/* COMPACT COLUMN ALIGNMENT */
+.footer-column.brand-info { text-align: left; }
+.footer-column.links-section { text-align: center; }
+.footer-column.visit-section { text-align: right; }
+
+/* SLIMMER HEADINGS */
+.footer-column h3 {
+  font-size: 0.75rem; /* Smaller premium text */
+  color: #007bff;
+  margin-bottom: 12px; /* Tightened gap to prevent drifting */
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+
+/* THE ANIMATED UNDERLINE */
+.footer-column h3::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 15px; /* Shorter initial line */
+  height: 2px;
+  background: #007bff;
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.footer-column:hover h3::after {
+  width: 100%; /* Line grows on hover */
+}
+
+/* TIGHTER LINKS & TEXT */
+.footer-logo {
+  font-size: 1.3rem; /* Compact logo */
+  font-weight: 900;
+  color: #007bff;
+  margin-bottom: 8px;
+}
+
+.footer-logo span { color: #ffffff; }
+
+.footer-tagline, .visit-text {
+  color: #b0b0b0;
+  font-size: 0.8rem; /* Smaller text size */
+  line-height: 1.5; /* Tightened line spacing */
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li { margin-bottom: 6px; } /* Minimal vertical gap */
+
+.footer-links a {
+  color: #b0b0b0 !important;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+/* THE SLIDE HOVER */
+.footer-links a:hover {
+  color: #007bff !important;
+  transform: translateX(6px); /* Subtle interactive slide */
+}
+
+/* MINIMALIST COPYRIGHT BAR */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 25px; /* Shorter gap before copyright */
+  padding-top: 15px;
+  text-align: center;
+}
+
+.footer-bottom p {
+  color: #555;
+  font-size: 0.7rem;
+}

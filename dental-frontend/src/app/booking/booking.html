@@ -1,0 +1,164 @@
+<div class="booking-page-wrapper">
+  
+  <div class="peek-icon tooth-left">🦷</div>
+  <div class="peek-icon brush-right">🪥</div>
+  <div class="peek-icon sparkle-top">✨</div>
+  <div class="peek-icon mirror-mid">🪞</div>
+  <div class="peek-icon diamond-bottom">💎</div>
+  <div class="peek-icon cross-left">🏥</div>
+
+  <div class="glass-container">
+    
+    <div class="stepper">
+      <div class="step" [class.active]="currentStep === 1 || currentStep === 1.5">
+        <div class="step-circle">1</div>
+        <span class="step-label">Service</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep === 2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Date & Time</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep === 3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Details</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep === 4">
+        <div class="step-circle">4</div>
+        <span class="step-label">Confirm</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="booking-content">
+      
+      <div *ngIf="currentStep === 1">
+        <h2 class="step-title">Select a Treatment</h2>
+        <p class="step-subtitle">Choose the dental care you need today.</p>
+
+        <div class="selection-summary" *ngIf="selectedServices.length > 0">
+          <p>Your Selection ({{ selectedServices.length }}/3):</p>
+          <div class="chip-container">
+            <span class="service-chip" *ngFor="let item of selectedServices">
+              {{ item }} <small (click)="toggleService(item)">✕</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card" (click)="selectCategory('General Dentistry')">
+            <div class="service-icon">🦷</div>
+            <h3>General Dentistry</h3>
+            <p>Preventative care and cleanings.</p>
+            <button class="select-btn">Select</button>
+          </div>
+          <div class="service-card" (click)="selectCategory('Cosmetic Arts')">
+            <div class="service-icon">✨</div>
+            <h3>Cosmetic Arts</h3>
+            <p>Veneers and whitening.</p>
+            <button class="select-btn">Select</button>
+          </div>
+          <div class="service-card" (click)="selectCategory('Orthodontics')">
+            <div class="service-icon">💎</div>
+            <h3>Orthodontics</h3>
+            <p>Braces and aligners.</p>
+            <button class="select-btn">Select</button>
+          </div>
+          <div class="service-card" (click)="selectCategory('Oral Surgery')">
+            <div class="service-icon">🏥</div>
+            <h3>Oral Surgery</h3>
+            <p>Specialist surgical care.</p>
+            <button class="select-btn">Select</button>
+          </div>
+          <div class="service-card" (click)="selectCategory('Dental Implants')">
+            <div class="service-icon">⚙️</div>
+            <h3>Dental Implants</h3>
+            <p>Restorative solutions.</p>
+            <button class="select-btn">Select</button>
+          </div>
+          <div class="service-card" (click)="selectCategory('Pediatric Care')">
+            <div class="service-icon">🧸</div>
+            <h3>Pediatric Care</h3>
+            <p>Care for children.</p>
+            <button class="select-btn">Select</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 1.5">
+        <h2 class="step-title">{{ selectedCategory }}</h2>
+        <p class="step-subtitle">Choose specific services for this category:</p>
+
+        <div class="selection-summary" *ngIf="selectedServices.length > 0">
+          <p>Current Selection ({{ selectedServices.length }}/3):</p>
+          <div class="chip-container">
+            <span class="service-chip" *ngFor="let item of selectedServices">
+              {{ item }} <small (click)="toggleService(item)">✕</small>
+            </span>
+          </div>
+        </div>
+        
+        <div class="sub-service-list">
+          <button class="sub-btn" 
+                  *ngFor="let s of currentSubServices" 
+                  [class.selected]="selectedServices.includes(s)"
+                  (click)="toggleService(s)">
+            {{ s }}
+          </button>
+        </div>
+        
+        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
+          <button class="back-link" (click)="currentStep = 1">← Back to Categories</button>
+          <button class="select-btn" *ngIf="selectedServices.length > 0" (click)="confirmSelection()">
+            Continue to Booking
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 2">
+        <h2 class="step-title">Choose Date & Time</h2>
+        <p class="step-subtitle">Booking: <strong>{{ selectedServices.join(', ') }}</strong></p>
+        
+        <div class="calendar-wrapper">
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <button class="nav-btn">‹</button>
+              <h3>February 2026</h3>
+              <button class="nav-btn">›</button>
+            </div>
+            <div class="calendar-grid">
+              <div class="day-cell" *ngFor="let d of calendarDays" 
+                   [class.selected]="selectedDate === ('Feb ' + d.date + ', 2026')"
+                   (click)="selectDate(d)">
+                <span class="day-name">{{ d.day }}</span>
+                <span class="day-number">{{ d.date }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-container">
+            <h3>Available Times</h3>
+            <div class="time-grid">
+              <button class="time-btn" *ngFor="let t of availableTimes"
+                      [class.active]="selectedTime === t"
+                      (click)="selectTime(t)">
+                {{ t }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
+          <button class="back-link" (click)="currentStep = 1.5">← Back</button>
+          <button class="select-btn" [disabled]="!selectedDate || !selectedTime" (click)="currentStep = 3">
+            Enter My Details
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

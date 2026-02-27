@@ -1,0 +1,160 @@
+/* =========================
+   OPTION 3: MODERN TECH (CLEANED)
+========================= */
+.hero-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 10%;
+  position: relative;
+  overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=2070') center/cover no-repeat;
+  background-color: #f0f8ff;
+} 
+
+
+/* Natural Blur Mask - keeps the equipment on the right sharp */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  mask-image: linear-gradient(to right, black 0%, black 20%, rgba(0, 0, 0, 0.5) 45%, transparent 65%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black 20%, rgba(0, 0, 0, 0.5) 45%, transparent 65%);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+}
+
+/* ENTRANCE ANIMATIONS */
+.hero-content > * {
+  opacity: 0;
+  animation: fadeInUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.hero-label { animation-delay: 0.2s; }
+.hero-title { animation-delay: 0.4s; }
+.hero-subtitle { animation-delay: 0.6s; }
+.hero-actions { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* AESTHETIC ELEMENTS */
+.hero-label {
+  display: inline-block;
+  padding: 8px 24px;
+  background: rgba(0, 123, 255, 0.1);
+  color: #0b5ed7;
+  border-radius: 50px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 0.1px;
+  border: 1px solid rgba(0, 123, 255, 0.15);
+}
+
+.hero-title {
+  font-size: 4.8rem;      /* slightly smaller (less aggressive) */
+  font-weight: 900;       
+  line-height: 1.15;      /* better breathing between lines */
+  letter-spacing: -1px;   /* softer tightening */
+  margin-bottom: 25px;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #0b5ed7, #46c3ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.7;
+  max-width: 550px;
+  margin-bottom: 50px;
+  font-weight: 500;
+}
+
+/* BUTTONS */
+.hero-actions { display: flex; gap: 20px; flex-wrap: wrap; }
+
+.hero-btn-primary {
+  background: #007bff;
+  color: white;
+  padding: 20px 45px;
+  border-radius: 999px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(0, 123, 255, 0.25);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 25px 50px rgba(0, 123, 255, 0.45);
+  background: #0b5ed7;
+}
+
+.hero-btn-secondary {
+  background: white; 
+  color: #0b5ed7;
+  padding: 20px 45px;
+  border-radius: 999px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 2px solid rgba(0, 123, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #0b5ed7;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* THE SEAMLESS BOTTOM BLEND */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;          /* 👈 changed from 0 */
+  left: 0;
+  width: 100%;
+  height: 180px;         /* 👈 a bit taller */
+  background: linear-gradient(
+    to top,
+    #f0f8ff 0%,
+    rgba(240, 248, 255, 0.8) 40%,
+    rgba(240, 248, 255, 0) 100%
+  );
+  z-index: 3;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+}
+
+.star {
+  display: inline-block;
+  margin-left: 12px;
+  transform: translateY(-8px);
+  font-size: 0.8em;
+}
