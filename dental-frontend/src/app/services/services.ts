@@ -18,8 +18,8 @@ export class ServicesComponent {
       desc: 'Comprehensive preventative care designed to protect your natural smile for a lifetime.',
       img: 'general.png',
       subServices: [
-        'Oral Consultation / Check-up', 'Dental Cleaning (Prophylaxis)', 'Digital X-Rays',
-        'Tooth Fillings (Composite / Amalgam)', 'Fluoride Treatment', 'Dental Sealants',
+        'Oral Consultation / Check-up', 'Dental Cleaning', 'Digital X-Rays',
+        'Tooth Fillings', 'Fluoride Treatment', 'Dental Sealants',
         'Simple Tooth Extraction', 'Emergency Dental Care'
       ]
     },
@@ -49,7 +49,7 @@ export class ServicesComponent {
       desc: 'Specialist surgical care focused on patient comfort and optimal recovery outcomes.',
       img: 'oral_surgery.jpg',
       subServices: [
-        'Surgical Tooth Extraction', 'Impacted Wisdom Tooth Removal',
+        'Surgical Tooth Extraction', 'Wisdom Tooth Removal',
         'Cyst Removal', 'Minor Oral Surgery', 'Frenectomy'
       ]
     },

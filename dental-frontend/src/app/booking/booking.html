@@ -1,5 +1,4 @@
 <div class="booking-page-wrapper">
-  
   <div class="peek-icon tooth-left">🦷</div>
   <div class="peek-icon brush-right">🪥</div>
   <div class="peek-icon sparkle-top">✨</div>
@@ -8,7 +7,6 @@
   <div class="peek-icon cross-left">🏥</div>
 
   <div class="glass-container">
-    
     <div class="stepper">
       <div class="step" [class.active]="currentStep === 1 || currentStep === 1.5">
         <div class="step-circle">1</div>
@@ -31,130 +29,304 @@
       </div>
     </div>
 
-    <hr class="divider">
-
     <div class="booking-content">
       
-      <div *ngIf="currentStep === 1">
-        <h2 class="step-title">Select a Treatment</h2>
-        <p class="step-subtitle">Choose the dental care you need today.</p>
-
-        <div class="selection-summary" *ngIf="selectedServices.length > 0">
-          <p>Your Selection ({{ selectedServices.length }}/3):</p>
-          <div class="chip-container">
-            <span class="service-chip" *ngFor="let item of selectedServices">
-              {{ item }} <small (click)="toggleService(item)">✕</small>
-            </span>
-          </div>
-        </div>
-
+      <div *ngIf="currentStep === 1" class="fade-in">
+        <h2 class="category-main-title">Select a Treatment</h2>
+        <p class="category-subtitle">Please choose the dental category that best fits your needs today.</p>
+        
         <div class="services-grid">
           <div class="service-card" (click)="selectCategory('General Dentistry')">
             <div class="service-icon">🦷</div>
             <h3>General Dentistry</h3>
             <p>Preventative care and cleanings.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
           <div class="service-card" (click)="selectCategory('Cosmetic Arts')">
             <div class="service-icon">✨</div>
             <h3>Cosmetic Arts</h3>
             <p>Veneers and whitening.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
           <div class="service-card" (click)="selectCategory('Orthodontics')">
             <div class="service-icon">💎</div>
             <h3>Orthodontics</h3>
             <p>Braces and aligners.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
           <div class="service-card" (click)="selectCategory('Oral Surgery')">
             <div class="service-icon">🏥</div>
             <h3>Oral Surgery</h3>
             <p>Specialist surgical care.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
           <div class="service-card" (click)="selectCategory('Dental Implants')">
             <div class="service-icon">⚙️</div>
             <h3>Dental Implants</h3>
             <p>Restorative solutions.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
           <div class="service-card" (click)="selectCategory('Pediatric Care')">
             <div class="service-icon">🧸</div>
             <h3>Pediatric Care</h3>
             <p>Care for children.</p>
-            <button class="select-btn">Select</button>
+            <button type="button" class="select-btn">Select</button>
           </div>
         </div>
       </div>
 
-      <div *ngIf="currentStep === 1.5">
-        <h2 class="step-title">{{ selectedCategory }}</h2>
-        <p class="step-subtitle">Choose specific services for this category:</p>
-
-        <div class="selection-summary" *ngIf="selectedServices.length > 0">
-          <p>Current Selection ({{ selectedServices.length }}/3):</p>
-          <div class="chip-container">
-            <span class="service-chip" *ngFor="let item of selectedServices">
-              {{ item }} <small (click)="toggleService(item)">✕</small>
-            </span>
+      <div *ngIf="currentStep === 1.5" class="fade-in step-1-5-wrapper">
+        <div class="category-header-container">
+          <button type="button" class="circle-back-btn" (click)="currentStep = 1">
+            <span class="arrow-icon">←</span>
+          </button>
+          <div class="header-text-group">
+            <h2 class="category-main-title">{{ selectedCategory }}</h2>
+            <p class="category-instruction-text">MAX: 3 SERVICES / 120 MINS</p>
           </div>
         </div>
-        
-        <div class="sub-service-list">
-          <button class="sub-btn" 
-                  *ngFor="let s of currentSubServices" 
-                  [class.selected]="selectedServices.includes(s)"
-                  (click)="toggleService(s)">
-            {{ s }}
-          </button>
-        </div>
-        
-        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
-          <button class="back-link" (click)="currentStep = 1">← Back to Categories</button>
-          <button class="select-btn" *ngIf="selectedServices.length > 0" (click)="confirmSelection()">
-            Continue to Booking
-          </button>
-        </div>
-      </div>
 
-      <div *ngIf="currentStep === 2">
-        <h2 class="step-title">Choose Date & Time</h2>
-        <p class="step-subtitle">Booking: <strong>{{ selectedServices.join(', ') }}</strong></p>
-        
-        <div class="calendar-wrapper">
-          <div class="calendar-container">
-            <div class="calendar-header">
-              <button class="nav-btn">‹</button>
-              <h3>February 2026</h3>
-              <button class="nav-btn">›</button>
-            </div>
-            <div class="calendar-grid">
-              <div class="day-cell" *ngFor="let d of calendarDays" 
-                   [class.selected]="selectedDate === ('Feb ' + d.date + ', 2026')"
-                   (click)="selectDate(d)">
-                <span class="day-name">{{ d.day }}</span>
-                <span class="day-number">{{ d.date }}</span>
+        <div class="sub-service-grid-wrapper">
+          <div class="sub-service-list">
+            <button type="button" class="sub-btn" *ngFor="let s of currentSubServices" 
+                    [class.selected]="selectedServices.includes(s.name)"
+                    [disabled]="!selectedServices.includes(s.name) && (selectedServices.length >= 3 || totalSelectedDuration + s.duration > 120)"
+                    (click)="toggleService(s.name)">
+              <span class="service-name">{{ s.name }}</span>
+              <span class="service-duration">{{ s.duration }} min</span>
+            </button>
+          </div>
+
+          <div class="floating-cart-panel">
+            <span class="cart-header-label">YOUR SELECTION</span>
+            
+            <div class="limit-tracker-container">
+              <div class="limit-bar">
+                <div class="limit-fill" [style.width.%]="(totalSelectedDuration / 120) * 100"
+                     [class.at-limit]="totalSelectedDuration >= 120"></div>
+              </div>
+              <div class="limit-text-row">
+                <small>{{ totalSelectedDuration }} / 120 mins</small>
+                <small *ngIf="selectedServices.length >= 3" class="limit-reached-text">Max Count Reached</small>
               </div>
             </div>
-          </div>
 
-          <div class="time-container">
-            <h3>Available Times</h3>
-            <div class="time-grid">
-              <button class="time-btn" *ngFor="let t of availableTimes"
-                      [class.active]="selectedTime === t"
-                      (click)="selectTime(t)">
-                {{ t }}
+            <div class="cart-chips-stack">
+              <div class="modern-chip fade-in" *ngFor="let s of selectedServices">
+                <span>{{ s }}</span>
+                <span (click)="toggleService(s)" class="remove-x" title="Remove">✕</span>
+              </div>
+              <div *ngIf="selectedServices.length === 0" class="empty-cart-msg">
+                <span class="empty-icon">🛒</span>
+                <p>Choose a service to begin</p>
+              </div>
+            </div>
+
+            <div class="cart-footer-static">
+              <button type="button" class="reset-selection-btn" (click)="resetSelection()" [disabled]="selectedServices.length === 0">
+                Reset Selection
               </button>
             </div>
           </div>
         </div>
 
-        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center;">
-          <button class="back-link" (click)="currentStep = 1.5">← Back</button>
-          <button class="select-btn" [disabled]="!selectedDate || !selectedTime" (click)="currentStep = 3">
-            Enter My Details
+        <div class="static-confirm-wrapper">
+          <button type="button" class="confirm-primary-btn" 
+                  [disabled]="selectedServices.length === 0" 
+                  (click)="currentStep = 2">
+            Confirm & Choose Date
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 2" class="fade-in step-2-wrapper">
+  <div class="category-header-container">
+    <button type="button" class="circle-back-btn" (click)="currentStep = 1.5">
+      <span class="arrow-icon">←</span>
+    </button>
+    <div class="header-text-group">
+      <h2 class="category-main-title">Select Date & Time</h2>
+      <p class="category-instruction-text">ESTIMATED SESSION: {{ totalSelectedDuration }} MINS</p>
+    </div>
+  </div>
+
+  <div class="datetime-selection-flex">
+    <div class="calendar-compact-card">
+      <div class="calendar-header-nav">
+        <button type="button" class="nav-arrow" (click)="prevMonth()">«</button>
+        <h3 class="month-label">{{ currentMonthName }} {{ currentYear }}</h3>
+        <button type="button" class="nav-arrow" (click)="nextMonth()">»</button>
+      </div>
+      
+      <div class="calendar-days-grid">
+        <span class="day-name" *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']">{{d}}</span>
+        <button type="button" *ngFor="let day of calendarDays" 
+                class="date-cell"
+                [class.selected-cell]="selectedDate === day.date"
+                [class.available]="day.isAvailable && !day.isPast && !day.isWeekend"
+                [disabled]="day.isPast || !day.number || !day.isAvailable" 
+                (click)="selectDate(day.date)">
+          {{ day.number }}
+        </button>
+      </div>
+
+      <div class="calendar-legend-dfa">
+        <div class="legend-item"><span class="dot available"></span> Available</div>
+        <div class="legend-item"><span class="dot booked"></span> Fully Booked</div>
+      </div>
+    </div>
+
+    <div class="time-slots-column">
+      <span class="column-label">AVAILABLE SLOTS</span>
+      <div *ngIf="selectedDate; else noDate" class="slots-grid">
+        <button type="button" *ngFor="let slot of availableSlots" 
+                class="time-pill"
+                [class.active]="selectedTime === slot.time"
+                [disabled]="slot.slotsLeft === 0"
+                (click)="selectedTime = slot.time">
+          {{ slot.time }}
+        </button>
+      </div>
+      <ng-template #noDate>
+        <div class="selection-placeholder">
+          <p>Please select a date on the calendar to view available times.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="static-confirm-wrapper">
+    <button type="button" class="confirm-primary-btn" 
+            [disabled]="!selectedDate || !selectedTime" 
+            (click)="currentStep = 3">
+      Next: Patient Details
+    </button>
+  </div>
+</div>
+
+      <div *ngIf="currentStep === 3" class="fade-in step-3-wrapper">
+        <div class="category-header-container">
+          <button type="button" class="circle-back-btn" (click)="currentStep = 2">
+            <span class="arrow-icon">←</span>
+          </button>
+          <div class="header-text-group">
+            <h2 class="category-main-title">Patient Information</h2>
+            <div class="appointment-summary-badge">
+              📅 {{ selectedDate | date:'MMM d' }} at {{ selectedTime }}
+            </div>
+          </div>
+        </div>
+
+        <div class="details-form-container">
+          <div class="form-grid">
+            <div class="input-group">
+              <label>First Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" [(ngModel)]="patientDetails.firstName" placeholder="Raphoncel">
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <label>Last Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" [(ngModel)]="patientDetails.lastName" placeholder="Eduria">
+              </div>
+            </div>
+
+            <div class="triple-grid-row">
+              <div class="input-group email-column">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">📧</span>
+                  <input type="email" [(ngModel)]="patientDetails.email" placeholder="email@address.com">
+                </div>
+              </div>
+
+              <div class="input-group phone-column">
+                <label>Phone Number</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">📞</span>
+                  <input type="tel" [(ngModel)]="patientDetails.phone" placeholder="09123456789">
+                </div>
+              </div>
+
+              <div class="input-group age-column">
+                <label>Age</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">🎂</span>
+                  <input type="number" [(ngModel)]="patientDetails.age" placeholder="21">
+                </div>
+              </div>
+            </div>
+
+            <div class="input-group full-width">
+              <label>Additional Notes (Optional)</label>
+              <div class="input-wrapper">
+                <span class="input-icon top">📝</span>
+                <textarea [(ngModel)]="patientDetails.notes" placeholder="Any specific dental concerns?"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="static-confirm-wrapper">
+          <button type="button" class="confirm-primary-btn" 
+                  [disabled]="!patientDetails.firstName || !patientDetails.lastName || !patientDetails.email || !patientDetails.phone" 
+                  (click)="currentStep = 4">
+            Next: Review & Confirm
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 4" class="fade-in step-4-container">
+        <div class="category-header-container">
+          <button type="button" class="circle-back-btn static-back" (click)="currentStep = 3">
+            <span class="arrow-icon">←</span>
+          </button>
+          <div class="header-text-group">
+            <h2 class="category-main-title">Review Appointment</h2>
+            <p class="category-subtitle">Double-check your details before we finalize your booking.</p>
+          </div>
+        </div>
+
+        <div class="review-aesthetic-card">
+          <div class="review-grid">
+            <div class="review-item">
+              <div class="review-icon-box">📅</div>
+              <div class="review-content">
+                <label>Appointment Schedule</label>
+                <p class="main-val">{{ selectedDate | date:'EEEE, MMMM d, y' }}</p>
+                <p class="sub-val">Time Slot: {{ selectedTime }}</p>
+              </div>
+            </div>
+
+            <div class="review-item">
+              <div class="review-icon-box">🦷</div>
+              <div class="review-content">
+                <label>Selected Services</label>
+                <div class="review-chip-group">
+                  <span *ngFor="let s of selectedSubServices" class="aesthetic-chip">{{ s.name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-item">
+              <div class="review-icon-box">👤</div>
+              <div class="review-content">
+                <label>Patient Details</label>
+                <p class="main-val">{{ patientDetails.firstName }} {{ patientDetails.lastName }} ({{ patientDetails.age }} yrs)</p>
+                <p class="sub-val">{{ patientDetails.email }}</p>
+                <p class="sub-val">{{ patientDetails.phone }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="final-action-area">
+          <button type="button" class="confirm-primary-btn booking-final-btn" (click)="completeBooking()">
+            Confirm & Book Appointment
           </button>
         </div>
       </div>
