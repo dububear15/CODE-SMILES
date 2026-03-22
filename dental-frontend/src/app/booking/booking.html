@@ -139,70 +139,142 @@
         </div>
       </div>
 
-      <div *ngIf="currentStep === 2" class="fade-in step-2-wrapper">
-  <div class="category-header-container">
-    <button type="button" class="circle-back-btn" (click)="currentStep = 1.5">
-      <span class="arrow-icon">←</span>
-    </button>
-    <div class="header-text-group">
-      <h2 class="category-main-title">Select Date & Time</h2>
-      <p class="category-instruction-text">ESTIMATED SESSION: {{ totalSelectedDuration }} MINS</p>
-    </div>
+
+
+
+
+
+
+
+
+
+  <div *ngIf="currentStep === 2" class="fade-in step-2-wrapper">
+  <div class="step-2-back-row">
+  <button type="button" class="step-2-back-btn" (click)="currentStep = 1.5">
+    <span class="step-2-arrow-icon">←</span>
+  </button>
+</div>
+
+<div class="category-header-container step-2-header">
+  <div class="header-text-group">
+    <h2 class="category-main-title">Select Date & Time</h2>
+    <p class="category-instruction-text">ESTIMATED SESSION: {{ totalSelectedDuration }} MINS</p>
   </div>
+</div>
 
   <div class="datetime-selection-flex">
     <div class="calendar-compact-card">
       <div class="calendar-header-nav">
-        <button type="button" class="nav-arrow" (click)="prevMonth()">«</button>
-        <h3 class="month-label">{{ currentMonthName }} {{ currentYear }}</h3>
-        <button type="button" class="nav-arrow" (click)="nextMonth()">»</button>
-      </div>
-      
+  <button type="button" class="nav-arrow" (click)="prevMonth()" aria-label="Previous month">
+    <
+  </button>
+
+  <h3 class="month-label">{{ currentMonthName }} {{ currentYear }}</h3>
+
+  <button type="button" class="nav-arrow" (click)="nextMonth()" aria-label="Next month">
+    >
+  </button>
+</div>
+
       <div class="calendar-days-grid">
-        <span class="day-name" *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']">{{d}}</span>
-        <button type="button" *ngFor="let day of calendarDays" 
-                class="date-cell"
-                [class.selected-cell]="selectedDate === day.date"
-                [class.available]="day.isAvailable && !day.isPast && !day.isWeekend"
-                [disabled]="day.isPast || !day.number || !day.isAvailable" 
-                (click)="selectDate(day.date)">
-          {{ day.number }}
-        </button>
+        <span class="day-name" *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']">{{ d }}</span>
+
+        <button
+  type="button"
+  *ngFor="let day of calendarDays"
+  class="date-cell"
+  [class.empty-cell]="!day.number"
+  [class.selected-cell]="selectedDate === day.date"
+  [class.available]="day.isAvailable && !day.isPast && !day.isFullyBooked"
+  [class.fully-booked]="day.isFullyBooked"
+  [class.unavailable]="day.isPast || !day.isAvailable"
+  [class.today-cell]="day.isToday"
+  [disabled]="day.isPast || !day.number || day.isFullyBooked || !day.isAvailable"
+  (click)="selectDate(day.date)">
+  {{ day.number }}
+</button>
       </div>
 
-      <div class="calendar-legend-dfa">
-        <div class="legend-item"><span class="dot available"></span> Available</div>
-        <div class="legend-item"><span class="dot booked"></span> Fully Booked</div>
-      </div>
-    </div>
-
-    <div class="time-slots-column">
-      <span class="column-label">AVAILABLE SLOTS</span>
-      <div *ngIf="selectedDate; else noDate" class="slots-grid">
-        <button type="button" *ngFor="let slot of availableSlots" 
-                class="time-pill"
-                [class.active]="selectedTime === slot.time"
-                [disabled]="slot.slotsLeft === 0"
-                (click)="selectedTime = slot.time">
-          {{ slot.time }}
-        </button>
-      </div>
-      <ng-template #noDate>
-        <div class="selection-placeholder">
-          <p>Please select a date on the calendar to view available times.</p>
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <span class="dot available"></span>
+          <span>Available</span>
         </div>
-      </ng-template>
+        <div class="legend-item">
+          <span class="dot selected"></span>
+          <span>Selected</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot booked"></span>
+          <span>Fully Booked</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot unavailable"></span>
+          <span>Unavailable</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot today"></span>
+          <span>Today</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="static-confirm-wrapper">
-    <button type="button" class="confirm-primary-btn" 
-            [disabled]="!selectedDate || !selectedTime" 
-            (click)="currentStep = 3">
-      Next: Patient Details
-    </button>
+    <div class="right-side-action-column">
+      <div class="time-slots-column">
+        <span class="column-label">AVAILABLE SLOTS</span>
+
+        <div *ngIf="selectedDate; else noDate" class="slots-grid">
+          <button
+            type="button"
+            *ngFor="let slot of availableSlots"
+            class="time-pill"
+            [class.active]="selectedTime === slot.time"
+            [class.full]="slot.slotsLeft === 0"
+            [disabled]="slot.slotsLeft === 0"
+            (click)="selectedTime = slot.time">
+
+            <span class="slot-time">{{ slot.time }}</span>
+            <span class="slot-meta">
+              {{ slot.slotsLeft === 0 ? 'Fully Booked' : slot.slotsLeft + ' slot' + (slot.slotsLeft > 1 ? 's' : '') + ' left' }}
+            </span>
+          </button>
+        </div>
+
+        <ng-template #noDate>
+          <div class="selection-placeholder">
+            <p>Please select a date on the calendar to view available times.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="step-2-action-row">
+        <button
+          type="button"
+          class="next-patient-btn"
+          [disabled]="!selectedDate || !selectedTime"
+          (click)="currentStep = 3">
+          Next: Patient Details
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div *ngIf="currentStep === 3" class="fade-in step-3-wrapper">
         <div class="category-header-container">
@@ -223,7 +295,7 @@
               <label>First Name</label>
               <div class="input-wrapper">
                 <span class="input-icon">👤</span>
-                <input type="text" [(ngModel)]="patientDetails.firstName" placeholder="Raphoncel">
+                <input type="text" [(ngModel)]="patientDetails.firstName" placeholder="First name">
               </div>
             </div>
             
@@ -231,7 +303,7 @@
               <label>Last Name</label>
               <div class="input-wrapper">
                 <span class="input-icon">👤</span>
-                <input type="text" [(ngModel)]="patientDetails.lastName" placeholder="Eduria">
+                <input type="text" [(ngModel)]="patientDetails.lastName" placeholder="Last name">
               </div>
             </div>
 
@@ -240,7 +312,7 @@
                 <label>Email Address</label>
                 <div class="input-wrapper">
                   <span class="input-icon">📧</span>
-                  <input type="email" [(ngModel)]="patientDetails.email" placeholder="email@address.com">
+                  <input type="email" [(ngModel)]="patientDetails.email" placeholder="name@email.com">
                 </div>
               </div>
 
@@ -248,7 +320,7 @@
                 <label>Phone Number</label>
                 <div class="input-wrapper">
                   <span class="input-icon">📞</span>
-                  <input type="tel" [(ngModel)]="patientDetails.phone" placeholder="09123456789">
+                  <input type="tel" [(ngModel)]="patientDetails.phone" placeholder="09XXXXXXXXX">
                 </div>
               </div>
 
@@ -256,7 +328,7 @@
                 <label>Age</label>
                 <div class="input-wrapper">
                   <span class="input-icon">🎂</span>
-                  <input type="number" [(ngModel)]="patientDetails.age" placeholder="21">
+                  <input type="number" [(ngModel)]="patientDetails.age">
                 </div>
               </div>
             </div>

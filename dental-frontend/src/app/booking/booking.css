@@ -7,13 +7,24 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
 .booking-page-wrapper {
   min-height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center; /* This keeps the neat box vertically centered */
-  padding: 40px 20px;
+  align-items: flex-start; /* changed from center */
+  padding: 110px 20px 80px; /* more top and bottom breathing room */
+  background:
+    radial-gradient(circle at top left, rgba(59,165,255,0.08), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(16,185,129,0.08), transparent 26%),
+    linear-gradient(180deg, #f8fbff 0%, #fdfefe 100%);
 }
 
 .limit-warning-text {
@@ -32,11 +43,13 @@
   border-radius: 40px;
   width: 95%;
   max-width: 1100px;
-  padding: 40px 50px;
-  box-shadow: 0 40px 100px rgba(15, 23, 42, 0.06);
-  min-height: auto !important; /* Removes the 650px anchor */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 50px 50px 60px;
   height: auto !important;
-  align-self: center; /* Ensures the box stays centered even when small */
+  min-height: unset; /* important */
 }
 
 /* =========================================
@@ -117,7 +130,11 @@
 .booking-content {
   text-align: center;
   flex: 1;
+  width: 100%;
   margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .step-title {
@@ -173,14 +190,6 @@
 /* =========================================
    5. STEP 1.5: SUB-SERVICE DASHBOARD & HEADER
    ========================================= */
-.category-header-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 30px;
-  min-height: 60px;
-}
 
 .center-title-group { text-align: center; }
 
@@ -396,24 +405,65 @@
 }
 
 .calendar-header-nav {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
+.month-label-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .month-label {
-  font-size: 1.15rem;
+  margin: 0;
+  font-size: 1rem;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.5px;
+  text-align: center;
 }
+
+
+.nav-arrow {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dbeafe;
+  border-radius: 50%;
+  background: white;
+  color: #000000;
+  font-size: 1.15rem;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.10);
+  transition: all 0.2s ease;
+}
+
+.nav-arrow:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.nav-arrow:active {
+  transform: scale(0.96);
+}
+
 
 .calendar-days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 8px; /* Slightly reduced gap from 10px */
   justify-items: center;
+  flex-grow: 1; /* Pushes the legend to the very bottom */
+  margin-bottom: 15px;
 }
 
 .day-name {
@@ -426,68 +476,111 @@
 
 /* Base Date Cell Styling */
 .date-cell {
-  width: 42px;
-  height: 42px;
+  width: 38px;  /* Reduced from 42px to ensure 6 rows fit safely */
+  height: 38px; /* Reduced from 42px */
   border-radius: 50%;
   border: 1px solid transparent;
-  background: #f8fafc; /* Neutral background */
-  font-weight: 700;
+  background: #f8fafc;
   font-size: 0.9rem;
+  font-weight: 700;
   color: #64748b;
-  cursor: pointer;
-  transition: all 0.25s ease;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.22s ease;
+  cursor: pointer;
 }
 
-/* 🟢 Available State: Mint Green */
+.date-cell.empty-cell {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .date-cell.available {
-  background: #f0fdf4;
-  color: #16a34a;
-  border: 1px solid #dcfce7;
+  background: #ecfdf3;
+  color: #15803d;
+  border-color: #d1fae5;
 }
 
 .date-cell.available:hover:not(:disabled) {
-  background: #16a34a;
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(22, 163, 74, 0.2);
+  background: #dff7ea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(34, 197, 94, 0.12);
 }
 
-/* 🔴 Fully Booked State: Soft Rose */
 .date-cell.fully-booked {
   background: #fff1f2;
   color: #e11d48;
-  cursor: not-allowed !important;
-  opacity: 0.8;
+  border-color: #fecdd3;
+  cursor: not-allowed;
+  opacity: 0.95;
 }
 
-/* 🔵 Selected State: The Blue Pop */
-.date-cell.selected-cell {
-  background: #3ba5ff !important;
-  color: white !important;
-  box-shadow: 0 8px 15px rgba(59, 165, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.date-cell.today-cell:not(.selected-cell) {
-  border: 2px solid #3ba5ff;
-  color: #3ba5ff;
-}
-
-.date-cell:disabled:not(.fully-booked) {
-  opacity: 0.15;
+.date-cell.unavailable {
+  background: #f1f5f9;
+  color: #b0b8c5;
+  border-color: #edf2f7;
   cursor: not-allowed;
 }
 
+.date-cell.today-cell:not(.selected-cell) {
+  border: 2px solid #f59e0b;
+  color: #f59e0b;
+  background: #fffaf0;
+}
+
+.date-cell.selected-cell {
+  background: linear-gradient(135deg, #3ba5ff, #2563eb);
+  color: #fff;
+  border-color: transparent;
+  transform: scale(1.08);
+  box-shadow: 0 10px 18px rgba(59, 165, 255, 0.28);
+}
+
 /* --- Legend Styling --- */
-.calendar-legend-dfa {
+.calendar-legend {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 10px 14px;
   margin-top: 20px;
-  padding-top: 15px;
+  padding-top: 16px;
   border-top: 1px solid #f1f5f9;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.available {
+  background: #22c55e;
+}
+
+.dot.selected {
+  background: #3b82f6;
+}
+
+.dot.booked {
+  background: #f43f5e;
+}
+
+.dot.unavailable {
+  background: #cbd5e1;
+}
+
+.dot.today {
+  background: #f59e0b;
 }
 
 .badge-dfa {
@@ -631,11 +724,12 @@
 
 
 .static-confirm-wrapper {
-  margin-top: 20px; /* Controlled gap from the calendar */
-  margin-bottom: 10px; 
+  width: 100%;
   display: flex;
   justify-content: center;
-  flex-shrink: 0; /* Prevents button from being squished */
+
+  margin-top: auto; /* THIS is the key line */
+  padding-top: 20px;
 }
 
 .footer-divider {
@@ -646,27 +740,29 @@
 }
 
 .confirm-primary-btn {
-  background: #1e293b;
+  background: linear-gradient(135deg, #3ba5ff, #2563eb);
   color: white;
-  padding: 18px 60px;
-  border-radius: 30px;
+  padding: 16px 42px;
+  border-radius: 999px;
   font-weight: 800;
   font-size: 1rem;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(30, 41, 59, 0.2);
+  transition: all 0.25s ease;
+  box-shadow: 0 14px 28px rgba(59, 165, 255, 0.22);
+  min-width: 260px;
 }
 
 .confirm-primary-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  background: #334155;
-  box-shadow: 0 15px 30px rgba(30, 41, 59, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(59, 165, 255, 0.28);
+  background: linear-gradient(135deg, #4aaeff, #2f6df3);
 }
 
 .confirm-primary-btn:disabled {
-  background: #e2e8f0;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
   color: #94a3b8;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
@@ -723,10 +819,18 @@
   letter-spacing: 0.5px;
 }
 
+.category-header-container {
+  position: relative; /* REQUIRED: This is the anchor for the button */
+  display: flex;
+  justify-content: center; /* This keeps the title in the middle */
+  align-items: center;
+  margin-bottom: 30px;
+  min-height: 60px;
+}
 
 .circle-back-btn {
-  position: absolute; /* This pulls it out of the 'flow' so it doesn't push the title */
-  left: 0;
+  position: absolute; 
+  left: 0; /* REQUIRED: This pulls the button to the far left edge */
   top: 50%;
   transform: translateY(-50%);
   width: 42px;
@@ -741,24 +845,11 @@
   z-index: 10;
 }
 
-.circle-back-btn:hover {
-  border-color: #3ba5ff;
-  /* Removed: transform: translateX(-3px); */
-  background: #f8fafc;
-  /* Add this to ensure it stays static */
-  transform: translateY(-50%); 
-}
-
 .arrow-icon {
   font-size: 1.2rem;
   color: #64748b;
   font-weight: bold;
 }
-
-.circle-back-btn:hover .arrow-icon {
-  color: #3ba5ff;
-}
-
 
 
 
@@ -1013,11 +1104,7 @@
   box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3) !important;
 }
 
-/* Static Back Button Fix */
-.circle-back-btn:hover {
-  transform: translateY(-50%) !important;
-  background: #f1f5f9;
-}
+
 
 /* Scoped Fix for Step 4 Header */
 .step-4-container .category-header-container {
@@ -1052,26 +1139,6 @@
 }
 
 
-
-
-/* --- THE CLEAN-UP OVERRIDE --- */
-
-/* Fixes the "Plain" Calendar Split */
-.datetime-selection-flex {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  align-items: flex-start;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 10px 20px 20px 20px; /* Reduced top padding */
-  
-  /* ADD THIS: Forces a compact height for the selection area */
-  height: auto; 
-  max-height: 500px; 
-}
-
-/* Fixes the "Messy" Service Buttons */
 .sub-btn {
   display: flex !important;
   justify-content: space-between !important;
@@ -1165,33 +1232,6 @@
 }
 
 
-/* Container for the date/time split */
-.datetime-selection-flex {
-  display: flex;
-  gap: 40px;
-  justify-content: center; /* Centering the whole unit */
-  align-items: flex-start;
-  max-width: 900px;
-  margin: 0 auto; /* Keeps it from being too wide */
-  padding: 20px;
-}
-
-/* Shrink the calendar card */
-.calendar-compact-card {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  width: 340px; /* Fixed natural width */
-  flex-shrink: 0;
-}
-
-/* Time slots column */
-.time-slots-column {
-  flex-grow: 1;
-  max-width: 300px;
-}
-
 .column-label {
   display: block;
   font-size: 0.75rem;
@@ -1200,46 +1240,69 @@
   margin-bottom: 15px;
   letter-spacing: 1px;
 }
-
 .slots-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 400px; /* Limits the height of the time list */
-  overflow-y: auto; /* Adds a scrollbar ONLY inside the list if it's too long */
-  padding-right: 8px;
+  gap: 8px;
 }
 
 /* Time selection buttons (Pills) */
 .time-pill {
-  background: white;
-  border: 1px solid #edf2f7;
-  padding: 14px;
+  width: 100%;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
   border-radius: 12px;
-  font-weight: 600;
-  color: #4a5568;
-  transition: all 0.2s;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
   cursor: pointer;
+  transition: all 0.22s ease;
 }
 
-.time-pill:hover {
-  border-color: #3ba5ff;
-  background: #f0f9ff;
+.time-pill:hover:not(:disabled) {
+  border-color: #60a5fa;
+  background: #eef6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.10);
 }
 
 .time-pill.active {
-  background: #3ba5ff;
-  color: white;
-  border-color: #3ba5ff;
-  box-shadow: 0 4px 12px rgba(59, 165, 255, 0.3);
+  background: linear-gradient(135deg, #4da8ff, #2f80ed);
+  border-color: #2f80ed;
+  box-shadow: 0 10px 20px rgba(47, 128, 237, 0.20);
 }
 
-/* Small adjustments to existing calendar cells to fit the new size */
-.date-cell {
-  width: 40px;
-  height: 40px;
-  font-size: 0.9rem;
+.slot-time {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e293b;
 }
+
+.slot-meta {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.time-pill.active .slot-time,
+.time-pill.active .slot-meta {
+  color: white;
+}
+
+.time-pill.full {
+  background: #f8fafc;
+  border: 1px dashed #dbe3ee;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.time-pill.full .slot-time,
+.time-pill.full .slot-meta {
+  color: #94a3b8;
+}
+
 
 .selection-placeholder {
     padding: 30px;
@@ -1249,4 +1312,135 @@
     color: #718096;
     text-align: center;
     font-size: 0.85rem;
+}
+
+
+/* ===== STEP 2 LAYOUT FINAL ===== */
+.step-2-wrapper {
+  width: 100%;
+  max-width: 980px;
+  margin: -8px auto 0;
+  position: relative;
+}
+
+.step-2-header .header-text-group {
+  text-align: center;
+}
+
+.step-2-header .category-main-title {
+  font-size: 2.1rem;
+  letter-spacing: -1px;
+  margin-top: -25px;
+  margin-bottom: 10px;
+}
+
+.step-2-header .category-instruction-text {
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.datetime-selection-flex {
+  display: grid;
+  grid-template-columns: 360px 320px;
+  gap: 30px;
+  justify-content: center;
+  align-items: start;
+  max-width: 800px;
+  margin: 4px auto 18px;
+}
+
+.calendar-compact-card {
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  padding: 24px 24px 28px;
+  height: auto;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
+  border: 1px solid #f1f5f9;
+}
+
+.time-slots-column {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
+  border: 1px solid #f1f5f9;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.step-2-confirm {
+  margin-top: 28px;
+}
+
+.step-2-back-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  padding-left: 6px;
+}
+
+.step-2-back-btn {
+  width: 42px;
+  height: 42px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  top: 1px;
+}
+
+.step-2-arrow-icon {
+  font-size: 1.2rem;
+  color: #64748b;
+  font-weight: bold;
+}
+
+.step-2-header {
+  margin-top: -18px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.step-2-header .header-text-group {
+  text-align: center;
+}
+
+.next-patient-btn {
+  width: 100%;
+  padding: 16px 42px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #3ba5ff, #2563eb);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 14px 28px rgba(59, 165, 255, 0.22);
+}
+
+.next-patient-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4aaeff, #2f6df3);
+  box-shadow: 0 18px 32px rgba(59, 165, 255, 0.28);
+}
+
+.next-patient-btn:active:not(:disabled) {
+  transform: none;
+}
+
+.right-side-action-column {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
