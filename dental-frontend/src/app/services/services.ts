@@ -91,26 +91,3 @@ export class ServicesComponent {
 
 
 
-/*import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-services',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink
-  ],
-  templateUrl: './services.html',
-  styleUrls: ['./services.css']
-})
-export class ServicesComponent {
-  activeService: string | null = null;
-
-  toggleDetails(event: Event, serviceId: string) {
-    // This stops the click from affecting other elements on the page
-    event.stopPropagation(); 
-    this.activeService = this.activeService === serviceId ? null : serviceId;
-  }
-} */

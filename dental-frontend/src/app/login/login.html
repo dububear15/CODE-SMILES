@@ -1,3 +1,183 @@
-<div class="auth-footer">
-  <p>Don't have an account? <a routerLink="/register">Create one here</a></p>
+<div class="auth-page">
+  <div class="login-content">
+
+    <!-- LEFT HERO -->
+    <section class="login-left">
+      <div class="brand-badge">
+        <span class="badge-dot"></span>
+        Code Smiles Dental Portal
+      </div>
+
+      <div class="hero-copy">
+        <h1>Healthy<br /><em>smiles</em><br />start here.</h1>
+        <p>
+          Book appointments, track requests, and stay connected with your dental care journey —
+          in one elegant, secure portal.
+        </p>
+      </div>
+
+      <div class="hero-features">
+        <div class="feature-item">
+          <div class="feature-icon">📅</div>
+          <span>Book and manage appointments anytime</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔔</div>
+          <span>Track requests and real-time updates</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔒</div>
+          <span>Secure and organized dental portal</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT CARD -->
+    <section class="login-card">
+      <div class="card-stripe"></div>
+
+      <div class="card-header">
+        <div class="mini-badge">Code Smiles</div>
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-subtitle">Sign in to continue to your dental care portal.</p>
+      </div>
+
+      <!-- ROLE TABS -->
+      <div class="role-tabs">
+        <button
+          type="button"
+          class="role-tab"
+          [class.active]="selectedRole === 'Patient'"
+          (click)="selectRole('Patient')"
+        >
+          <span class="tab-icon">👧🏻</span>
+          <span>Patient</span>
+        </button>
+
+        <button
+          type="button"
+          class="role-tab"
+          [class.active]="selectedRole === 'Staff'"
+          (click)="selectRole('Staff')"
+        >
+          <span class="tab-icon">🩺</span>
+          <span>Staff</span>
+        </button>
+
+        <button
+          type="button"
+          class="role-tab"
+          [class.active]="selectedRole === 'Admin'"
+          (click)="selectRole('Admin')"
+        >
+          <span class="tab-icon">👩🏻‍⚕️</span>
+          <span>Dentist</span>
+        </button>
+      </div>
+
+      <p class="role-hint">{{ roleDescription }}</p>
+
+      <!-- FORM -->
+      <form class="login-form" (ngSubmit)="login()">
+
+        <div class="form-main">
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrap" [class.invalid]="submitted && !isEmailValid">
+              <span class="input-icon">✉️</span>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                [(ngModel)]="loginData.email"
+                placeholder="Enter your email"
+                autocomplete="email"
+              />
+            </div>
+            <small class="error-text">
+  {{ submitted && !isEmailValid ? 'Please enter a valid email address.' : '' }}
+</small>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap" [class.invalid]="submitted && !isPasswordValid">
+              <span class="input-icon">🔒</span>
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                name="password"
+                [(ngModel)]="loginData.password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                (click)="togglePassword()"
+              >
+                {{ showPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+            <small class="error-text">
+  {{ submitted && !isPasswordValid ? 'Password must be at least 6 characters.' : '' }}
+</small>
+          </div>
+
+          <!-- Options -->
+          <div class="form-options">
+            <label class="remember-me">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                [(ngModel)]="loginData.rememberMe"
+              />
+              <span>Remember me</span>
+            </label>
+
+            <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="sign-in-btn">
+            {{ loginButtonText }} →
+          </button>
+        </div>
+
+        <div class="form-bottom">
+          <div *ngIf="selectedRole === 'Patient'">
+            <div class="divider"><span>or</span></div>
+
+            <div class="auth-alt-slot">
+              <button
+                type="button"
+                class="google-btn"
+                (click)="signInWithGoogle()"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  class="google-icon"
+                  alt="Google"
+                />
+                Sign in with Google
+              </button>
+            </div>
+
+            <p class="signup-text">
+              Don't have an account? <a routerLink="/register">Create one</a>
+            </p>
+          </div>
+
+          <div *ngIf="selectedRole !== 'Patient'">
+            <p class="auth-note">
+              Staff and Dentist accounts are provided by the clinic administration.
+            </p>
+          </div>
+        </div>
+
+      </form>
+    </section>
+
+  </div>
 </div>

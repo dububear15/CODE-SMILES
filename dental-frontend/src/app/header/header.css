@@ -1,89 +1,92 @@
-/* --- THE CRYSTAL CONTAINER --- */
 .luxury-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   padding: 0.7rem 0;
-  background: rgba(255, 255, 255, 0.85); 
-  backdrop-filter: blur(20px) saturate(180%); 
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(0, 123, 255, 0.1);
   z-index: 9999;
 }
 
 .nav-wrapper {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 280px 1fr 360px;
   align-items: center;
   width: 94%;
   max-width: 1800px;
   margin: 0 auto;
+  gap: 24px;
 }
 
-/* BRANDING & LOGO: RESTORED DESIGN */
 .brand-section {
   display: flex;
-  align-items: center; 
+  align-items: center;
   gap: 15px;
   cursor: pointer;
-  flex: 1; /* Anchors brand to the left */
+  min-width: 0;
 }
 
 .main-logo {
-  height: 52px; /* Restored size for impact */
+  height: 52px;
   width: auto;
   filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.2));
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .brand-section:hover .main-logo {
-  transform: scale(1.1) rotate(-8deg); /* Bouncy interaction */
+  transform: scale(1.1) rotate(-8deg);
 }
 
 .main-name {
   font-size: 1.6rem;
-  font-weight: 950; /* RESTORED: Bold, premium "Code Smiles" font */
-  color: #1a1a1a; 
+  font-weight: 950;
+  color: #1a1a1a;
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-/* NAVIGATION MENU: THE "LIT UP" REPAIR */
 .nav-links {
   display: flex;
-  gap: 10px; 
   justify-content: center;
   align-items: center;
-  flex: 2; /* Centers the links */
+  gap: 12px;
+  min-width: 0;
 }
 
-/* UNIFIED STYLING FOR ALL LINKS */
-.nav-links a {
+.nav-links a,
+.clinic-toggle {
   text-decoration: none;
-  color: #444; 
+  color: #444;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   position: relative;
-  padding: 10px 22px; 
-  border-radius: 50px; 
-  border: 2px solid transparent; 
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: 2px solid transparent;
+  background: transparent;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-/* THE "PRETTY PLEASE" GLOW EFFECT */
-.nav-links a:hover {
-  color: #007bff; 
-  background: rgba(0, 123, 255, 0.08); 
-  border-color: rgba(0, 123, 255, 0.3); 
-  transform: translateY(-3px); 
+.nav-links a:hover,
+.clinic-toggle:hover {
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.08);
+  border-color: rgba(0, 123, 255, 0.3);
+  transform: translateY(-3px);
   text-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
   box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1);
 }
 
-.nav-links a::after {
+.nav-links a::after,
+.clinic-toggle::after {
   content: '';
   position: absolute;
   bottom: 8px;
@@ -96,15 +99,59 @@
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover::after {
-  width: 18px; 
+.nav-links a:hover::after,
+.clinic-toggle:hover::after {
+  width: 18px;
 }
 
-/* CALL TO ACTION BUTTON */
+.clinic-dropdown {
+  position: relative;
+}
+
+.dropdown-arrow {
+  margin-left: 6px;
+  font-size: 0.75rem;
+}
+
+.clinic-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 190px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(0, 123, 255, 0.12);
+  box-shadow: 0 16px 35px rgba(14, 43, 77, 0.12);
+  backdrop-filter: blur(18px);
+  z-index: 10000;
+}
+
+.clinic-menu button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #1a1a1a;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.clinic-menu button:hover {
+  background: rgba(0, 123, 255, 0.08);
+  color: #007bff;
+}
+
 .action-buttons {
-  flex: 1;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
 }
 
 .book-btn {
@@ -118,10 +165,335 @@
   letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.4s ease;
+  white-space: nowrap;
 }
 
 .book-btn:hover {
   background: #007bff;
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+}
+
+.header-login-link,
+.header-logout-link {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.header-login-link {
+  color: #444;
+}
+
+.header-login-link:hover {
+  color: #007bff;
+}
+
+.header-logout-link {
+  color: #ff4d4f;
+}
+
+.header-logout-link:hover {
+  color: #d9363e;
+}
+
+.icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 123, 255, 0.14);
+  background: rgba(0, 123, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.icon-circle:hover {
+  background: rgba(0, 123, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+.notif-wrapper {
+  position: relative;
+}
+
+.icon-circle.notif-btn {
+  position: relative;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff4d4f;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 6px 14px rgba(255, 77, 79, 0.28);
+}
+
+.notif-dropdown {
+  position: absolute;
+  top: 62px;
+  right: -120px;
+  width: 390px;
+  max-height: 520px;
+  padding: 16px;
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.99) 0%,
+    rgba(248, 251, 255, 0.98) 100%
+  );
+  border: 1px solid rgba(13, 110, 253, 0.12);
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.18),
+    0 10px 30px rgba(13, 110, 253, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1000;
+}
+
+.notif-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 40px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  transform: rotate(45deg);
+  border-left: 1px solid rgba(13,110,253,0.1);
+  border-top: 1px solid rgba(13,110,253,0.1);
+}
+
+
+.notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(13, 110, 253, 0.08);
+}
+
+.notif-header h4 {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.notif-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.notif-tabs button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(13,110,253,0.08);
+  color: #4b5b73;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.notif-tabs button:hover {
+  background: rgba(13, 110, 253, 0.14);
+}
+
+.notif-tabs button.active {
+  background: linear-gradient(135deg, #0d6efd, #3b82f6);
+  color: white;
+  box-shadow: 0 6px 14px rgba(13,110,253,0.25);
+}
+
+.notif-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.notif-items::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notif-items::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+}
+
+.notif-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(13, 110, 253, 0.08);
+  transition: all 0.22s ease;
+}
+
+.notif-item:hover {
+  transform: translateY(-3px) scale(1.01);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(13, 110, 253, 0.08);
+}
+
+.notif-item.unread {
+  background: linear-gradient(
+    135deg,
+    rgba(13,110,253,0.18),
+    rgba(13,110,253,0.06)
+  );
+  border: 1px solid rgba(13,110,253,0.25);
+  border-left: 4px solid #0d6efd;
+}
+
+.notif-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(13, 110, 253, 0.08);
+  font-size: 1.1rem;
+}
+
+.notif-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-text strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.35;
+}
+
+.notif-text p {
+  margin: 0 0 6px;
+  font-size: 0.83rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.notif-text span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.view-all-btn {
+  width: 100%;
+  margin-top: 14px;
+  min-height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1683ff, #0c68e9);
+  color: white;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 12px 24px rgba(13, 110, 253, 0.18);
+}
+
+.view-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(13, 110, 253, 0.24);
+}
+
+@media (max-width: 1200px) {
+  .nav-wrapper {
+    grid-template-columns: 220px 1fr 300px;
+    gap: 16px;
+  }
+
+  .nav-links a,
+  .clinic-toggle {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
+  .book-btn {
+    padding: 12px 22px;
+  }
+
+  .main-name {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .nav-wrapper {
+    grid-template-columns: 70px 1fr auto;
+    gap: 12px;
+  }
+
+  .main-name {
+    display: none;
+  }
+
+  .nav-links {
+    gap: 6px;
+  }
+
+  .nav-links a,
+  .clinic-toggle {
+    padding: 8px 10px;
+    font-size: 0.74rem;
+    letter-spacing: 0.9px;
+  }
+
+  .action-buttons {
+    gap: 8px;
+  }
+
+  .book-btn {
+    padding: 10px 16px;
+    font-size: 0.7rem;
+  }
+
+  .header-login-link,
+  .header-logout-link {
+    font-size: 0.76rem;
+  }
+
+  .notif-dropdown {
+    width: 320px;
+    right: -16px;
+  }
 }

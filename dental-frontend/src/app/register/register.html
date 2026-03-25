@@ -1,14 +1,225 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2>Create Your Account</h2>
-    <p>Join Code Smiles to book and track appointments.</p>
-    
-    <input type="text" placeholder="Full Name" [(ngModel)]="user.full_name">
-    <input type="email" placeholder="Email Address" [(ngModel)]="user.email">
-    <input type="password" placeholder="Password" [(ngModel)]="user.password">
-    
-    <button class="auth-btn" (click)="onSubmit()">Register Now</button>
-    
-    <p>Already a member? <a routerLink="/login">Login here</a></p>
+<div class="auth-page">
+  <div class="login-content">
+
+    <!-- LEFT HERO -->
+    <section class="login-left">
+      <div class="brand-badge">
+        <span class="badge-dot"></span>
+        Code Smiles Dental Portal
+      </div>
+
+      <div class="hero-copy">
+        <h1>Healthy<br /><em>smiles</em><br />begin here.</h1>
+        <p>
+          Create your patient account to book appointments, manage requests,
+          and stay connected.
+        </p>
+      </div>
+
+      <div class="hero-features">
+        <div class="feature-item">
+          <div class="feature-icon">📅</div>
+          <span>Create your account in minutes</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🦷</div>
+          <span>Manage dental appointments easily</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔒</div>
+          <span>Secure access to your records</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT CARD -->
+    <section class="login-card register-card">
+      <div class="card-stripe"></div>
+
+      <div class="card-header">
+        <div class="mini-badge">Code Smiles</div>
+        <h2 class="card-title">Create Account</h2>
+        <p class="card-subtitle">
+          Register as a patient to access appointments and your portal.
+        </p>
+      </div>
+
+      <form class="login-form" (ngSubmit)="register()">
+        <div class="form-main">
+
+          <!-- FIRST + LAST NAME -->
+          <!-- FIRST + LAST NAME -->
+<div class="form-row">
+  <div class="form-group half">
+    <label for="firstName">First Name</label>
+    <div class="input-wrap">
+      <span class="input-icon">👤</span>
+      <input
+        id="firstName"
+        type="text"
+        name="firstName"
+        [(ngModel)]="registerData.firstName"
+        placeholder="Enter your first name"
+        autocomplete="given-name"
+      />
+    </div>
+    <small class="error-text">
+      {{ submitted && !isFirstNameValid ? 'First name is required.' : '' }}
+    </small>
+  </div>
+
+  <div class="form-group half">
+    <label for="lastName">Last Name</label>
+    <div class="input-wrap">
+      <span class="input-icon">👤</span>
+      <input
+        id="lastName"
+        type="text"
+        name="lastName"
+        [(ngModel)]="registerData.lastName"
+        placeholder="Enter your last name"
+        autocomplete="family-name"
+      />
+    </div>
+    <small class="error-text">
+      {{ submitted && !isLastNameValid ? 'Last name is required.' : '' }}
+    </small>
+  </div>
+</div>
+
+<!-- EMAIL + CONTACT -->
+<div class="form-row">
+  <div class="form-group half">
+    <label for="email">Email Address</label>
+    <div class="input-wrap">
+      <span class="input-icon">✉️</span>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        [(ngModel)]="registerData.email"
+        placeholder="Enter your email"
+        autocomplete="email"
+      />
+    </div>
+    <small class="error-text">
+      {{ submitted && !isRegisterEmailValid ? 'Please enter a valid email address.' : '' }}
+    </small>
+  </div>
+
+  <div class="form-group half">
+    <label for="contactNumber">Contact Number</label>
+    <div class="input-wrap">
+      <span class="input-icon">📱</span>
+      <input
+        id="contactNumber"
+        type="text"
+        name="contactNumber"
+        [(ngModel)]="registerData.contactNumber"
+        placeholder="Enter your contact number"
+        autocomplete="tel"
+      />
+    </div>
+    <small class="error-text">
+      {{ submitted && !isContactValid ? 'Contact number is required.' : '' }}
+    </small>
+  </div>
+</div>
+
+<!-- PASSWORD + CONFIRM -->
+<div class="form-row">
+  <div class="form-group half">
+    <label for="password">Password</label>
+    <div class="input-wrap">
+      <span class="input-icon">🔒</span>
+      <input
+        id="password"
+        [type]="showPassword ? 'text' : 'password'"
+        name="password"
+        [(ngModel)]="registerData.password"
+        placeholder="Create password"
+        autocomplete="new-password"
+      />
+      <button
+        type="button"
+        class="toggle-password"
+        (click)="togglePassword()"
+      >
+        {{ showPassword ? 'Hide' : 'Show' }}
+      </button>
+    </div>
+    <small class="error-text">
+      {{ submitted && !isRegisterPasswordValid ? 'At least 6 characters.' : '' }}
+    </small>
+  </div>
+
+  <div class="form-group half">
+    <label for="confirmPassword">Confirm Password</label>
+    <div class="input-wrap">
+      <span class="input-icon">🔐</span>
+      <input
+        id="confirmPassword"
+        [type]="showConfirmPassword ? 'text' : 'password'"
+        name="confirmPassword"
+        [(ngModel)]="registerData.confirmPassword"
+        placeholder="Confirm password"
+        autocomplete="new-password"
+      />
+      <button
+        type="button"
+        class="toggle-password"
+        (click)="toggleConfirmPassword()"
+      >
+        {{ showConfirmPassword ? 'Hide' : 'Show' }}
+      </button>
+    </div>
+    <small class="error-text">
+      {{ submitted && !doPasswordsMatch ? 'Passwords do not match.' : '' }}
+    </small>
+  </div>
+</div>
+
+          <!-- TERMS -->
+          <div class="form-options">
+            <label class="remember-me">
+              <input
+                type="checkbox"
+                name="agreeTerms"
+                [(ngModel)]="registerData.agreeTerms"
+              />
+              <span>I agree to the terms and privacy policy</span>
+            </label>
+          </div>
+
+          <button type="submit" class="sign-in-btn">
+            Create Account →
+          </button>
+        </div>
+
+        <div class="form-bottom">
+          <div class="divider"><span>or</span></div>
+
+          <div class="auth-alt-slot">
+            <button
+              type="button"
+              class="google-btn"
+              (click)="signUpWithGoogle()"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                class="google-icon"
+                alt="Google"
+              />
+              Sign up with Google
+            </button>
+          </div>
+
+          <p class="signup-text">
+            Already have an account? <a routerLink="/login">Sign in</a>
+          </p>
+        </div>
+      </form>
+    </section>
+
   </div>
 </div>

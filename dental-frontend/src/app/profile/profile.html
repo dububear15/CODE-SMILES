@@ -1,0 +1,241 @@
+<section class="profile-page">
+  <!-- HERO -->
+  <div class="profile-hero">
+    <div class="hero-left">
+      <div class="avatar-wrap">
+        <div class="avatar">{{ initials }}</div>
+        <button class="photo-btn" type="button" (click)="changePhoto()">
+          Change Photo
+        </button>
+      </div>
+
+      <div class="hero-main">
+        <span class="section-badge">PATIENT PROFILE</span>
+        <h1>{{ user.fullName }}</h1>
+        <p class="hero-email">{{ user.email }}</p>
+
+        <div class="hero-meta">
+          <span>Patient ID: {{ user.patientId }}</span>
+          <span>Member since {{ user.memberSince }}</span>
+          <span>{{ user.preferredClinic }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <button *ngIf="!isEditing" (click)="editProfile()" class="primary-btn">
+        Edit Information
+      </button>
+
+      <div *ngIf="isEditing" class="editing-actions">
+        <button (click)="saveProfile()" class="primary-btn">Save Changes</button>
+        <button (click)="cancelEdit()" class="secondary-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="profile-actions-strip">
+    <button class="action-pill" type="button" (click)="editProfile()">
+      <span>✏️</span>
+      Edit Info
+    </button>
+
+    <button class="action-pill" type="button" (click)="changePhoto()">
+      <span>🖼️</span>
+      Change Photo
+    </button>
+
+    <button class="action-pill" type="button" (click)="changePassword()">
+      <span>🔐</span>
+      Change Password
+    </button>
+
+    <button class="action-pill" type="button" (click)="managePrivacy()">
+      <span>⚙️</span>
+      Privacy
+    </button>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="profile-layout">
+    <div class="profile-main-column">
+      <!-- PERSONAL -->
+      <section class="profile-section">
+        <div class="section-heading">
+          <h3>Personal Information</h3>
+          <p>Your core patient details stored in the system.</p>
+        </div>
+
+        <div class="detail-list">
+          <div class="detail-row">
+            <div class="detail-label">Full Name</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.fullName" />
+              <span *ngIf="!isEditing">{{ user.fullName }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Birth Date</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" type="date" [(ngModel)]="tempUser.birthDate" />
+              <span *ngIf="!isEditing">{{ user.birthDate }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Gender</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.gender" />
+              <span *ngIf="!isEditing">{{ user.gender }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Phone Number</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.phone" />
+              <span *ngIf="!isEditing">{{ user.phone }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Address</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.address" />
+              <span *ngIf="!isEditing">{{ user.address }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMERGENCY -->
+      <section class="profile-section">
+        <div class="section-heading">
+          <h3>Emergency Contact</h3>
+          <p>The person the clinic can reach in urgent situations.</p>
+        </div>
+
+        <div class="detail-list">
+          <div class="detail-row">
+            <div class="detail-label">Name</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.emergencyName" />
+              <span *ngIf="!isEditing">{{ user.emergencyName }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Relationship</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.emergencyRelation" />
+              <span *ngIf="!isEditing">{{ user.emergencyRelation }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Contact Number</div>
+            <div class="detail-value">
+              <input *ngIf="isEditing" [(ngModel)]="tempUser.emergencyPhone" />
+              <span *ngIf="!isEditing">{{ user.emergencyPhone }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <aside class="profile-side-column">
+      <section class="side-panel">
+        <div class="side-panel-heading">
+          <h4>Account Summary</h4>
+        </div>
+
+        <div class="summary-minimal">
+          <div class="summary-line">
+            <span>Patient ID</span>
+            <strong>{{ user.patientId }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Gender</span>
+            <strong>{{ user.gender }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Member Since</span>
+            <strong>{{ user.memberSince }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Email Alerts</span>
+            <strong>{{ settings.emailNotifications ? 'Enabled' : 'Disabled' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="side-panel">
+        <div class="side-panel-heading">
+          <h4>Settings</h4>
+        </div>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <div>
+              <strong>Email Notifications</strong>
+              <p>Receive appointment and record updates by email.</p>
+            </div>
+
+            <label class="switch">
+              <input
+                type="checkbox"
+                [(ngModel)]="tempSettings.emailNotifications"
+                [disabled]="!isEditing"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <strong>Appointment Reminders</strong>
+              <p>Get reminders before your clinic visit.</p>
+            </div>
+
+            <label class="switch">
+              <input
+                type="checkbox"
+                [(ngModel)]="tempSettings.appointmentReminders"
+                [disabled]="!isEditing"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <strong>SMS Alerts</strong>
+              <p>Receive urgent schedule changes by text.</p>
+            </div>
+
+            <label class="switch">
+              <input
+                type="checkbox"
+                [(ngModel)]="tempSettings.smsAlerts"
+                [disabled]="!isEditing"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-buttons">
+            <button class="secondary-btn small-btn" type="button" (click)="changePassword()">
+              Change Password
+            </button>
+            <button class="secondary-btn small-btn" type="button" (click)="managePrivacy()">
+              Privacy
+            </button>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>

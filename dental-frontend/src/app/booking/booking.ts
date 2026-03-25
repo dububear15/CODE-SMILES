@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface TimeSlot {
   time: string;
@@ -36,6 +37,15 @@ export class BookingComponent implements OnInit {
   currentMonthName: string = '';
   currentYear: number = 0;
   calendarDays: any[] = [];
+
+  bookingConfirmed: boolean = false;
+
+  confirmedBooking = {
+    fullName: '',
+    date: '',
+    time: '',
+    services: [] as ServiceDetail[]
+  };
 
   patientDetails = {
     firstName: '',
@@ -97,12 +107,50 @@ export class BookingComponent implements OnInit {
     ]
   };
 
+  constructor(private router: Router) {}
+
   ngOnInit() {
     this.generateCalendar();
   }
 
   get currentSubServices() {
     return this.serviceMap[this.selectedCategory] || [];
+  }
+
+  get selectedServiceSummary(): string {
+    const names = this.selectedSubServices.map(service => service.name).join(', ');
+    return `${names} • ${this.totalSelectedDuration} mins`;
+  }
+
+  get isFirstNameValid(): boolean {
+    return /^[A-Za-z\s'-]{2,}$/.test(this.patientDetails.firstName.trim());
+  }
+
+  get isLastNameValid(): boolean {
+    return /^[A-Za-z\s'-]{2,}$/.test(this.patientDetails.lastName.trim());
+  }
+
+  get isEmailValid(): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.patientDetails.email.trim());
+  }
+
+  get isPhoneValid(): boolean {
+    return /^09\d{9}$/.test(this.patientDetails.phone.trim());
+  }
+
+  get isAgeValid(): boolean {
+    const age = Number(this.patientDetails.age);
+    return Number.isInteger(age) && age >= 1 && age <= 120;
+  }
+
+  get canProceedToReview(): boolean {
+    return (
+      this.isFirstNameValid &&
+      this.isLastNameValid &&
+      this.isEmailValid &&
+      this.isPhoneValid &&
+      this.isAgeValid
+    );
   }
 
   selectCategory(category: string) {
@@ -133,6 +181,7 @@ export class BookingComponent implements OnInit {
 
     if (this.selectedDate) {
       this.availableSlots = this.generateAvailableSlots(this.selectedDate);
+
       if (!this.availableSlots.some(slot => slot.time === this.selectedTime && slot.slotsLeft > 0)) {
         this.selectedTime = '';
       }
@@ -143,11 +192,29 @@ export class BookingComponent implements OnInit {
     this.selectedServices = [];
     this.selectedSubServices = [];
     this.totalSelectedDuration = 0;
+    this.selectedDate = '';
     this.selectedTime = '';
+    this.availableSlots = [];
+  }
 
-    if (this.selectedDate) {
-      this.availableSlots = this.generateAvailableSlots(this.selectedDate);
-    }
+  resetPatientDetails() {
+    this.patientDetails = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      age: '',
+      notes: ''
+    };
+  }
+
+  resetConfirmedBooking() {
+    this.confirmedBooking = {
+      fullName: '',
+      date: '',
+      time: '',
+      services: []
+    };
   }
 
   generateCalendar() {
@@ -215,8 +282,9 @@ export class BookingComponent implements OnInit {
       this.selectedTime = '';
       this.availableSlots = this.generateAvailableSlots(date);
     } else {
-      this.availableSlots = [];
+      this.selectedDate = '';
       this.selectedTime = '';
+      this.availableSlots = [];
     }
   }
 
@@ -225,18 +293,18 @@ export class BookingComponent implements OnInit {
     const day = dateObj.getDay();
 
     const closingMinutes =
-      day === 0 ? 21 * 60 + 30 :   // Sunday 9:30 PM
-      day === 6 ? 21 * 60 :        // Saturday 9:00 PM
-                  20 * 60 + 30;    // Mon-Fri 8:30 PM
+      day === 0 ? 21 * 60 + 30 :
+      day === 6 ? 21 * 60 :
+      20 * 60 + 30;
 
     const candidateStarts = [
-      9 * 60,        // 09:00 AM
-      10 * 60 + 30,  // 10:30 AM
-      13 * 60,       // 01:00 PM
-      14 * 60 + 30,  // 02:30 PM
-      16 * 60,       // 04:00 PM
-      17 * 60 + 30,  // 05:30 PM
-      19 * 60        // 07:00 PM
+      9 * 60,
+      10 * 60 + 30,
+      13 * 60,
+      14 * 60 + 30,
+      16 * 60,
+      17 * 60 + 30,
+      19 * 60
     ];
 
     return candidateStarts
@@ -277,19 +345,44 @@ export class BookingComponent implements OnInit {
   }
 
   completeBooking() {
-    console.log('Final Booking Data:', {
-      services: this.selectedSubServices,
+    if (!this.canProceedToReview) {
+      return;
+    }
+
+    this.confirmedBooking = {
+      fullName: `${this.patientDetails.firstName.trim()} ${this.patientDetails.lastName.trim()}`,
       date: this.selectedDate,
       time: this.selectedTime,
-      patient: this.patientDetails
-    });
+      services: [...this.selectedSubServices]
+    };
 
-    alert('Thank you, ' + this.patientDetails.firstName + '! Your appointment is confirmed.');
-
+    this.bookingConfirmed = true;
     this.currentStep = 1;
+    this.selectedCategory = '';
+
     this.resetSelection();
-    this.selectedDate = '';
-    this.selectedTime = '';
-    this.availableSlots = [];
+    this.resetPatientDetails();
+  }
+
+  startNewBooking() {
+    this.bookingConfirmed = false;
+    this.currentStep = 1;
+    this.selectedCategory = '';
+
+    this.resetSelection();
+    this.resetPatientDetails();
+    this.resetConfirmedBooking();
+  }
+
+  goHome() {
+    this.bookingConfirmed = false;
+    this.currentStep = 1;
+    this.selectedCategory = '';
+
+    this.resetSelection();
+    this.resetPatientDetails();
+    this.resetConfirmedBooking();
+
+    this.router.navigate(['/']);
   }
 }

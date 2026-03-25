@@ -1,17 +1,31 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home'; 
-import { AdminComponent } from './admin/admin'; 
+import { HomeComponent } from './home/home';
+import { AdminComponent } from './admin/admin';
 import { BookingComponent } from './booking/booking';
 import { LoginComponent } from './login/login';
 import { RegisterComponent } from './register/register';
 import { ContactComponent } from './contact/contact';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password';
+import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard';
+import { MyAppointments } from './my-appointments/my-appointments';
+import { Records } from './records/records';
+import { Notifications } from './notifications/notifications';
+import { Profile } from './profile/profile';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'admin', component: AdminComponent },
   { path: 'booking', component: BookingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'contact', component: ContactComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
+  { path: 'admin', component: AdminComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'patient-dashboard', component: PatientDashboardComponent },
+  { path: 'my-appointments', component: MyAppointments },
+  { path: 'records', component: Records },
+  { path: 'notifications', component: Notifications },
+  { path: 'profile', component: Profile },
   { path: '**', redirectTo: '' }
 ];

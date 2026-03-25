@@ -1,0 +1,182 @@
+<div class="patient-dashboard-page">
+  <!-- HERO -->
+  <section class="dashboard-hero">
+    <div class="dashboard-hero-content">
+      <div class="hero-copy">
+        <span class="dashboard-badge">PATIENT DASHBOARD</span>
+
+        <h1>
+          Welcome back,
+          <span>{{ patientName }}</span>
+        </h1>
+
+        <p class="hero-description">
+          Keep track of your visits, approvals, notifications, and dental
+          records in one clean private space.
+        </p>
+
+        <div class="hero-cta-group">
+          <a routerLink="/booking" class="primary-btn">Book Appointment</a>
+          <a routerLink="/my-appointments" class="secondary-btn">My Appointments</a>
+        </div>
+      </div>
+
+      <div class="hero-appointment-card">
+        <div class="hero-card-top">
+          <span class="mini-label">NEXT APPOINTMENT</span>
+          <span class="status-pill" [ngClass]="getStatusClass(nextAppointment.status)">
+            {{ nextAppointment.status }}
+          </span>
+        </div>
+
+        <h2>{{ nextAppointment.service }}</h2>
+        <p class="hero-dentist">{{ nextAppointment.dentist }}</p>
+
+        <div class="hero-appointment-meta">
+          <div class="hero-meta-box">
+            <span>Date</span>
+            <strong>{{ nextAppointment.date }}</strong>
+          </div>
+
+          <div class="hero-meta-box">
+            <span>Time</span>
+            <strong>{{ nextAppointment.time }}</strong>
+          </div>
+        </div>
+
+        <div class="hero-card-actions">
+          <button type="button" class="small-btn filled-btn">View Details</button>
+          <button type="button" class="small-btn outlined-btn">Reschedule</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="dashboard-summary">
+    <div class="summary-grid">
+      <div class="summary-card" *ngFor="let card of summaryCards">
+        <div class="summary-icon">{{ card.icon }}</div>
+        <div class="summary-text">
+          <p class="summary-title">{{ card.title }}</p>
+          <h3>{{ card.value }}</h3>
+          <span>{{ card.subtitle }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <section class="dashboard-main-grid">
+    <!-- LEFT -->
+    <div class="main-left">
+      <div class="section-heading">
+        <span class="section-badge">YOUR VISITS</span>
+        <h2>Appointments Overview</h2>
+        <p>
+          Review your upcoming, pending, and completed appointments in one organized list.
+        </p>
+      </div>
+
+      <div class="appointment-list">
+        <div class="appointment-card" *ngFor="let appointment of appointments">
+          <div class="appointment-card-top">
+            <div>
+              <h3>{{ appointment.service }}</h3>
+              <p>{{ appointment.dentist }}</p>
+            </div>
+
+            <span class="status-pill" [ngClass]="getStatusClass(appointment.status)">
+              {{ appointment.status }}
+            </span>
+          </div>
+
+          <div class="appointment-card-details">
+            <div class="detail-box">
+              <span>Date</span>
+              <strong>{{ appointment.date }}</strong>
+            </div>
+
+            <div class="detail-box">
+              <span>Time</span>
+              <strong>{{ appointment.time }}</strong>
+            </div>
+          </div>
+
+          <div class="appointment-actions">
+            <button type="button" class="small-btn filled-btn">View</button>
+            <button type="button" class="small-btn outlined-btn">Reschedule</button>
+            <button type="button" class="small-btn text-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="main-right">
+      <div class="side-card">
+        <div class="side-card-top">
+          <div>
+            <span class="section-badge small-badge">NOTIFICATIONS</span>
+            <h3>Latest Updates</h3>
+          </div>
+          <a routerLink="/notifications" class="side-link">View all</a>
+        </div>
+
+        <div class="notification-list">
+          <div class="notification-item" *ngFor="let item of notifications">
+            <div class="notification-dot"></div>
+
+            <div class="notification-content">
+              <div class="notification-top">
+                <h4>{{ item.title }}</h4>
+                <span>{{ item.time }}</span>
+              </div>
+              <p>{{ item.message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-top">
+          <div>
+            <span class="section-badge small-badge">DIGITAL VAULT</span>
+            <h3>Recent Records</h3>
+          </div>
+          <a routerLink="/records" class="side-link">View all</a>
+        </div>
+
+        <div class="record-list">
+          <div class="record-item" *ngFor="let record of recordPreview">
+            <div class="record-icon">🗂️</div>
+            <div class="record-content">
+              <h4>{{ record.title }}</h4>
+              <p>{{ record.dentist }}</p>
+              <span>{{ record.date }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="dashboard-support-strip">
+    <div class="support-strip-content">
+      <div>
+        <span class="section-badge dark-badge">PATIENT SUPPORT</span>
+        <h2>Need help with your request or visit?</h2>
+        <p>
+          Our clinic team can help you with approvals, follow-ups,
+          reschedules, and record concerns.
+        </p>
+      </div>
+
+      <div class="support-actions">
+        <a routerLink="/contact" class="secondary-btn support-outline">Contact Clinic</a>
+        <a routerLink="/booking" class="primary-btn">Book Another Visit</a>
+      </div>
+    </div>
+  </section>
+</div>

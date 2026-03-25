@@ -6,10 +6,16 @@
 
 /* GLOBAL BACKGROUND SYSTEM */
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  color: var(--dark);
 
   background: linear-gradient(
     135deg,
@@ -17,16 +23,44 @@ body {
     #e6f2ff 35%,
     #ffffff 70%
   );
-
   background-attachment: fixed;
   background-size: cover;
-
-  min-height: 100vh;
-  color: var(--dark);
 }
 
-html {
-  scroll-behavior: smooth;
+/* --- SHARED AUTH BACKGROUND --- */
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.auth-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(15, 30, 55, 0.42) 0%,
+      rgba(15, 30, 55, 0.22) 40%,
+      rgba(255, 255, 255, 0.08) 58%,
+      rgba(255, 255, 255, 0.18) 68%,
+      rgba(255, 255, 255, 0.3) 100%
+    ),
+    url('https://images.unsplash.com/photo-1629909615184-74f495363b67?w=1600&q=85') center / cover no-repeat;
+}
+
+.auth-page::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 /* --- NAVIGATION BAR --- */
@@ -59,3 +93,4 @@ html {
 .nav-links a:hover {
   color: var(--azure);
 }
+

@@ -183,6 +183,14 @@ input:focus, textarea:focus {
   box-shadow: 0 15px 35px rgba(0,0,0,0.05);
 }
 
+
+.hours-card h5 {
+  font-size: 1.2rem;   /* bigger */
+  font-weight: 900;
+  color: #1a1a1a;
+  margin: 0 0 12px;
+}
+
 .hours-row {
   display: flex; 
   justify-content: space-between; /* Fixed weird clumping from image_acc759.png */
@@ -213,3 +221,4 @@ input:focus, textarea:focus {
   display: inline-block; margin-right: 8px;
   box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
 }
+
