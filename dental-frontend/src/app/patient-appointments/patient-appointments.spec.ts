@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MyAppointments } from './my-appointments';
+import { MyAppointments } from './patient-appointments';
 
 describe('MyAppointments', () => {
   let component: MyAppointments;
@@ -9,12 +8,11 @@ describe('MyAppointments', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MyAppointments]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MyAppointments);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -1,13 +1,29 @@
 :host {
   display: block;
-  background: #f0f8ff;
+  background: #edf5fc;
 }
 
-
-.contact-section { 
-  padding: 140px 8%; 
-  background: transparent;
+.contact-section {
+  margin-top: 95px;
+  padding: 0 8% 100px;
+  background: #edf5fc;
   font-family: 'Inter', sans-serif;
+}
+
+.contact-section::before {
+  content: "";
+  display: none;
+  height: 40px;
+  margin-top: -40px;
+  background: linear-gradient(
+    to bottom,
+    rgba(237, 245, 252, 0) 0%,
+    rgba(237, 245, 252, 1) 100%
+  );
+}
+
+.contact-section::after {
+  display: none;
 }
 
 .contact-container {
@@ -222,3 +238,116 @@ input:focus, textarea:focus {
   box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
 }
 
+/* Dashboard Theme Alignment */
+:host {
+  --page-bg: #edf4fb;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: rgba(255, 255, 255, 0.95);
+  --line: rgba(27, 55, 89, 0.1);
+  --text: #1b2c43;
+  --muted: #6d7f96;
+  --navy: #11233b;
+  --navy-2: #1b3657;
+  --blue: #4e8fd8;
+  --blue-strong: #2f6daf;
+  --blue-soft: #dcecff;
+  --shadow-lg: 0 20px 36px rgba(18, 34, 56, 0.1);
+  --shadow-md: 0 12px 24px rgba(18, 34, 56, 0.07);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: #edf5fc;
+}
+
+
+.title,
+.hours-card h5 {
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--navy);
+}
+
+.label,
+.title span,
+.contact-link:hover {
+  color: var(--blue-strong);
+}
+
+.details span,
+.hours-row span:first-child {
+  color: #70839a;
+}
+
+.details p,
+.contact-link,
+.hours-row span:last-child,
+.emergency-box p {
+  color: var(--text);
+}
+
+.icon-box,
+input,
+textarea,
+.hours-card,
+.emergency-box,
+.map-wrapper {
+  border: 1px solid var(--line);
+}
+
+.icon-box {
+  background: rgba(220, 236, 255, 0.72);
+  color: var(--blue-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-item:hover .icon-box {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-strong) 100%);
+  box-shadow: 0 16px 30px rgba(34, 102, 177, 0.2);
+}
+
+input,
+textarea {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(243, 249, 255, 0.92));
+  color: var(--navy);
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(47, 109, 175, 0.28);
+  box-shadow: 0 14px 28px rgba(47, 109, 175, 0.12);
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-strong) 100%);
+  box-shadow: 0 18px 34px rgba(34, 102, 177, 0.22);
+}
+
+.send-btn:hover {
+  background: linear-gradient(135deg, var(--navy-2) 0%, var(--navy) 100%);
+}
+
+.emergency-box,
+.hours-card {
+  background:
+    radial-gradient(circle at top right, rgba(123, 183, 247, 0.08), transparent 26%),
+    linear-gradient(180deg, var(--surface-strong), var(--surface));
+  box-shadow: var(--shadow-lg);
+}
+
+.emergency-box {
+  border-left: 4px solid var(--blue-strong);
+  border-radius: 22px;
+}
+
+.map-wrapper {
+  box-shadow: var(--shadow-lg);
+}
+
+.hours-row {
+  border-bottom: 1px solid rgba(27, 55, 89, 0.06);
+}
+
+.about-philosophy,
+.innovation-section,
+.dentist-grid,
+.contact-section {
+  background: #edf5fc;
+}

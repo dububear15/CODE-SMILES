@@ -10,19 +10,17 @@ import { Footer } from './footer/footer';
   standalone: true,
   imports: [RouterOutlet, Header, Footer, CommonModule],
   template: `
-    <!-- Header (hidden on login/register/forgot-password) -->
     <app-header *ngIf="showHeader"></app-header>
-    
-    <main [class.no-scroll]="!showFooter">
+
+    <main [class.no-scroll]="hideScrollLayout">
       <router-outlet></router-outlet>
     </main>
-    
-    <!-- Footer (hidden on login/register/forgot-password/booking) -->
+
     <app-footer *ngIf="showFooter"></app-footer>
   `,
   styles: [`
     main { min-height: 80vh; }
-    .no-scroll { height: 100vh; overflow: hidden; }
+    .no-scroll { min-height: 100vh; overflow: hidden; }
   `]
 })
 export class AppComponent {
@@ -30,25 +28,32 @@ export class AppComponent {
 
   showFooter = true;
   showHeader = true;
+  hideScrollLayout = false;
 
   constructor(private router: Router) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-
       const url = event.urlAfterRedirects;
 
-      // Pages with NO header & footer
       const hideAllLayout =
         url === '/login' ||
         url === '/register' ||
         url === '/forgot-password';
 
-      // Pages with NO footer only
+      const privatePatientRoutes =
+        url.startsWith('/patient-dashboard') ||
+        url.startsWith('/my-appointments') ||
+        url.startsWith('/patient-medical-vault') ||
+        url.startsWith('/records') ||
+        url.startsWith('/notifications') ||
+        url.startsWith('/profile');
+
       const hideFooterOnly = url === '/booking';
 
-      this.showHeader = !hideAllLayout;
-      this.showFooter = !(hideAllLayout || hideFooterOnly);
+      this.showHeader = !(hideAllLayout || privatePatientRoutes);
+      this.showFooter = !(hideAllLayout || hideFooterOnly || privatePatientRoutes);
+      this.hideScrollLayout = privatePatientRoutes;
     });
   }
 }

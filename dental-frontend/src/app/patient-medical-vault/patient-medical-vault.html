@@ -1,0 +1,339 @@
+<div class="patient-vault-page" [class.sidebar-collapsed]="sidebarCollapsed()">
+  <aside class="vault-sidebar">
+    <div class="sidebar-inner">
+      <div class="brand-block">
+        <div class="brand-mark">
+          <img src="logo.png" alt="Code Smiles logo" class="brand-logo" />
+        </div>
+        <div class="brand-copy">
+          <span class="eyebrow">Code Smiles</span>
+          <h2>Patient Concierge</h2>
+        </div>
+        <button
+          class="sidebar-toggle-btn"
+          type="button"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+          <span class="sidebar-toggle-icon">{{ sidebarCollapsed() ? '›' : '‹' }}</span>
+        </button>
+      </div>
+
+      <div class="sidebar-panel">
+        <span class="sidebar-panel-label">Navigation</span>
+        <nav class="sidebar-nav">
+          <a class="nav-item" routerLink="/patient-dashboard" title="Dashboard">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.8v-6.2H9.8V21H5a1 1 0 0 1-1-1z"/></svg>
+            </span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item" routerLink="/my-appointments" title="Appointments">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h2v2h6V3h2v2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2zm12 7H5v9h14z"/></svg>
+            </span>
+            <span class="nav-label">Appointments</span>
+          </a>
+          <a class="nav-item active" routerLink="/patient-medical-vault" title="Medical Vault">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8h-9z"/><path d="M10 4v4h4"/></svg>
+            </span>
+            <span class="nav-label">Medical Vault</span>
+          </a>
+          <a class="nav-item" href="javascript:void(0)" title="Services">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m12 2 2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2z"/></svg>
+            </span>
+            <span class="nav-label">Services</span>
+          </a>
+          <a class="nav-item" href="javascript:void(0)" title="About Clinic">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+            </span>
+            <span class="nav-label">About Clinic</span>
+          </a>
+          <a class="nav-item" href="javascript:void(0)" title="Contact">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+            </span>
+            <span class="nav-label">Contact</span>
+          </a>
+          <a class="nav-item" routerLink="/notifications" title="Notifications">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22zm7-4H5l1.6-1.8V11a5.4 5.4 0 1 1 10.8 0v5.2z"/></svg>
+            </span>
+            <span class="nav-label">Notifications</span>
+          </a>
+          <a class="nav-item" routerLink="/profile" title="Profile">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
+            </span>
+            <span class="nav-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-cta-wrap sidebar-cta-button-only">
+        <a class="sidebar-book-btn" routerLink="/booking">
+          <span class="nav-icon sidebar-btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M11 5h2v14h-2z"/><path d="M5 11h14v2H5z"/></svg>
+          </span>
+          <span class="sidebar-book-label">Book Appointment</span>
+        </a>
+      </div>
+
+      <div class="sidebar-panel sidebar-panel-secondary">
+        <span class="sidebar-panel-label">Account</span>
+        <nav class="sidebar-nav">
+          <a class="nav-item nav-item-muted" href="javascript:void(0)" title="Profile Settings">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m12 8.5 1.3-2.8 2.8 1.3 2.2-1.1 1.5 2.6-2 1.6.2 1.9 2.3 1.2-1.1 2.9-2.8-.4-1.4 1.3.4 2.8-2.9 1.1-1.2-2.3-1.9-.2-1.6 2-2.6-1.5 1.1-2.2-1.3-2.8 2.8-1.3.7-1.8-.7-1.8-2.8-1.3 1.3-2.8 2.2 1.1 1.6-2zM12 15.5A3.5 3.5 0 1 0 8.5 12 3.5 3.5 0 0 0 12 15.5z"/></svg>
+            </span>
+            <span class="nav-label">Profile Settings</span>
+          </a>
+          <a class="nav-item nav-item-muted" href="javascript:void(0)" title="Help Center">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm.2 15.5h-1.8v-1.8h1.8zm2-7.1-.8.8a3 3 0 0 0-1 2.3h-1.8v-.4a3.8 3.8 0 0 1 1.2-2.8l1.1-1.1a1.7 1.7 0 1 0-2.9-1.2H8.2a3.5 3.5 0 1 1 6 2.3z"/></svg>
+            </span>
+            <span class="nav-label">Help Center</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <a class="nav-item nav-item-muted logout-item" href="javascript:void(0)" title="Log Out">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M10 17v-2h6V9h-6V7h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2z"/><path d="m13 12-4 4v-3H4v-2h5V8z"/></svg>
+          </span>
+          <span class="nav-label">Log Out</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="vault-main">
+    <div class="vault-layout">
+      <section class="vault-center">
+        <section class="hero-card">
+          <div class="hero-copy">
+            <span class="eyebrow">Digital vault</span>
+            <h1>Your dental records, organized clearly</h1>
+            <p>
+              Review consultation summaries, treatment notes, and prescriptions in one
+              refined patient record space designed for quick access.
+            </p>
+
+            <div class="hero-actions">
+              <a routerLink="/booking" class="primary-action-btn">Book appointment</a>
+              <a routerLink="/patient-dashboard" class="ghost-btn hero-secondary-btn">Back to dashboard</a>
+            </div>
+          </div>
+
+          <div class="hero-visit-card vault-hero-card">
+            <span class="hero-visit-label">Vault overview</span>
+            <strong>4 active records</strong>
+            <p>Consultations, treatments, and prescriptions are available for review.</p>
+
+            <div class="hero-visit-meta">
+              <div class="hero-visit-chip">
+                <span class="hero-chip-label">Latest entry</span>
+                <strong>April 02, 2026</strong>
+              </div>
+              <div class="hero-visit-chip">
+                <span class="hero-chip-label">Updated by</span>
+                <strong>Dr. Lee Sung-Kyung</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="summary-grid">
+          <article class="summary-card">
+            <div class="summary-card-top">
+              <span class="summary-kicker">All records</span>
+              <span class="summary-badge">04</span>
+            </div>
+            <h3>Stored entries</h3>
+            <p>Your consultation, treatment, and prescription records are available here.</p>
+            <strong>Updated this year</strong>
+          </article>
+
+          <article class="summary-card">
+            <div class="summary-card-top">
+              <span class="summary-kicker">Completed</span>
+              <span class="summary-badge">03</span>
+            </div>
+            <h3>Finished care notes</h3>
+            <p>Most treatment entries are completed and filed into your history.</p>
+            <strong>Ready to review</strong>
+          </article>
+
+          <article class="summary-card summary-card-accent">
+            <div class="summary-card-top">
+              <span class="summary-kicker">Active</span>
+              <span class="summary-badge">01</span>
+            </div>
+            <h3>Ongoing record</h3>
+            <p>One prescription is still active and should remain visible in your vault.</p>
+            <strong>Pain relief prescription</strong>
+          </article>
+        </section>
+
+        <section class="content-card vault-board">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Medical vault</span>
+              <h2>Patient records</h2>
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <button
+              *ngFor="let filter of filters"
+              type="button"
+              class="filter-btn"
+              [class.active]="selectedFilter === filter.key"
+              (click)="setFilter(filter.key)">
+              <span>{{ filter.label }}</span>
+            </button>
+          </div>
+
+          <div class="empty-state" *ngIf="filteredRecords.length === 0">
+            <div class="empty-icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>
+            </div>
+            <h3>No records found</h3>
+            <p>There are no dental records available under this filter yet.</p>
+          </div>
+
+          <div class="records-list" *ngIf="filteredRecords.length > 0">
+            <article class="record-row" *ngFor="let record of filteredRecords">
+              <div class="record-icon-wrap" [ngClass]="record.category">
+                <svg *ngIf="record.category === 'consultation'" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 1 8 8c0 5.2-8 12-8 12S4 15.2 4 10a8 8 0 0 1 8-8z"/><path d="M12 6v8M8 10h8"/></svg>
+                <svg *ngIf="record.category === 'treatment'" viewBox="0 0 24 24"><path d="M14.7 3.3a4.5 4.5 0 0 1 0 6.4L9.4 15l-4.2.9.9-4.2 5.3-5.3a4.5 4.5 0 0 1 6.4 0z"/><path d="m12.1 5.9 6 6"/></svg>
+                <svg *ngIf="record.category === 'prescription'" viewBox="0 0 24 24"><path d="M8 4h8a2 2 0 0 1 2 2v12H6V6a2 2 0 0 1 2-2z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+              </div>
+
+              <div class="record-main">
+                <div class="record-headline">
+                  <div>
+                    <span class="record-type">{{ record.type }}</span>
+                    <h3>{{ record.title }}</h3>
+                  </div>
+                  <span class="record-status" [ngClass]="getStatusClass(record.status)">
+                    {{ record.status }}
+                  </span>
+                </div>
+
+                <div class="record-meta">
+                  <div class="meta-box">
+                    <span>Date</span>
+                    <strong>{{ record.date }}</strong>
+                  </div>
+                  <div class="meta-box">
+                    <span>Dentist</span>
+                    <strong>{{ record.dentist }}</strong>
+                  </div>
+                  <div class="meta-box">
+                    <span>Category</span>
+                    <strong>{{ record.type }}</strong>
+                  </div>
+                </div>
+
+                <div class="record-notes">
+                  <span>Clinical notes</span>
+                  <p>{{ record.notes }}</p>
+                </div>
+              </div>
+
+              <div class="record-actions">
+                <button class="primary-action-btn" type="button">View details</button>
+                <button class="ghost-btn" type="button">Download copy</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <aside class="vault-right-panel">
+        <div class="patient-card">
+          <div class="patient-avatar-wrap">
+            <div class="patient-avatar">M</div>
+          </div>
+
+          <span class="eyebrow">Vault profile</span>
+          <h3>Mark Anthony</h3>
+
+          <div class="patient-stats">
+            <div>
+              <span>Total</span>
+              <strong>4</strong>
+            </div>
+            <div>
+              <span>Completed</span>
+              <strong>3</strong>
+            </div>
+            <div>
+              <span>Active</span>
+              <strong>1</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="premium-tips-card vault-guidance-card">
+          <div class="tips-header">
+            <div class="tips-icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/></svg>
+            </div>
+            <div class="tips-header-copy">
+              <span class="eyebrow">Record guidance</span>
+            </div>
+          </div>
+
+          <div class="tips-list">
+            <div class="tip-row">
+              <span class="tip-dot"></span>
+              <span>Use the vault to review treatment notes before your next consultation.</span>
+            </div>
+            <div class="tip-row">
+              <span class="tip-dot"></span>
+              <span>Download copies if you need to share records with another clinic.</span>
+            </div>
+            <div class="tip-row">
+              <span class="tip-dot"></span>
+              <span>Check active prescriptions regularly for dose and duration reminders.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-links">
+          <a class="quick-link" routerLink="/my-appointments">
+            <span class="quick-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h2v2h6V3h2v2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2z"/><path d="M8 11h8M8 15h5"/></svg>
+            </span>
+            <div>
+              <strong>Appointments</strong>
+              <small>Review your upcoming and recent visits</small>
+            </div>
+          </a>
+
+          <a class="quick-link" routerLink="/patient-dashboard">
+            <span class="quick-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.8v-6.2H9.8V21H5a1 1 0 0 1-1-1z"/></svg>
+            </span>
+            <div>
+              <strong>Dashboard</strong>
+              <small>Return to your patient overview</small>
+            </div>
+          </a>
+        </div>
+
+        <div class="promo-card">
+          <span class="promo-kicker">Vault reminder</span>
+          <h4>Keep your records close</h4>
+          <p>Review treatment notes and prescription guidance before each upcoming appointment.</p>
+          <a class="primary-action-btn promo-link-btn" routerLink="/my-appointments">View visits</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>

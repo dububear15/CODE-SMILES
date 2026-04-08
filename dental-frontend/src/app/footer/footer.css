@@ -1,14 +1,27 @@
+/* --- FOOTER BASE --- */
 .luxury-footer {
   position: relative;
   width: 100%;
   overflow: hidden;
   margin-top: 0px;
   padding: 60px 0 22px;
-  background: linear-gradient(180deg, #0f1724 0%, #0b1220 100%);
+
+  /* 🔥 MATCH SIDEBAR BLUE */
+  background: linear-gradient(
+    180deg,
+    #1e3a5f 0%,
+    #1b3554 40%,
+    #162c47 100%
+  );
+
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* ✨ GLASS EFFECT */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* soft glow effect */
+/* --- GLOW EFFECT --- */
 .luxury-footer::before,
 .luxury-footer::after {
   content: '';
@@ -32,10 +45,10 @@
   height: 220px;
   right: -80px;
   bottom: -100px;
-  background: rgba(42, 170, 128, 0.25);
+  background: rgba(0, 123, 255, 0.25);
 }
 
-/* layout */
+/* --- LAYOUT --- */
 .footer-container {
   position: relative;
   z-index: 1;
@@ -47,11 +60,11 @@
   align-items: start;
 }
 
-/* brand */
+/* --- BRAND --- */
 .footer-logo {
   font-size: 1.7rem;
   font-weight: 900;
-  color: #007bff;
+  color: #58a6ff;
   margin-bottom: 12px;
 }
 
@@ -61,23 +74,23 @@
 
 .footer-tagline {
   max-width: 360px;
-  color: #9eb0c7;
+  color: #c9d6e4;
   font-size: 0.95rem;
   line-height: 1.8;
   margin-bottom: 20px;
 }
 
-/* section titles */
+/* --- SECTION TITLES --- */
 .footer-column h3 {
   font-size: 0.75rem;
-  color: #58a6ff;
+  color: #6bb6ff;
   margin-bottom: 18px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 800;
 }
 
-/* links */
+/* --- LINKS --- */
 .footer-links {
   list-style: none;
   padding: 0;
@@ -89,7 +102,7 @@
 }
 
 .footer-links a {
-  color: #9eb0c7 !important;
+  color: #c9d6e4 !important;
   text-decoration: none;
   font-size: 0.92rem;
   transition: all 0.25s ease;
@@ -101,15 +114,15 @@
   transform: translateX(4px);
 }
 
-/* contact text */
+/* --- CONTACT TEXT --- */
 .visit-text {
-  color: #9eb0c7;
+  color: #c9d6e4;
   font-size: 0.93rem;
   margin-bottom: 12px;
   line-height: 1.7;
 }
 
-/* social buttons */
+/* --- SOCIAL BUTTONS --- */
 .footer-socials {
   display: flex;
   gap: 12px;
@@ -118,24 +131,51 @@
 
 .footer-socials a {
   text-decoration: none;
-  color: #b8c6d8;
+  color: #c9d6e4;
   font-size: 0.84rem;
   font-weight: 600;
   padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
   transition: all 0.25s ease;
 }
 
 .footer-socials a:hover {
   color: #ffffff;
-  background: rgba(0, 123, 255, 0.15);
-  border-color: rgba(0, 123, 255, 0.4);
+  background: rgba(0, 123, 255, 0.2);
+  border-color: rgba(0, 123, 255, 0.5);
   transform: translateY(-2px);
 }
 
-/* bottom */
+/* --- ROUND ICON SOCIALS --- */
+.social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  color: #c9d6e4;
+  font-size: 0.9rem;
+
+  transition: all 0.25s ease;
+}
+
+.social-btn:hover {
+  color: white;
+  background: rgba(0, 123, 255, 0.25);
+  border-color: rgba(0, 123, 255, 0.6);
+  transform: translateY(-3px);
+}
+
+/* --- BOTTOM --- */
 .footer-bottom {
   position: relative;
   z-index: 1;
@@ -143,15 +183,15 @@
   margin: 35px auto 0;
   padding-top: 18px;
   text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-bottom p {
-  color: #6f8098;
+  color: #8fa3bd;
   font-size: 0.78rem;
 }
 
-/* responsive */
+/* --- RESPONSIVE --- */
 @media (max-width: 900px) {
   .footer-container {
     grid-template-columns: 1fr;
@@ -166,28 +206,4 @@
   .footer-socials a:hover {
     transform: none;
   }
-}
-
-.social-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  color: #b8c6d8;
-  font-size: 0.9rem;
-
-  transition: all 0.25s ease;
-}
-
-.social-btn:hover {
-  color: white;
-  background: rgba(0, 123, 255, 0.2);
-  border-color: rgba(0, 123, 255, 0.5);
-  transform: translateY(-3px);
 }

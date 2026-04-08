@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-my-appointments',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './my-appointments.html',
-  styleUrl: './my-appointments.css',
+  templateUrl: './patient-appointments.html',
+  styleUrl: './patient-appointments.css', // ✅ FIXED
 })
 export class MyAppointments {
+  protected readonly sidebarCollapsed = signal(false);
+
   selectedTab = 'upcoming';
 
   appointmentTabs = [
@@ -24,6 +26,8 @@ export class MyAppointments {
       service: 'General Dentistry',
       dentist: 'Dr. Lee Sung-Kyung',
       date: 'April 2, 2026',
+      dateMonth: 'APR',
+      dateDay: '02',
       time: '2:30 PM',
       status: 'Approved',
       type: 'upcoming',
@@ -33,6 +37,8 @@ export class MyAppointments {
       service: 'Teeth Whitening',
       dentist: 'Dr. Ju Ji-Hoon',
       date: 'April 18, 2026',
+      dateMonth: 'APR',
+      dateDay: '18',
       time: '10:00 AM',
       status: 'Pending',
       type: 'pending',
@@ -42,6 +48,8 @@ export class MyAppointments {
       service: 'Braces Adjustment',
       dentist: 'Dr. Park Shin-Hye',
       date: 'March 12, 2026',
+      dateMonth: 'MAR',
+      dateDay: '12',
       time: '1:00 PM',
       status: 'Completed',
       type: 'completed',
@@ -51,6 +59,8 @@ export class MyAppointments {
       service: 'Pediatric Consultation',
       dentist: 'Dr. Choo Young-Woo',
       date: 'March 1, 2026',
+      dateMonth: 'MAR',
+      dateDay: '01',
       time: '9:00 AM',
       status: 'Cancelled',
       type: 'cancelled',
@@ -58,12 +68,18 @@ export class MyAppointments {
     },
   ];
 
+  protected toggleSidebar(): void {
+    this.sidebarCollapsed.update((collapsed) => !collapsed);
+  }
+
   setTab(tab: string) {
     this.selectedTab = tab;
   }
 
   get filteredAppointments() {
-    return this.appointments.filter((appointment) => appointment.type === this.selectedTab);
+    return this.appointments.filter(
+      (appointment) => appointment.type === this.selectedTab
+    );
   }
 
   getStatusClass(status: string): string {

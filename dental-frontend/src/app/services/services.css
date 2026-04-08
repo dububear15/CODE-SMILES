@@ -1,29 +1,35 @@
 :host {
   display: block;
-  background: #f0f8ff;
+  background: #edf5fc;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #1b2c43;
+
+  --page-bg: #edf5fc;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: rgba(255, 255, 255, 0.95);
+  --line: rgba(27, 55, 89, 0.1);
+  --line-soft: rgba(27, 55, 89, 0.06);
+  --text: #1b2c43;
+  --muted: #6d7f96;
+  --navy: #11233b;
+  --blue: #4e8fd8;
+  --blue-strong: #2f6daf;
+  --blue-soft: #dcecff;
+  --shadow-lg: 0 20px 36px rgba(18, 34, 56, 0.1);
+  --shadow-md: 0 12px 24px rgba(18, 34, 56, 0.07);
 }
 
-
-
-/* =====================================================
-   0) SERVICES SECTION WRAPPER (IMPORTANT CONTAINER FIX)
-   - This prevents the grid from being too wide or too squished
-===================================================== */
 .services-section{
   width: 100%;
-  max-width: 1500px;   /* controls how wide everything can go */
-  margin: 0 auto;      /* THIS centers it */
-  padding: 80px 5%;    /* equal spacing left & right */
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px 5% 28px;
+  background: #edf5fc;
 }
 
-
-/* =====================================================
-   1) SERVICES HEADER (Premium Clean Version)
-   - "Our Services" + Title + Description
-===================================================== */
 .services-header{
-  max-width: 760px;     /* keeps header text readable */
-  margin-bottom: 60px;  /* spacing before the grid */
+  max-width: 760px;
+  margin-bottom: 40px;
   position: relative;
 }
 
@@ -357,3 +363,4 @@
   transform: translateY(-3px);
   box-shadow: 0 15px 30px rgba(13, 110, 253, 0.25);
 }
+

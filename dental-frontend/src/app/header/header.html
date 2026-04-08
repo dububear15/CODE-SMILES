@@ -1,54 +1,55 @@
-<header class="luxury-header">
-  <div class="nav-wrapper">
-    <div class="brand-section" (click)="isPatientView ? goDashboard() : scrollToSection('home')">
-      <img src="logo.png" alt="Code Smiles Logo" class="main-logo" />
-      <div class="logo-text">
-        <span class="main-name">CODE SMILES</span>
+<header class="luxury-header" [class.patient-header-mode]="isPatientView">
+  <div class="nav-wrapper" [class.patient-nav-wrapper]="isPatientView">
+    <!-- PUBLIC MODE -->
+    <ng-container *ngIf="!isPatientView">
+      <div
+        class="brand-section"
+        (click)="scrollToSection('home')"
+      >
+        <img src="logo.png" alt="Code Smiles Logo" class="main-logo" />
+        <div class="logo-text">
+          <span class="main-name">CODE SMILES</span>
+        </div>
       </div>
-    </div>
 
-    <nav class="nav-links">
-      <!-- PUBLIC HEADER -->
-      <ng-container *ngIf="!isPatientView">
+      <nav class="nav-links">
         <a (click)="scrollToSection('home')">HOME</a>
         <a (click)="scrollToSection('services')">SERVICES</a>
         <a (click)="scrollToSection('about')">ABOUT US</a>
         <a (click)="scrollToSection('contact')">CONTACT</a>
-      </ng-container>
+      </nav>
 
-      <!-- PATIENT HEADER -->
-      <ng-container *ngIf="isPatientView">
-        <a routerLink="/patient-dashboard">DASHBOARD</a>
-        <a routerLink="/my-appointments">APPOINTMENTS</a>
-        <a routerLink="/records">RECORDS</a>
-        <a routerLink="/profile">PROFILE</a>
+      <div class="action-buttons">
+  <a routerLink="/login" class="header-login-link">LOGIN</a>
+  <button class="book-btn" routerLink="/register">BOOK APPOINTMENT</button>
+</div>
+    </ng-container>
 
-        <div class="clinic-dropdown">
-          <button type="button" class="clinic-toggle" (click)="toggleClinicMenu()">
-            CLINIC <span class="dropdown-arrow">▾</span>
-          </button>
-
-          <div class="clinic-menu" *ngIf="isClinicMenuOpen">
-            <button type="button" (click)="goToPublicSection('services')">Services</button>
-            <button type="button" (click)="goToPublicSection('about')">About Us</button>
-            <button type="button" (click)="goToPublicSection('contact')">Contact Us</button>
-          </div>
+    <!-- PATIENT MODE -->
+    <ng-container *ngIf="isPatientView">
+      <!-- LEFT -->
+      <div class="patient-brand-panel" (click)="goDashboard()">
+        <img src="logo.png" alt="Code Smiles Logo" class="patient-brand-logo" />
+        <div class="patient-brand-copy">
+          <strong>CODE SMILES</strong>
+          <span>Patient Portal</span>
         </div>
-      </ng-container>
-    </nav>
+      </div>
 
-    <div class="action-buttons">
-      <!-- PUBLIC ACTIONS -->
-      <ng-container *ngIf="!isPatientView">
-        <a routerLink="/login" class="header-login-link">LOGIN</a>
-        <button class="book-btn" routerLink="/booking">BOOK APPOINTMENT</button>
-      </ng-container>
+      <!-- CENTER -->
+      <div class="patient-toolbar-center">
+        <div class="patient-searchbar">
+          <span class="search-icon">⌕</span>
+          <span class="search-placeholder">Search portal</span>
+          <span class="search-shortcut">⌘F</span>
+        </div>
+      </div>
 
-      <!-- PATIENT ACTIONS -->
-      <ng-container *ngIf="isPatientView">
+      <!-- RIGHT -->
+      <div class="patient-toolbar-actions">
         <div class="notif-wrapper">
           <button
-            class="icon-circle notif-btn"
+            class="patient-icon-btn notif-btn"
             type="button"
             aria-label="Notifications"
             (click)="toggleNotifications()"
@@ -105,12 +106,24 @@
           </div>
         </div>
 
-        <a (click)="logout()" class="header-logout-link">LOGOUT</a>
+        <button class="patient-icon-btn" type="button" aria-label="Messages">
+          ✉
+        </button>
 
-        <button class="book-btn" routerLink="/booking">
+        <div class="patient-profile-chip">
+          <div class="patient-mini-avatar">M</div>
+          <div class="patient-mini-text">
+            <strong>Mark Anthony</strong>
+            <span>Verified Patient</span>
+          </div>
+        </div>
+
+        <a (click)="logout()" class="patient-logout-link">LOGOUT</a>
+
+        <button class="patient-cta-btn" routerLink="/booking">
           BOOK APPOINTMENT
         </button>
-      </ng-container>
-    </div>
+      </div>
+    </ng-container>
   </div>
 </header>

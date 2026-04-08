@@ -1,22 +1,28 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ServicesComponent } from '../services/services';
-import { AboutComponent } from '../about/about'; // 1. Import it
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AboutComponent } from '../about/about';
 import { ContactComponent } from '../contact/contact';
-
+import { ServicesComponent } from '../services/services';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule, 
-    ServicesComponent, 
-    AboutComponent, // 2. Add it to this list
-    ContactComponent,
-    RouterLink
-  ],
+  imports: [CommonModule, ServicesComponent, AboutComponent, ContactComponent, RouterLink],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
-export class HomeComponent {}
+export class HomeComponent {
+  constructor(private router: Router) {}
+
+  handleBook(): void {
+    const isLoggedIn = localStorage.getItem('user');
+
+    if (isLoggedIn) {
+      this.router.navigate(['/booking']);
+      return;
+    }
+
+    this.router.navigate(['/register']);
+  }
+}

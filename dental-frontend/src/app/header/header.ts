@@ -12,7 +12,6 @@ import { filter } from 'rxjs/operators';
 })
 export class Header {
   isPatientView = false;
-  isClinicMenuOpen = false;
   isNotifOpen = false;
   selectedNotifTab = 'all';
 
@@ -50,7 +49,6 @@ export class Header {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         this.updateHeaderMode();
-        this.isClinicMenuOpen = false;
         this.isNotifOpen = false;
       });
   }
@@ -59,6 +57,7 @@ export class Header {
     const patientRoutes = [
       '/patient-dashboard',
       '/my-appointments',
+      '/patient-medical-vault',
       '/records',
       '/notifications',
       '/profile',
@@ -85,23 +84,14 @@ export class Header {
   }
 
   goDashboard() {
-    this.isClinicMenuOpen = false;
     this.isNotifOpen = false;
     this.router.navigate(['/patient-dashboard']);
-  }
-
-  toggleClinicMenu() {
-    this.isClinicMenuOpen = !this.isClinicMenuOpen;
-    if (this.isClinicMenuOpen) {
-      this.isNotifOpen = false;
-    }
   }
 
   toggleNotifications() {
     this.isNotifOpen = !this.isNotifOpen;
 
     if (this.isNotifOpen) {
-      this.isClinicMenuOpen = false;
       this.notifications.forEach((notif) => (notif.read = true));
     }
   }
@@ -115,16 +105,7 @@ export class Header {
     this.router.navigate(['/notifications']);
   }
 
-  goToPublicSection(sectionId: string) {
-    this.router.navigate(['/']).then(() => {
-      setTimeout(() => this.scrollNow(sectionId), 100);
-      this.isClinicMenuOpen = false;
-      this.isNotifOpen = false;
-    });
-  }
-
   logout() {
-    this.isClinicMenuOpen = false;
     this.isNotifOpen = false;
     this.router.navigate(['/']);
   }
@@ -152,10 +133,6 @@ export class Header {
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
     const target = event.target as HTMLElement;
-
-    if (!target.closest('.clinic-dropdown')) {
-      this.isClinicMenuOpen = false;
-    }
 
     if (!target.closest('.notif-wrapper')) {
       this.isNotifOpen = false;

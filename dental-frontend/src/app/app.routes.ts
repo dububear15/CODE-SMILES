@@ -8,8 +8,8 @@ import { ContactComponent } from './contact/contact';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password';
 import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard';
-import { MyAppointments } from './my-appointments/my-appointments';
-import { Records } from './records/records';
+import { MyAppointments } from './patient-appointments/patient-appointments';
+import { PatientMedicalVault } from './patient-medical-vault/patient-medical-vault';
 import { Notifications } from './notifications/notifications';
 import { Profile } from './profile/profile';
 
@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'patient-dashboard', component: PatientDashboardComponent },
   { path: 'my-appointments', component: MyAppointments },
-  { path: 'records', component: Records },
+  { path: 'patient-medical-vault', component: PatientMedicalVault },
   { path: 'notifications', component: Notifications },
   { path: 'profile', component: Profile },
   { path: '**', redirectTo: '' }
