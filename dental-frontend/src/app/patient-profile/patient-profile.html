@@ -1,0 +1,227 @@
+<div class="profile-page-shell">
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <main class="profile-main">
+    <section class="profile-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <span class="page-kicker">Patient Profile</span>
+          <h1>My Profile</h1>
+          <p>Manage your information and account settings.</p>
+        </div>
+
+        <div class="topbar-profile">
+          <button type="button" class="alert-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar-small" aria-hidden="true">{{ initials }}</div>
+            <div class="profile-copy">
+              <strong>{{ profile.fullName }}</strong>
+              <span>Patient ID: {{ profile.patientId }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div class="hero-main">
+          <div class="hero-identity">
+            <div class="hero-primary">
+              <div class="profile-avatar-large">{{ initials }}</div>
+
+              <div class="hero-copy">
+                <span class="hero-kicker">Profile Overview</span>
+                <div class="identity-row">
+                  <h2>{{ profile.fullName }}</h2>
+                  <span class="status-chip">{{ profile.status }}</span>
+                </div>
+
+                <div class="hero-meta-row">
+                  <span>Member Since: {{ profile.memberSince }}</span>
+                  <span>Patient ID: {{ profile.patientId }}</span>
+                </div>
+
+                <div class="hero-actions">
+                  <button type="button" class="hero-action hero-action-primary" (click)="navigateToEdit()">Edit Profile</button>
+                  <button type="button" class="hero-action" (click)="navigateToChangePassword()">Change Password</button>
+                  <button type="button" class="hero-action" (click)="downloadMyData()">Download My Data</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-summary">
+            <article class="hero-summary-item" *ngFor="let item of heroMeta">
+              <div class="hero-summary-icon" aria-hidden="true">
+                <svg [attr.viewBox]="item.iconViewBox">
+                  <path *ngFor="let path of item.iconPaths" [attr.d]="path"></path>
+                </svg>
+              </div>
+              <div>
+                <span>{{ item.label }}</span>
+                <strong>{{ item.value }}</strong>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="main-column">
+          <article class="profile-card">
+            <div class="card-head">
+              <div>
+                <span class="section-kicker">Identity</span>
+                <h3>Personal Information</h3>
+                <p class="card-subcopy">Your core patient details and clinic profile information.</p>
+              </div>
+              <button type="button" class="card-link" (click)="navigateToEdit()">Edit</button>
+            </div>
+
+            <div class="info-grid">
+              <article class="info-item" *ngFor="let item of personalInfoFields">
+                <div class="info-icon" aria-hidden="true">
+                  <svg [attr.viewBox]="item.iconViewBox">
+                    <path *ngFor="let path of item.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <div class="info-copy">
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.value }}</strong>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="profile-card">
+            <div class="card-head">
+              <div>
+                <span class="section-kicker">Contact</span>
+                <h3>Contact &amp; Address</h3>
+                <p class="card-subcopy">How the clinic can reach you and who to contact in emergencies.</p>
+              </div>
+              <button type="button" class="card-link" (click)="navigateToEdit()">Edit</button>
+            </div>
+
+            <div class="contact-grid">
+              <section class="contact-highlight">
+                <div class="contact-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 10.5 12 4l8 6.5V20H4z" />
+                    <path d="M9 20v-5h6v5" />
+                  </svg>
+                </div>
+                <div class="contact-copy">
+                  <span>Home Address</span>
+                  <strong>{{ profile.homeAddress }}</strong>
+                </div>
+              </section>
+
+              <section class="contact-detail-grid">
+                <article class="contact-detail">
+                  <div class="contact-detail-head">
+                    <h4>Preferred Contact Method</h4>
+                    <button type="button" class="card-link subtle-link" (click)="navigateToEdit()">Update</button>
+                  </div>
+                  <p>{{ profile.preferredContactMethod }}</p>
+                </article>
+
+                <article class="contact-detail">
+                  <div class="contact-detail-head">
+                    <h4>Emergency Contact</h4>
+                    <button type="button" class="card-link subtle-link" (click)="navigateToEdit()">Edit</button>
+                  </div>
+                  <p>{{ profile.emergencyContact.name }}</p>
+                  <span>{{ profile.emergencyContact.relationship }}</span>
+                  <strong>{{ profile.emergencyContact.phoneNumber }}</strong>
+                </article>
+              </section>
+            </div>
+          </article>
+
+          <article class="profile-card">
+            <div class="card-head">
+              <div>
+                <span class="section-kicker">Preferences</span>
+                <h3>Notification Preferences</h3>
+                <p class="card-subcopy">Choose how you want to stay updated.</p>
+              </div>
+            </div>
+
+            <div class="preferences-list">
+              <article class="preference-row" *ngFor="let item of notificationItems">
+                <div class="preference-icon" aria-hidden="true">
+                  <svg [attr.viewBox]="item.iconViewBox">
+                    <path *ngFor="let path of item.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+
+                <div class="preference-copy">
+                  <strong>{{ item.title }}</strong>
+                  <span>{{ item.description }}</span>
+                </div>
+
+                <label class="switch" [attr.aria-label]="item.title">
+                  <input
+                    type="checkbox"
+                    [checked]="profile.notifications[item.key]"
+                    (change)="toggleNotification(item.key)"
+                  />
+                  <span class="slider"></span>
+                </label>
+              </article>
+            </div>
+
+            <div class="preference-footer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 18 5.5v5.4c0 4-2.5 7.6-6 9.1-3.5-1.5-6-5.1-6-9.1V5.5L12 3Z" />
+                <path d="M10.5 12 12 13.5l2.8-3.4" />
+              </svg>
+              <span>You can update your notification preferences at any time.</span>
+            </div>
+          </article>
+        </section>
+
+        <aside class="side-column">
+          <article class="profile-card support-card">
+            <div class="support-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M6 8.5a6 6 0 1 1 12 0v6a2 2 0 0 1-2 2h-1.2" />
+                <path d="M6 10H4.8A1.8 1.8 0 0 0 3 11.8v2.4A1.8 1.8 0 0 0 4.8 16H6" />
+                <path d="M18 10h1.2a1.8 1.8 0 0 1 1.8 1.8v2.4a1.8 1.8 0 0 1-1.8 1.8H18" />
+              </svg>
+            </div>
+            <div class="support-copy">
+              <span class="section-kicker">Support</span>
+              <h3>Need Help?</h3>
+              <p>We're here to help you manage your account and keep your details up to date.</p>
+              <button type="button" class="support-link" (click)="openHelpCenter()">(555) 123-4567</button>
+            </div>
+          </article>
+
+          <article class="profile-card support-card support-card-soft">
+            <div class="support-icon support-icon-green" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3 18 5.5v5.4c0 4-2.5 7.6-6 9.1-3.5-1.5-6-5.1-6-9.1V5.5L12 3Z" />
+                <path d="M10.5 12 12 13.5l2.8-3.4" />
+              </svg>
+            </div>
+            <div class="support-copy">
+              <span class="section-kicker">Privacy</span>
+              <h3>Your Information is Secure</h3>
+              <p>We protect your data with secure access, careful privacy controls, and encrypted patient records.</p>
+            </div>
+          </article>
+        </aside>
+      </section>
+
+      <div class="toast-banner" *ngIf="toastMessage">{{ toastMessage }}</div>
+    </section>
+  </main>
+</div>

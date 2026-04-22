@@ -1,0 +1,144 @@
+<div class="dentist-shell dentist-dashboard-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main dentist-dashboard-main">
+    <header class="dentist-topbar">
+      <div class="dentist-topbar-left">
+        <button class="dentist-menu-btn" type="button" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <label class="dentist-searchbar" aria-label="Search patients, appointments, records">
+          <span class="dentist-search-icon">S</span>
+          <input type="text" value="Search patients, appointments, records..." readonly />
+        </label>
+      </div>
+
+      <div class="dentist-topbar-actions">
+        <button class="dentist-bell-btn" type="button" aria-label="Notifications">
+          <span class="dentist-bell-icon">N</span>
+          <span class="dentist-bell-badge">{{ notifications.length }}</span>
+        </button>
+
+        <div class="dentist-profile-chip">
+          <div class="dentist-avatar">D</div>
+          <div>
+            <strong>Dr. Maria Santos</strong>
+            <span>Dentist • CS-1023</span>
+          </div>
+        </div>
+
+        <button class="dentist-chevron-btn" type="button" aria-label="Open profile menu">v</button>
+      </div>
+    </header>
+
+    <section class="dentist-page-intro">
+      <div>
+        <h1>Good morning, Dr. Maria!</h1>
+        <p>Here’s what’s happening in your clinic workflow today.</p>
+      </div>
+
+      <div class="dentist-date-lockup">
+        <strong>Wednesday, April 17, 2024</strong>
+        <span>8:45 AM</span>
+      </div>
+    </section>
+
+    <section class="dentist-stat-grid">
+      <article class="dentist-stat-card" *ngFor="let card of summaryCards" [attr.data-tone]="card.tone">
+        <div class="dentist-stat-icon">{{ card.icon }}</div>
+        <div class="dentist-stat-copy">
+          <span>{{ card.label }}</span>
+          <div class="dentist-stat-metric">
+            <strong>{{ card.value }}</strong>
+            <small>{{ card.unit }}</small>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="dentist-dashboard-grid">
+      <article class="dentist-panel dentist-appointments-panel">
+        <div class="dentist-panel-head">
+          <div class="dentist-panel-title">
+            <span class="dentist-panel-icon">C</span>
+            <h2>Today's Schedule</h2>
+          </div>
+          <a routerLink="/dentist-appointments">View Full Schedule</a>
+        </div>
+
+        <div class="dentist-appointment-list">
+          <div class="dentist-appointment-row" *ngFor="let appointment of todaySchedule">
+            <div class="dentist-time-block">
+              <strong>{{ appointment.time }}</strong>
+              <span>{{ appointment.period }}</span>
+            </div>
+
+            <div class="dentist-patient-avatar">{{ appointment.initials }}</div>
+
+            <div class="dentist-appointment-copy">
+              <strong>{{ appointment.patient }}</strong>
+              <span>{{ appointment.patientId }} • {{ appointment.age }} years old</span>
+              <small>{{ appointment.service }}</small>
+            </div>
+
+            <div class="dentist-appointment-status">
+              <span class="dentist-status-pill" [attr.data-status]="appointment.statusTone">
+                {{ appointment.status }}
+              </span>
+            </div>
+
+            <div class="dentist-appointment-actions">
+              <button class="dentist-ghost-btn dentist-visit-btn" type="button">{{ appointment.primaryAction }}</button>
+              <a class="dentist-view-link" routerLink="/dentist-patients">View Patient</a>
+            </div>
+
+            <button class="dentist-more-btn" type="button" aria-label="More actions">...</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="dentist-panel dentist-schedule-side">
+        <div class="dentist-panel-head">
+          <div class="dentist-panel-title">
+            <span class="dentist-panel-icon tone-blue">Q</span>
+            <h2>Approval Queue</h2>
+          </div>
+          <a routerLink="/dentist-appointments">View All</a>
+        </div>
+
+        <div class="dentist-side-stack">
+          <div class="dentist-queue-card" *ngFor="let item of approvalQueue">
+            <div class="dentist-queue-copy">
+              <strong>{{ item.patient }}</strong>
+              <span>{{ item.service }}</span>
+            </div>
+            <div class="dentist-queue-meta">
+              <small>{{ item.date }}</small>
+              <small>{{ item.time }}</small>
+              <span class="dentist-status-pill" [attr.data-status]="item.statusTone">{{ item.status }}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="dentist-panel dentist-quick-panel">
+      <div class="dentist-panel-head">
+        <div class="dentist-panel-title">
+          <span class="dentist-panel-icon tone-blue">A</span>
+          <h2>Quick Actions</h2>
+        </div>
+      </div>
+
+      <div class="dentist-quick-grid dentist-quick-grid-panel">
+        <a class="dentist-quick-chip" *ngFor="let action of quickActions" [routerLink]="action.route">
+          <span class="dentist-quick-icon">{{ action.icon }}</span>
+          <span>{{ action.label }}</span>
+        </a>
+      </div>
+    </section>
+  </main>
+</div>

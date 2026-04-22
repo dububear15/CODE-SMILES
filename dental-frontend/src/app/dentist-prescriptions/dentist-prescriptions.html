@@ -1,0 +1,61 @@
+<div class="dentist-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main">
+    <section class="dentist-page-hero">
+      <div>
+        <span class="dentist-eyebrow">Prescriptions</span>
+        <h2>Medication guidance and care advice stay reviewable.</h2>
+        <p>
+          Keep prescriptions visible to the dentist workflow, whether they are medication-based
+          or instruction-based, and mark them as reviewed when chart updates are complete.
+        </p>
+      </div>
+    </section>
+
+    <section class="dentist-panel">
+      <div class="dentist-section-head">
+        <div>
+          <span class="dentist-eyebrow">Prescription queue</span>
+          <h3>Patient instructions and review state</h3>
+        </div>
+      </div>
+
+      <div class="dentist-card-grid">
+        <article class="dentist-card" *ngFor="let item of prescriptions">
+          <div class="dentist-row-between">
+            <strong>{{ item.patient }}</strong>
+            <span class="dentist-pill">{{ item.status }}</span>
+          </div>
+          <div class="dentist-detail-grid">
+            <div>
+              <span>Medication or advice</span>
+              <strong>{{ item.medication }}</strong>
+            </div>
+            <div>
+              <span>Dosage or instruction</span>
+              <strong>{{ item.dosage }}</strong>
+            </div>
+            <div>
+              <span>Issue date</span>
+              <strong>{{ item.issueDate }}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong>{{ item.status }}</strong>
+            </div>
+          </div>
+          <div class="dentist-note">
+            <span>Clinical instruction</span>
+            <p>{{ item.instruction }}</p>
+          </div>
+          <div class="dentist-actions">
+            <a class="dentist-btn" routerLink="/dentist-prescriptions">Add Prescription</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-prescriptions">Update Instruction</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Mark as Reviewed</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

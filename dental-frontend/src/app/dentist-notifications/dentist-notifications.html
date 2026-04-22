@@ -1,0 +1,42 @@
+<div class="dentist-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main">
+    <section class="dentist-page-hero">
+      <div>
+        <span class="dentist-eyebrow">Notifications</span>
+        <h2>Alerts that matter to dentist workflow stay grouped by action.</h2>
+        <p>
+          Catch upcoming consultations, reschedules, pending record updates, and follow-up
+          reminders before they interrupt patient care in the chair.
+        </p>
+      </div>
+    </section>
+
+    <section class="dentist-panel">
+      <div class="dentist-section-head">
+        <div>
+          <span class="dentist-eyebrow">Alert feed</span>
+          <h3>Clinical and schedule notices</h3>
+        </div>
+      </div>
+
+      <div class="dentist-note-list">
+        <div class="dentist-note" *ngFor="let item of notifications">
+          <div class="dentist-row-between">
+            <strong>{{ item.title }}</strong>
+            <span class="dentist-pill">{{ item.type }}</span>
+          </div>
+          <p>{{ item.detail }}</p>
+          <time>{{ item.time }}</time>
+        </div>
+      </div>
+
+      <div class="dentist-actions">
+        <a class="dentist-btn" routerLink="/dentist-appointments">Open Schedule</a>
+        <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Open Records</a>
+        <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Review Follow-ups</a>
+      </div>
+    </section>
+  </main>
+</div>

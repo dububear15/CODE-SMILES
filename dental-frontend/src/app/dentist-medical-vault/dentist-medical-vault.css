@@ -1,0 +1,182 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.dentist-shell {
+  --dentist-shell-offset: 270px;
+  display: block;
+  grid-template-columns: none;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(116, 173, 239, 0.12), transparent 24%),
+    linear-gradient(180deg, #eff5fd 0%, #f7fbff 52%, #edf4fb 100%);
+}
+
+.dentist-main {
+  width: calc(100% - var(--dentist-shell-offset));
+  min-height: 100vh;
+  margin-left: var(--dentist-shell-offset);
+  padding: 24px;
+  box-sizing: border-box;
+  color: #22384d;
+}
+
+.dentist-page-hero,
+.dentist-panel,
+.dentist-card {
+  border: 1px solid rgba(26, 66, 110, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(249, 252, 255, 0.98));
+  box-shadow: 0 18px 36px rgba(17, 40, 68, 0.07);
+}
+
+.dentist-page-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.9fr);
+  gap: 16px;
+  padding: 24px 26px;
+  border-radius: 24px;
+  margin-bottom: 16px;
+}
+
+.dentist-hero-side,
+.dentist-list-item,
+.dentist-note,
+.dentist-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: #f8fbff;
+  border: 1px solid rgba(26, 66, 110, 0.08);
+}
+
+.dentist-page-hero h2,
+.dentist-section-head h3,
+.dentist-hero-side h3 {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #22384d;
+}
+
+.dentist-page-hero h2 {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.dentist-page-hero p,
+.dentist-note p,
+.dentist-list-item p,
+.dentist-card p {
+  color: #6f8499;
+  line-height: 1.6;
+}
+
+.dentist-eyebrow {
+  display: inline-block;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: #4c7bb1;
+}
+
+.dentist-grid.two-col,
+.dentist-card-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.dentist-grid.two-col {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+}
+
+.dentist-panel {
+  padding: 22px;
+  border-radius: 22px;
+}
+
+.dentist-section-head,
+.dentist-row-between,
+.dentist-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dentist-list,
+.dentist-note-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.dentist-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 16px;
+}
+
+.dentist-pill {
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #347fd6;
+  background: #edf4ff;
+}
+
+.dentist-pill.muted {
+  color: #6d8192;
+  background: #f1f5fa;
+}
+
+.dentist-actions {
+  margin-top: 16px;
+}
+
+.dentist-btn,
+.dentist-btn-ghost {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid rgba(52, 127, 214, 0.16);
+}
+
+.dentist-btn {
+  color: #ffffff;
+  background: linear-gradient(180deg, #4da6f0, #3388df);
+}
+
+.dentist-btn-ghost {
+  color: #347fd6;
+  background: #ffffff;
+}
+
+.dentist-list-item small,
+.dentist-note time,
+.dentist-card small {
+  color: #7d92a7;
+}
+
+@media (max-width: 1080px) {
+  .dentist-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .dentist-page-hero,
+  .dentist-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .dentist-main {
+    padding: 18px;
+  }
+}

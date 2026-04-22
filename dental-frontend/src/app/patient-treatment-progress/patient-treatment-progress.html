@@ -1,0 +1,453 @@
+<div class="treatment-progress-page">
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <main class="progress-main">
+    <section class="progress-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <h1>Treatment Progress</h1>
+          <p>Track your smile journey and stay on top of every step.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" class="alert-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar" aria-hidden="true">L</div>
+            <div class="profile-copy">
+              <strong>{{ patientProfile.name }}</strong>
+              <span>Patient ID: {{ patientProfile.id }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card summary-card-progress">
+          <div class="progress-ring" aria-hidden="true">
+            <div class="progress-ring-circle">
+              <span>{{ selectedTreatment.progress }}%</span>
+            </div>
+          </div>
+
+          <div class="summary-copy">
+            <span>Overall Progress</span>
+            <strong>{{ selectedTreatment.stepsCompleted }} of {{ selectedTreatment.totalSteps }} Steps Completed</strong>
+            <p class="progress-pill">On Track</p>
+          </div>
+        </article>
+
+        <article class="summary-card tone-appointment">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 3v3M17 3v3M4 8h16" />
+              <rect x="4" y="5.5" width="16" height="14.5" rx="2.4" />
+            </svg>
+          </div>
+
+          <div class="summary-copy">
+            <span>Next Appointment</span>
+            <strong>{{ selectedTreatment.nextStepDate }} · {{ selectedTreatment.nextStepTime }}</strong>
+            <p>{{ selectedTreatment.nextStepDescription }} with {{ selectedTreatment.nextStepDoctor }}</p>
+            <a routerLink="/patient-appointments">View Appointment</a>
+          </div>
+        </article>
+
+        <article class="summary-card compact-card tone-completed">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="m6 12 4 4 8-8" />
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+          </div>
+
+          <div class="summary-copy">
+            <span>Completed</span>
+            <strong>{{ selectedTreatment.stepsCompleted }}</strong>
+            <p>Great job! Keep it up.</p>
+          </div>
+        </article>
+
+        <article class="summary-card compact-card tone-remaining">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 7v5l3 2" />
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+          </div>
+
+          <div class="summary-copy">
+            <span>Remaining</span>
+            <strong>{{ selectedTreatment.totalSteps - selectedTreatment.stepsCompleted }}</strong>
+            <p>Stay focused on the next steps.</p>
+          </div>
+        </article>
+
+        <article class="summary-card tone-estimate">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 7v5l3 2" />
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+          </div>
+
+          <div class="summary-copy">
+            <span>Estimated Completion</span>
+            <strong>Mar 2025</strong>
+            <p>Based on current plan</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="info-strip">
+        <div class="info-strip-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 8.5v.1M12 11.5v4.5" />
+            <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+          </svg>
+        </div>
+        <p>Treatment timelines may change based on your dentist’s recommendations. We’ll notify you of any updates.</p>
+      </section>
+
+      <section class="content-grid">
+        <section class="main-column">
+          <div class="section-head">
+            <div>
+              <h2>Your Treatments</h2>
+              <p>Select a treatment to see details and manage your journey.</p>
+            </div>
+
+            <a routerLink="/patient-medical-vault" class="section-link">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 8v4l3 2" />
+                <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+              </svg>
+              View Treatment History
+            </a>
+          </div>
+
+          <section class="treatment-tabs">
+            <button
+              *ngFor="let treatment of treatmentPlans"
+              type="button"
+              class="treatment-tab"
+              [class.active]="selectedTreatment.id === treatment.id"
+              (click)="selectTreatment(treatment.id)">
+              <div class="tab-icon-box" [ngClass]="treatment.icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" *ngIf="treatment.icon === 'orthodontics'">
+                  <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                </svg>
+                <svg viewBox="0 0 24 24" *ngIf="treatment.icon === 'whitening'">
+                  <path d="M12 3.5 13.8 9l5.7 1.2-5.7 1.2L12 17l-1.8-5.6L4.5 10.2 10.2 9 12 3.5Z" />
+                </svg>
+                <svg viewBox="0 0 24 24" *ngIf="treatment.icon === 'filling'">
+                  <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                  <path d="M9.5 11.5h5" />
+                </svg>
+                <svg viewBox="0 0 24 24" *ngIf="treatment.icon === 'retainer'">
+                  <path d="M4.5 13c1.6-2.5 4.3-4 7.5-4s5.9 1.5 7.5 4" />
+                  <path d="M6.5 13.2c.6 2.5 2.6 4.3 5.5 4.3s4.9-1.8 5.5-4.3" />
+                </svg>
+                <svg viewBox="0 0 24 24" *ngIf="treatment.icon === 'consultation'">
+                  <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                </svg>
+              </div>
+
+              <div class="tab-copy">
+                <div class="tab-status-row">
+                  <span class="mini-status" [ngClass]="treatment.statusClass">{{ treatment.status }}</span>
+                </div>
+                <strong>{{ treatment.shortTitle }}</strong>
+                <p>{{ treatment.cardDescription }}</p>
+                <div class="tab-progress-row">
+                  <div class="mini-progress">
+                    <span class="mini-progress-fill" [style.width.%]="treatment.progress"></span>
+                  </div>
+                  <span class="mini-progress-value">{{ treatment.progress }}%</span>
+                </div>
+              </div>
+            </button>
+          </section>
+
+          <section class="active-plan-card">
+            <header class="active-plan-head">
+              <div class="active-plan-title">
+                <div class="active-plan-icon" [ngClass]="selectedTreatment.icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" *ngIf="selectedTreatment.icon === 'orthodontics'">
+                    <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" *ngIf="selectedTreatment.icon === 'whitening'">
+                    <path d="M12 3.5 13.8 9l5.7 1.2-5.7 1.2L12 17l-1.8-5.6L4.5 10.2 10.2 9 12 3.5Z" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" *ngIf="selectedTreatment.icon === 'filling'">
+                    <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                    <path d="M9.5 11.5h5" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" *ngIf="selectedTreatment.icon === 'retainer'">
+                    <path d="M4.5 13c1.6-2.5 4.3-4 7.5-4s5.9 1.5 7.5 4" />
+                    <path d="M6.5 13.2c.6 2.5 2.6 4.3 5.5 4.3s4.9-1.8 5.5-4.3" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" *ngIf="selectedTreatment.icon === 'consultation'">
+                    <path d="M12 4c-3.8 0-6 2.2-6 5.8 0 4.1 2.2 9.7 5.2 9.7 1.8 0 1.6-2.8 2.8-2.8s1 2.8 2.8 2.8c3 0 5.2-5.6 5.2-9.7C18 6.2 15.8 4 12 4Z" />
+                  </svg>
+                </div>
+
+                <div>
+                  <span class="active-label">{{ selectedTreatment.status }}</span>
+                  <h3>{{ selectedTreatment.title }}</h3>
+                  <p>{{ selectedTreatment.subtitle }}</p>
+                </div>
+              </div>
+
+              <div class="active-plan-meta">
+                <div class="plan-progress-copy">
+                  <span>Progress</span>
+                  <strong>{{ selectedTreatment.progress }}% Complete</strong>
+                  <p>{{ selectedTreatment.stepsCompleted }} of {{ selectedTreatment.totalSteps }} Steps</p>
+                </div>
+
+                <div class="plan-progress-bar">
+                  <span class="plan-progress-fill" [style.width.%]="selectedTreatment.progress"></span>
+                </div>
+
+                <a routerLink="/patient-medical-vault" class="outline-btn">View Full Plan</a>
+              </div>
+            </header>
+
+            <section class="timeline-list">
+              <article class="timeline-step" *ngFor="let step of selectedTreatment.steps; let last = last">
+                <div class="timeline-rail">
+                  <div class="timeline-marker" [ngClass]="step.stage">
+                    <svg *ngIf="step.stage === 'done'" viewBox="0 0 24 24">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span *ngIf="step.stage !== 'done'">{{ step.order }}</span>
+                  </div>
+                  <div class="timeline-line" *ngIf="!last"></div>
+                </div>
+
+                <div class="timeline-card" [class.current-step-card]="step.stage === 'current'">
+                  <ng-container *ngIf="step.stage !== 'current'; else currentStepCard">
+                    <div class="timeline-card-simple">
+                      <div class="timeline-copy">
+                        <strong>{{ step.order }}. {{ step.title }}</strong>
+                        <p>{{ step.status }} · {{ step.date }} · {{ step.dentist }}</p>
+                        <span>{{ step.note }}</span>
+
+                        <div class="linked-records-inline" *ngIf="step.linkedRecords?.length">
+                          <strong class="linked-title">Linked Records</strong>
+                          <div class="linked-record-chip-row">
+                            <button
+                              *ngFor="let record of step.linkedRecords"
+                              type="button"
+                              class="linked-record-chip"
+                              (click)="viewLinkedRecord(record)">
+                              {{ record.title }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <span class="status-chip" [ngClass]="step.statusClass">{{ step.status }}</span>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #currentStepCard>
+                    <div class="current-step-shell">
+                      <div class="current-step-main">
+                        <div class="current-step-left">
+                          <div class="current-step-head">
+                            <span class="current-step-tag">Current Step</span>
+                            <span class="status-chip pending">{{ step.status }}</span>
+                          </div>
+
+                          <div class="timeline-copy">
+                            <strong>{{ step.order }}. {{ step.title }}</strong>
+                          </div>
+
+                          <div class="current-step-meta">
+                            <div class="meta-item">
+                              <svg viewBox="0 0 24 24">
+                                <path d="M7 3v3M17 3v3M4 8h16" />
+                                <rect x="4" y="5.5" width="16" height="14.5" rx="2.4" />
+                              </svg>
+                              <span>{{ step.appointment?.date }}</span>
+                            </div>
+                            <div class="meta-item">
+                              <svg viewBox="0 0 24 24">
+                                <path d="M12 7v5l3 2" />
+                                <circle cx="12" cy="12" r="9" />
+                              </svg>
+                              <span>{{ step.appointment?.time }}</span>
+                            </div>
+                            <div class="meta-item">
+                              <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M6 19c1.5-3 4-4.5 6-4.5S16.5 16 18 19" />
+                              </svg>
+                              <span>{{ step.appointment?.doctor }}</span>
+                            </div>
+                          </div>
+
+                          <div class="current-step-note">{{ step.note }}</div>
+
+                          <div class="current-step-actions">
+                            <a routerLink="/patient-appointments" class="primary-action-btn">View Appointment</a>
+                            <a routerLink="/patient-appointments" class="outline-btn">Reschedule</a>
+                            <button type="button" class="ghost-action-btn" (click)="openAddNotes(step)">Add Notes</button>
+                          </div>
+                        </div>
+
+                        <div class="linked-records-panel" *ngIf="step.linkedRecords?.length">
+                          <strong>Linked Records</strong>
+                          <div class="linked-record-list">
+                            <button
+                              *ngFor="let record of step.linkedRecords"
+                              type="button"
+                              class="linked-record-row"
+                              (click)="viewLinkedRecord(record)">
+                              <span>{{ record.title }}</span>
+                              <span class="record-view-link">View</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </article>
+            </section>
+          </section>
+        </section>
+
+        <aside class="side-column">
+          <section class="side-card tips-card">
+            <div class="side-card-head">
+              <div class="head-title">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3.5 13.8 9l5.7 1.2-5.7 1.2L12 17l-1.8-5.6L4.5 10.2 10.2 9 12 3.5Z" />
+                </svg>
+                <div>
+                  <h3>Tips & Reminders</h3>
+                  <p>Good oral hygiene makes treatment faster and more effective.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tips-list">
+              <div class="tip-item" *ngFor="let item of reminderItems">
+                <span class="tip-check" aria-hidden="true">✓</span>
+                <span>{{ item }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="side-card next-step-card">
+            <div class="side-card-head">
+              <div class="head-title">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3v3M17 3v3M4 8h16" />
+                  <rect x="4" y="5.5" width="16" height="14.5" rx="2.4" />
+                </svg>
+                <div>
+                  <h3>Your Next Step</h3>
+                  <p>{{ selectedTreatment.nextStepDescription }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="next-step-panel">
+              <div class="next-step-copy">
+                <strong>{{ selectedTreatment.nextStepTitle }}</strong>
+                <h4>{{ selectedTreatment.nextStepDate }} · {{ selectedTreatment.nextStepTime }}</h4>
+                <p>{{ selectedTreatment.nextStepDoctor }}</p>
+                <a routerLink="/patient-appointments" class="primary-action-btn">View Appointment</a>
+              </div>
+            </div>
+          </section>
+
+          <section class="side-card quick-actions-card">
+            <div class="side-card-head">
+              <div class="head-title">
+                <svg viewBox="0 0 24 24">
+                  <path d="M13 3 4 14h6l-1 7 9-11h-6l1-7Z" />
+                </svg>
+                <h3>Quick Actions</h3>
+              </div>
+            </div>
+
+            <div class="quick-actions-list">
+              <a routerLink="/patient-medical-vault" class="quick-action-row">
+                <div class="quick-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                    <path d="M15 3v4h4" />
+                  </svg>
+                </div>
+                <div class="quick-action-copy">
+                  <strong>View All Treatment Plans</strong>
+                  <p>See details for every treatment</p>
+                </div>
+                <span class="quick-arrow">&#8250;</span>
+              </a>
+
+              <a routerLink="/patient-contact" class="quick-action-row action-green">
+                <div class="quick-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 11a4 4 0 1 1 8 0v2.5a2.5 2.5 0 0 1-2.5 2.5H12" />
+                    <path d="M6.5 10.5H5a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h1.5" />
+                    <path d="M17.5 10.5H19a2 2 0 0 1 2 2V14a2 2 0 0 1-2 2h-1.5" />
+                  </svg>
+                </div>
+                <div class="quick-action-copy">
+                  <strong>Message Clinic</strong>
+                  <p>Ask questions or get updates</p>
+                </div>
+                <span class="quick-arrow">&#8250;</span>
+              </a>
+
+              <a routerLink="/patient-contact" class="quick-action-row action-purple">
+                <div class="quick-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M6 4h4l2 5-2.5 2.5a16 16 0 0 0 3 3L15 12l5 2v4c0 1.1-.9 2-2 2C10.8 20 4 13.2 4 6c0-1.1.9-2 2-2Z" />
+                  </svg>
+                </div>
+                <div class="quick-action-copy">
+                  <strong>Call Clinic</strong>
+                  <p>(555) 123-4567</p>
+                </div>
+                <span class="quick-arrow">&#8250;</span>
+              </a>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast-banner" *ngIf="toastMessage">{{ toastMessage }}</div>
+
+  <div class="modal-backdrop" *ngIf="notesModalOpen" (click)="closeNotesModal()">
+    <section class="notes-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="modal-close" (click)="closeNotesModal()" aria-label="Close notes modal">&times;</button>
+      <p class="modal-kicker">Add Notes</p>
+      <h3>{{ activeStepForNotes?.title }}</h3>
+      <p class="modal-copy">Add a quick note for this treatment step. This is a mock UI action for now.</p>
+      <textarea
+        [(ngModel)]="noteDraft"
+        rows="5"
+        placeholder="Type your note here...">
+      </textarea>
+      <div class="modal-actions">
+        <button type="button" class="primary-action-btn" (click)="saveNote()">Save Note</button>
+        <button type="button" class="outline-btn" (click)="closeNotesModal()">Cancel</button>
+      </div>
+    </section>
+  </div>
+</div>

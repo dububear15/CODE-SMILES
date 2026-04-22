@@ -1,0 +1,62 @@
+<div class="dentist-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main">
+    <section class="dentist-page-hero">
+      <div>
+        <span class="dentist-eyebrow">Patients</span>
+        <h2>Your active patient list stays connected to treatment status.</h2>
+        <p>
+          Scan age, recent visits, current care, and next appointments, then jump directly
+          into the medical vault, treatment plan, or appointment history.
+        </p>
+      </div>
+    </section>
+
+    <section class="dentist-panel">
+      <div class="dentist-section-head">
+        <div>
+          <span class="dentist-eyebrow">Patient list</span>
+          <h3>Clinical follow-up at a glance</h3>
+        </div>
+      </div>
+
+      <div class="dentist-card-grid dentist-patient-grid">
+        <article class="dentist-card" *ngFor="let patient of patients">
+          <div class="dentist-row-between">
+            <strong>{{ patient.name }}</strong>
+            <span class="dentist-pill">{{ patient.treatmentStatus }}</span>
+          </div>
+          <div class="dentist-detail-grid">
+            <div>
+              <span>Age</span>
+              <strong>{{ patient.age }}</strong>
+            </div>
+            <div>
+              <span>Last visit</span>
+              <strong>{{ patient.lastVisit }}</strong>
+            </div>
+            <div>
+              <span>Current treatment</span>
+              <strong>{{ patient.currentTreatment }}</strong>
+            </div>
+            <div>
+              <span>Next visit</span>
+              <strong>{{ patient.nextVisit }}</strong>
+            </div>
+          </div>
+          <div class="dentist-note">
+            <span>Treatment status</span>
+            <p>{{ patient.riskFlag }}</p>
+          </div>
+          <div class="dentist-actions">
+            <a class="dentist-btn" routerLink="/dentist-medical-vault">Open Medical Vault</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">View Treatment Plan</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Add Progress Note</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-appointments">View Appointment History</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

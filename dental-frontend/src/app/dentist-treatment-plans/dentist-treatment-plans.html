@@ -1,0 +1,72 @@
+<div class="dentist-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main">
+    <section class="dentist-page-hero">
+      <div>
+        <span class="dentist-eyebrow">Treatment plans</span>
+        <h2>Track every treatment journey from consultation to completion.</h2>
+        <p>
+          Use this page for active braces, adjustments, review visits, and any care path
+          that needs milestones, next steps, and follow-up recommendations.
+        </p>
+      </div>
+    </section>
+
+    <section class="dentist-panel">
+      <div class="dentist-section-head">
+        <div>
+          <span class="dentist-eyebrow">Ongoing care</span>
+          <h3>Milestones and status updates</h3>
+        </div>
+      </div>
+
+      <div class="dentist-list">
+        <div class="dentist-list-item" *ngFor="let plan of plans">
+          <div class="dentist-row-between">
+            <div>
+              <strong>{{ plan.patient }}</strong>
+              <p>{{ plan.treatmentType }}</p>
+            </div>
+            <span class="dentist-pill">{{ plan.status }}</span>
+          </div>
+          <div class="dentist-detail-grid">
+            <div>
+              <span>Current phase</span>
+              <strong>{{ plan.milestone }}</strong>
+            </div>
+            <div>
+              <span>Next step</span>
+              <strong>{{ plan.nextStep }}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong>{{ plan.status }}</strong>
+            </div>
+            <div>
+              <span>Follow-up</span>
+              <strong>{{ plan.followUp }}</strong>
+            </div>
+          </div>
+          <div class="dentist-progress-label">
+            <span>Milestone progress</span>
+            <strong>{{ plan.progress }}%</strong>
+          </div>
+          <div class="dentist-progress-bar">
+            <div class="dentist-progress-fill" [style.width]="progressWidth(plan.progress)"></div>
+          </div>
+          <div class="dentist-note">
+            <span>Pending care task</span>
+            <p>{{ plan.pendingTask }}</p>
+          </div>
+          <div class="dentist-actions">
+            <a class="dentist-btn" routerLink="/dentist-treatment-plans">Update Phase</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-appointments">Schedule Follow-up Recommendation</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Mark Milestone Completed</a>
+            <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Add Treatment Instruction</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

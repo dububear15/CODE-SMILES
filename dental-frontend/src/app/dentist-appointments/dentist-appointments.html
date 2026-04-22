@@ -1,0 +1,168 @@
+<div class="dentist-shell dentist-appointments-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main dentist-appointments-main">
+    <header class="dentist-topbar">
+      <button class="dentist-menu-btn" type="button" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="dentist-topbar-actions">
+        <button class="dentist-bell-btn" type="button" aria-label="Notifications">
+          <span class="dentist-bell-icon">B</span>
+          <span class="dentist-bell-badge">{{ todayAppointments.length }}</span>
+        </button>
+
+        <div class="dentist-profile-chip">
+          <div class="dentist-avatar">D</div>
+          <div>
+            <strong>Dr. Maria Santos</strong>
+            <span>Dentist • CS-1023</span>
+          </div>
+        </div>
+
+        <button class="dentist-chevron-btn" type="button" aria-label="Open profile menu">⌄</button>
+      </div>
+    </header>
+
+    <section class="dentist-appointments-hero">
+      <div>
+        <h1>My Appointments</h1>
+        <p>Track today's queue, upcoming visits, completed procedures, and schedule changes.</p>
+      </div>
+
+      <div class="dentist-appointments-date">
+        <span>Wednesday, April 17, 2024</span>
+        <strong>Chairside schedule view</strong>
+      </div>
+    </section>
+
+    <section class="dentist-summary-grid">
+      <article class="dentist-summary-card">
+        <span>Today's Queue</span>
+        <strong>{{ todayAppointments.length }}</strong>
+        <small>Appointments lined up today</small>
+      </article>
+      <article class="dentist-summary-card">
+        <span>Upcoming</span>
+        <strong>{{ upcomingAppointments.length }}</strong>
+        <small>Scheduled for the next day</small>
+      </article>
+      <article class="dentist-summary-card">
+        <span>Completed</span>
+        <strong>{{ completedAppointments.length }}</strong>
+        <small>Already closed and documented</small>
+      </article>
+      <article class="dentist-summary-card">
+        <span>Cancelled</span>
+        <strong>{{ cancelledAppointments.length }}</strong>
+        <small>Need rescheduling or follow-up</small>
+      </article>
+    </section>
+
+    <section class="dentist-filter-panel">
+      <div class="dentist-filter-head">
+        <h2>Appointment Status</h2>
+      </div>
+
+      <div class="dentist-tabs">
+        <button *ngFor="let tab of tabs" type="button" [class.active]="tab === activeTab" (click)="setTab(tab)">
+          {{ tab }}
+        </button>
+      </div>
+    </section>
+
+    <section class="dentist-appointments-grid">
+      <article class="dentist-panel dentist-appointment-list-panel">
+        <div class="dentist-panel-head">
+          <h2>{{ activeTab }} Appointments</h2>
+          <a routerLink="/dentist-dashboard">Back to Dashboard</a>
+        </div>
+
+        <div class="dentist-appointment-list">
+          <article class="dentist-appointment-card" *ngFor="let appointment of filteredAppointments">
+            <div class="dentist-appointment-top">
+              <div class="dentist-appointment-time">
+                <span>{{ appointment.time }}</span>
+                <strong>{{ appointment.date }}</strong>
+              </div>
+
+              <div class="dentist-appointment-copy">
+                <h3>{{ appointment.patient }}</h3>
+                <p>{{ appointment.service }}</p>
+                <small>{{ appointment.reason }}</small>
+              </div>
+
+              <span class="dentist-status-pill" [attr.data-status]="statusTone(appointment.status)">
+                {{ appointment.status }}
+              </span>
+            </div>
+
+            <div class="dentist-appointment-meta">
+              <div>
+                <span>Visit Type</span>
+                <strong>{{ appointment.visitType }}</strong>
+              </div>
+              <div>
+                <span>Record State</span>
+                <strong>{{ appointment.recordState }}</strong>
+              </div>
+            </div>
+
+            <div class="dentist-appointment-note">
+              <span>Notes</span>
+              <p>{{ appointment.notes }}</p>
+            </div>
+
+            <div class="dentist-appointment-actions">
+              <a class="dentist-btn" routerLink="/dentist-patients">View Patient</a>
+              <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Open Record</a>
+              <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Treatment Plan</a>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <div class="dentist-side-stack">
+        <article class="dentist-panel">
+          <div class="dentist-panel-head">
+            <h2>Today's Queue</h2>
+          </div>
+
+          <div class="dentist-mini-list">
+            <div class="dentist-mini-item" *ngFor="let appointment of todayAppointments">
+              <strong>{{ appointment.time }}</strong>
+              <div>
+                <span>{{ appointment.patient }}</span>
+                <small>{{ appointment.service }}</small>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dentist-panel">
+          <div class="dentist-panel-head">
+            <h2>Prep Reminders</h2>
+          </div>
+
+          <div class="dentist-reminder-list">
+            <div class="dentist-reminder-item">
+              <strong>Review records before consultations</strong>
+              <span>Open x-rays and chart summaries before long treatment discussions.</span>
+            </div>
+            <div class="dentist-reminder-item">
+              <strong>Close notes after in-progress visits</strong>
+              <span>Keep record updates current so staff can coordinate follow-up quickly.</span>
+            </div>
+            <div class="dentist-reminder-item">
+              <strong>Flag cancelled visits for rebooking</strong>
+              <span>Notify front desk when a cancelled patient needs a priority replacement slot.</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

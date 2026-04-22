@@ -1,0 +1,22 @@
+<header class="luxury-header">
+  <div class="nav-wrapper">
+    <div class="brand-section" (click)="scrollToSection('home')">
+      <img src="logo.png" alt="Code Smiles Logo" class="main-logo" />
+      <div class="logo-text">
+        <span class="main-name">CODE SMILES</span>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a (click)="scrollToSection('home')">HOME</a>
+      <a (click)="scrollToSection('services')">SERVICES</a>
+      <a (click)="scrollToSection('about')">ABOUT US</a>
+      <a (click)="scrollToSection('contact')">CONTACT</a>
+    </nav>
+
+    <div class="action-buttons">
+      <a routerLink="/login" class="header-login-link">LOGIN</a>
+      <button class="book-btn" routerLink="/register">BOOK APPOINTMENT</button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,195 @@
+<div class="staff-alerts-page">
+  <app-staff-sidebar></app-staff-sidebar>
+
+  <main class="alerts-main">
+    <section class="alerts-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <h1>Alerts</h1>
+          <p>Monitor approvals, patient updates, messages, and clinic announcements from one queue.</p>
+        </div>
+
+        <div class="topbar-profile">
+          <button type="button" class="alert-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar" aria-hidden="true">MS</div>
+            <div class="profile-copy">
+              <strong>Maria Santos</strong>
+              <span>Front Desk Staff</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <article class="stat-card tone-blue">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M6.5 16.5h11l-1.5-2.2V10a4 4 0 1 0-8 0v4.3Z" />
+              <path d="M10 18.5a2 2 0 0 0 4 0" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Total Alerts</span>
+            <strong>{{ notifications.length }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-gold">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 6v6l4 2" />
+              <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Needs Action</span>
+            <strong>{{ needsActionNotifications.length }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-mint">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
+              <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Unread</span>
+            <strong>{{ unreadCount }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-rose">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H10l-4 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Messages</span>
+            <strong>{{ messageCount }}</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <section class="alerts-card">
+          <div class="card-head">
+            <div class="head-title">
+              <div class="head-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6.5 16.5h11l-1.5-2.2V10a4 4 0 1 0-8 0v4.3Z" />
+                  <path d="M10 18.5a2 2 0 0 0 4 0" />
+                </svg>
+              </div>
+              <h2>Notification Feed</h2>
+            </div>
+
+            <button type="button" class="primary-action-btn" (click)="markAllAsRead()">Mark All as Read</button>
+          </div>
+
+          <div class="alerts-list">
+            <article class="alert-row" *ngFor="let notification of visibleNotifications">
+              <div class="alert-icon" [ngClass]="'level-' + (notification.needsAction ? 'warning' : notification.unread ? 'new' : 'update')" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path *ngIf="notification.icon === 'calendar'" d="M8 3.5v4M16 3.5v4M4 9.5h16M4 5.5h16v14.5H4z" />
+                  <path *ngIf="notification.icon === 'hourglass'" d="M7 4h10M7 20h10M8 4c0 4 4 4 4 8s-4 4-4 8M16 4c0 4-4 4-4 8s4 4 4 8" />
+                  <path *ngIf="notification.icon === 'message'" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H10l-4 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" />
+                  <path *ngIf="notification.icon === 'document'" d="M8 4h6l4 4v12H8z" />
+                  <path *ngIf="notification.icon === 'document'" d="M14 4v4h4" />
+                  <path *ngIf="notification.icon === 'announcement'" d="M4 12h4l7-4v8l-7-4H4z" />
+                  <path *ngIf="notification.icon === 'announcement'" d="M15 9.5a3 3 0 0 1 0 5" />
+                </svg>
+              </div>
+
+              <div class="alert-copy">
+                <strong>{{ notification.title }}</strong>
+                <p>{{ notification.detail }}</p>
+                <p><small>{{ notification.meta }}</small></p>
+              </div>
+
+              <div class="alert-meta">
+                <span class="level-badge" [ngClass]="'level-' + (notification.needsAction ? 'warning' : notification.unread ? 'new' : 'update')">
+                  {{ notification.label }}
+                </span>
+                <small>{{ notification.time }}</small>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <aside class="alerts-card">
+          <section>
+            <div class="card-head compact">
+              <div class="head-title">
+                <div class="head-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m13 3-8 9h6l-1 9 8-9h-6z" />
+                  </svg>
+                </div>
+                <h2>Filters</h2>
+              </div>
+            </div>
+
+            <div class="tips-list">
+              <article class="tip-row" *ngFor="let filter of filters">
+                <strong>{{ filter.label }} ({{ getFilterCount(filter.key) }})</strong>
+                <p>
+                  <button type="button" class="primary-action-btn" *ngIf="selectedFilter !== filter.key" (click)="setFilter(filter.key)">Show</button>
+                  <span *ngIf="selectedFilter === filter.key">Currently selected</span>
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section>
+            <div class="card-head compact">
+              <div class="head-title">
+                <div class="head-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
+                    <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
+                  </svg>
+                </div>
+                <h2>Preferences</h2>
+              </div>
+            </div>
+
+            <div class="tips-list">
+              <article class="tip-row" *ngFor="let preference of preferences">
+                <strong>{{ preference.title }}</strong>
+                <p>{{ preference.enabled ? 'Enabled' : 'Disabled' }}</p>
+                <button type="button" class="primary-action-btn" (click)="togglePreference(preference)">
+                  {{ preference.enabled ? 'Turn Off' : 'Turn On' }}
+                </button>
+              </article>
+            </div>
+          </section>
+
+          <section class="help-card">
+            <div class="help-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3c-2.7 0-4.9 1.8-5.5 4.2-.4 1.6-.1 3.2.8 4.5l4 6.3a.8.8 0 0 0 1.4 0l4-6.3c.9-1.3 1.2-2.9.8-4.5C16.9 4.8 14.7 3 12 3Z" />
+                <path d="M10 8.8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2Z" />
+              </svg>
+            </div>
+            <div>
+              <h3>Need help reviewing alerts?</h3>
+              <p>Open the help center for staff workflow guidance and escalation steps.</p>
+            </div>
+            <a routerLink="/staff-help-center" class="primary-action-btn">Open Help Center</a>
+          </section>
+        </aside>
+      </section>
+    </section>
+  </main>
+</div>

@@ -1,8 +1,14 @@
-<div class="auth-page">
-  <div class="login-content">
+<div class="auth-page register-page login-page">
+  <div class="register-decor login-decor" aria-hidden="true">
+    <span class="decor decor-tooth-left">&#129463;</span>
+    <span class="decor decor-spark-top">&#10024;</span>
+    <span class="decor decor-spark-right">&#10022;</span>
+    <span class="decor decor-diamond-bottom">&#128142;</span>
+    <span class="decor decor-brush-left">&#129701;</span>
+  </div>
 
-    <!-- LEFT HERO -->
-    <section class="login-left">
+  <div class="register-content login-content">
+    <section class="register-left login-left">
       <div class="brand-badge">
         <span class="badge-dot"></span>
         Code Smiles Dental Portal
@@ -11,38 +17,40 @@
       <div class="hero-copy">
         <h1>Healthy<br /><em>smiles</em><br />start here.</h1>
         <p>
-          Book appointments, track requests, and stay connected with your dental care journey —
-          in one elegant, secure portal.
+          Sign in to book appointments, track requests, and stay connected
+          with your dental care journey in one calm, familiar portal.
         </p>
       </div>
 
       <div class="hero-features">
         <div class="feature-item">
-          <div class="feature-icon">📅</div>
+          <div class="feature-icon">&#128197;</div>
           <span>Book and manage appointments anytime</span>
         </div>
+
         <div class="feature-item">
-          <div class="feature-icon">🔔</div>
+          <div class="feature-icon">&#128276;</div>
           <span>Track requests and real-time updates</span>
         </div>
+
         <div class="feature-item">
-          <div class="feature-icon">🔒</div>
-          <span>Secure and organized dental portal</span>
+          <div class="feature-icon">&#128274;</div>
+          <span>Secure and organized dental portal access</span>
         </div>
       </div>
     </section>
 
-    <!-- RIGHT CARD -->
-    <section class="login-card">
+    <section class="register-card login-card">
       <div class="card-stripe"></div>
 
       <div class="card-header">
         <div class="mini-badge">Code Smiles</div>
         <h2 class="card-title">Welcome Back</h2>
-        <p class="card-subtitle">Sign in to manage your appointments and access your patient portal</p>
+        <p class="card-subtitle">
+          Sign in to manage your appointments and access your patient portal.
+        </p>
       </div>
 
-      <!-- ROLE TABS -->
       <div class="role-tabs">
         <button
           type="button"
@@ -50,7 +58,7 @@
           [class.active]="selectedRole === 'Patient'"
           (click)="selectRole('Patient')"
         >
-          <span class="tab-icon">👧🏻</span>
+          <span class="tab-icon">&#128100;</span>
           <span>Patient</span>
         </button>
 
@@ -60,7 +68,7 @@
           [class.active]="selectedRole === 'Staff'"
           (click)="selectRole('Staff')"
         >
-          <span class="tab-icon">🩺</span>
+          <span class="tab-icon">&#128188;</span>
           <span>Staff</span>
         </button>
 
@@ -70,22 +78,19 @@
           [class.active]="selectedRole === 'Admin'"
           (click)="selectRole('Admin')"
         >
-          <span class="tab-icon">👩🏻‍⚕️</span>
+          <span class="tab-icon">&#129463;</span>
           <span>Dentist</span>
         </button>
       </div>
 
       <p class="role-hint">{{ roleDescription }}</p>
 
-      <!-- FORM -->
-      <form class="login-form" (ngSubmit)="login()">
-
+      <form class="login-form" (ngSubmit)="login()" novalidate>
         <div class="form-main">
-          <!-- Email -->
           <div class="form-group">
             <label for="email">Email Address</label>
             <div class="input-wrap" [class.invalid]="submitted && !isEmailValid">
-              <span class="input-icon">✉️</span>
+              <span class="input-icon">&#9993;</span>
               <input
                 id="email"
                 type="email"
@@ -93,18 +98,20 @@
                 [(ngModel)]="loginData.email"
                 placeholder="Enter your email"
                 autocomplete="email"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
               />
             </div>
             <small class="error-text">
-  {{ submitted && !isEmailValid ? 'Please enter a valid email address.' : '' }}
-</small>
+              {{ submitted && !isEmailValid ? 'Please enter a valid email address.' : '' }}
+            </small>
           </div>
 
-          <!-- Password -->
           <div class="form-group">
             <label for="password">Password</label>
             <div class="input-wrap" [class.invalid]="submitted && !isPasswordValid">
-              <span class="input-icon">🔒</span>
+              <span class="input-icon">&#128274;</span>
               <input
                 id="password"
                 [type]="showPassword ? 'text' : 'password'"
@@ -112,6 +119,9 @@
                 [(ngModel)]="loginData.password"
                 placeholder="Enter your password"
                 autocomplete="current-password"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
               />
               <button
                 type="button"
@@ -122,12 +132,11 @@
               </button>
             </div>
             <small class="error-text">
-  {{ submitted && !isPasswordValid ? 'Password must be at least 6 characters.' : '' }}
-</small>
+              {{ submitted && !isPasswordValid ? 'Password must be at least 6 characters.' : '' }}
+            </small>
           </div>
 
-          <!-- Options -->
-          <div class="form-options">
+          <div class="form-options login-options">
             <label class="remember-me">
               <input
                 type="checkbox"
@@ -141,12 +150,12 @@
           </div>
 
           <button type="submit" class="sign-in-btn">
-            {{ loginButtonText }} →
+            {{ loginButtonText }} &rarr;
           </button>
         </div>
 
-        <div class="form-bottom">
-          <div *ngIf="selectedRole === 'Patient'">
+        <div class="form-bottom auth-bottom-shell">
+          <div class="bottom-panel bottom-panel-patient" [class.panel-hidden]="selectedRole !== 'Patient'">
             <div class="divider"><span>or</span></div>
 
             <div class="auth-alt-slot">
@@ -169,15 +178,9 @@
             </p>
           </div>
 
-          <div *ngIf="selectedRole !== 'Patient'">
+          <div class="bottom-panel bottom-panel-staff" [class.panel-hidden]="selectedRole === 'Patient'">
             <p class="auth-note">
-              Staff and Dentist accounts are provided by the clinic administration.
+              Staff and dentist accounts are provided by the clinic administration.
             </p>
           </div>
         </div>
-
-      </form>
-    </section>
-
-  </div>
-</div>

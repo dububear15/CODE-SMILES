@@ -1,0 +1,78 @@
+<div class="dentist-shell">
+  <app-dentist-sidebar></app-dentist-sidebar>
+
+  <main class="dentist-main">
+    <section class="dentist-page-hero">
+      <div>
+        <span class="dentist-eyebrow">Medical vault</span>
+        <h2>Clinical history, diagnoses, prescriptions, and progress in one place.</h2>
+        <p>
+          This vault ties directly to what patients later see in their own medical record,
+          so updates here should stay complete, clear, and treatment-aware.
+        </p>
+      </div>
+
+      <div class="dentist-hero-side">
+        <span class="dentist-eyebrow">Current patient in focus</span>
+        <h3>{{ focusPatient.patient }}</h3>
+        <p>{{ focusPatient.reasonForVisit }}</p>
+      </div>
+    </section>
+
+    <section class="dentist-grid two-col">
+      <article class="dentist-panel">
+        <div class="dentist-section-head">
+          <div>
+            <span class="dentist-eyebrow">Record sections</span>
+            <h3>Medical vault contents</h3>
+          </div>
+        </div>
+
+        <div class="dentist-list">
+          <div class="dentist-list-item" *ngFor="let entry of vaultEntries">
+            <div class="dentist-row-between">
+              <strong>{{ entry.title }}</strong>
+              <span class="dentist-pill muted">{{ entry.section }}</span>
+            </div>
+            <p>{{ entry.summary }}</p>
+            <small>{{ entry.date }}</small>
+          </div>
+        </div>
+
+        <div class="dentist-actions">
+          <a class="dentist-btn" routerLink="/dentist-medical-vault">Add Record</a>
+          <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Edit Treatment Note</a>
+          <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Add Recommendation</a>
+          <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Update Patient Progress</a>
+          <a class="dentist-btn-ghost" routerLink="/dentist-prescriptions">Attach Prescription</a>
+        </div>
+      </article>
+
+      <article class="dentist-panel">
+        <div class="dentist-section-head">
+          <div>
+            <span class="dentist-eyebrow">Treatment timeline</span>
+            <h3>Care journey and attachments</h3>
+          </div>
+        </div>
+
+        <div class="dentist-note-list">
+          <div class="dentist-note" *ngFor="let item of timeline">
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.detail }}</p>
+            <time>{{ item.date }}</time>
+          </div>
+        </div>
+
+        <div class="dentist-card-grid">
+          <article class="dentist-card" *ngFor="let item of prescriptions">
+            <span>Attached prescription</span>
+            <strong>{{ item.patient }}</strong>
+            <p>{{ item.medication }} • {{ item.dosage }}</p>
+            <small>{{ item.instruction }}</small>
+          </article>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>

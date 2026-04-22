@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.dentist-shell {
+  --dentist-shell-offset: 270px;
+  min-height: 100vh;
+  background: #edf4fb;
+}
+
+.dentist-main {
+  min-height: 100vh;
+  margin-left: var(--dentist-shell-offset);
+}
+
+@media (max-width: 1080px) {
+  .dentist-main {
+    margin-left: 0;
+  }
+}

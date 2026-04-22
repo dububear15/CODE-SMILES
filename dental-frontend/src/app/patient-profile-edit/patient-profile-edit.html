@@ -1,0 +1,147 @@
+<div class="profile-edit-page">
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <main class="edit-main">
+    <section class="edit-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <a routerLink="/patient-profile" class="back-link">← Back to My Profile</a>
+          <h1>Edit Profile</h1>
+          <p>Update your personal details, contact information, and emergency contact.</p>
+        </div>
+      </header>
+
+      <section class="hero-strip">
+        <div class="hero-avatar-wrap">
+          <div class="hero-avatar" *ngIf="!avatarPreview">{{ initials }}</div>
+          <img *ngIf="avatarPreview" class="hero-avatar preview-avatar" [src]="avatarPreview" alt="Profile preview" />
+
+          <label class="avatar-action">
+            <input type="file" accept="image/*" (change)="onAvatarSelected($event)" />
+            Change Photo
+          </label>
+        </div>
+        <div class="hero-copy">
+          <strong>{{ form.fullName }}</strong>
+          <span>{{ form.patientId }}</span>
+          <p>Keep your personal details current so the clinic can reach you and manage your records correctly.</p>
+        </div>
+      </section>
+
+      <section class="form-layout">
+        <article class="form-card">
+          <div class="card-head">
+            <h2>Personal Information</h2>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Full Name</span>
+              <input type="text" [(ngModel)]="form.fullName" />
+            </label>
+
+            <label>
+              <span>Preferred Language</span>
+              <select [(ngModel)]="form.preferredLanguage">
+                <option>English</option>
+                <option>Filipino</option>
+                <option>Spanish</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Gender</span>
+              <select [(ngModel)]="form.gender">
+                <option>Female</option>
+                <option>Male</option>
+                <option>Prefer not to say</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Blood Type</span>
+              <select [(ngModel)]="form.bloodType">
+                <option>O+</option>
+                <option>O-</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+              </select>
+            </label>
+          </div>
+        </article>
+
+        <article class="form-card form-card-wide">
+          <div class="card-head">
+            <h2>Contact Details</h2>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Phone Number</span>
+              <input type="text" [(ngModel)]="form.phoneNumber" />
+            </label>
+
+            <label>
+              <span>Email Address</span>
+              <input type="email" [(ngModel)]="form.email" />
+            </label>
+
+            <label class="full-width">
+              <span>Home Address</span>
+              <textarea rows="2" [(ngModel)]="form.homeAddress"></textarea>
+            </label>
+
+            <label>
+              <span>Preferred Contact Method</span>
+              <select [(ngModel)]="form.preferredContactMethod">
+                <option>Email</option>
+                <option>SMS</option>
+                <option>Email & SMS</option>
+                <option>Phone Call</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Primary Dentist</span>
+              <input type="text" [(ngModel)]="form.primaryDentist" />
+            </label>
+          </div>
+        </article>
+
+        <article class="form-card">
+          <div class="card-head">
+            <h2>Emergency Contact</h2>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Name</span>
+              <input type="text" [(ngModel)]="form.emergencyContact.name" />
+            </label>
+
+            <label>
+              <span>Relationship</span>
+              <input type="text" [(ngModel)]="form.emergencyContact.relationship" />
+            </label>
+
+            <label>
+              <span>Phone Number</span>
+              <input type="text" [(ngModel)]="form.emergencyContact.phoneNumber" />
+            </label>
+          </div>
+        </article>
+      </section>
+
+      <div class="form-actions">
+        <button type="button" class="primary-action" (click)="saveProfile()">Save Changes</button>
+        <button type="button" class="secondary-action" (click)="cancel()">Cancel</button>
+      </div>
+
+      <div class="toast-banner" *ngIf="toastMessage">{{ toastMessage }}</div>
+    </section>
+  </main>
+</div>

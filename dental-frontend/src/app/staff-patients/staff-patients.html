@@ -1,0 +1,175 @@
+<div class="staff-patients-page">
+  <app-staff-sidebar></app-staff-sidebar>
+
+  <main class="patients-main">
+    <section class="patients-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <h1>Patients</h1>
+          <p>Review contact details, recent visits, and upcoming appointments at a glance.</p>
+        </div>
+
+        <div class="topbar-profile">
+          <button type="button" class="alert-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar" aria-hidden="true">M</div>
+            <div class="profile-copy">
+              <strong>Maria Santos</strong>
+              <span>Front Desk Staff</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <article class="stat-card tone-blue">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
+              <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Total Patients</span>
+            <strong>{{ patients.length }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-mint">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Active</span>
+            <strong>{{ activePatientsCount }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-gold">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="5.5" width="16" height="14.5" rx="2.2" />
+              <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Upcoming Visits</span>
+            <strong>{{ patientsWithAppointments }}</strong>
+          </div>
+        </article>
+
+        <article class="stat-card tone-rose">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 7l10 10M17 7 7 17" />
+            </svg>
+          </div>
+          <div class="stat-copy">
+            <span>Inactive</span>
+            <strong>{{ inactivePatientsCount }}</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <section class="patients-card main-card">
+          <div class="card-head">
+            <div class="head-title">
+              <div class="head-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
+                  <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
+                </svg>
+              </div>
+              <h2>Patient Directory</h2>
+            </div>
+
+            <a routerLink="/staff-appointments" class="section-link">Open Appointments</a>
+          </div>
+
+          <div class="patients-list">
+            <article class="patient-row" *ngFor="let patient of patients">
+              <div class="patient-identity">
+                <div class="patient-avatar" aria-hidden="true">{{ patient.name.charAt(0) }}</div>
+                <div>
+                  <strong>{{ patient.name }}</strong>
+                  <span>{{ patient.email }}</span>
+                </div>
+              </div>
+
+              <div class="patient-meta">
+                <span>{{ patient.contact }}</span>
+                <span>Last Visit: {{ patient.lastVisit }}</span>
+                <span>Next: {{ patient.nextAppointment }}</span>
+              </div>
+
+              <div class="patient-status">
+                <span class="status-badge" [ngClass]="getStatusClass(patient.status)">{{ patient.status }}</span>
+              </div>
+
+              <div class="patient-actions">
+                <button type="button" class="primary-mini-btn">View Patient</button>
+                <button type="button" class="ghost-mini-btn">Appointments</button>
+                <button type="button" class="ghost-mini-btn">Medical Vault</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <aside class="patients-card side-card">
+          <section class="info-panel">
+            <div class="card-head compact">
+              <div class="head-title">
+                <div class="head-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3.5 5.5 7v5c0 4.2 2.7 7.5 6.5 8.5 3.8-1 6.5-4.3 6.5-8.5V7L12 3.5Z" />
+                    <path d="M9.5 11.5h5" />
+                  </svg>
+                </div>
+                <h2>Staff Notes</h2>
+              </div>
+            </div>
+
+            <div class="notes-list">
+              <article class="note-row">
+                <strong>Directory access is read-first.</strong>
+                <p>Staff can confirm records and next visits, then route deeper care questions to the dentist.</p>
+              </article>
+              <article class="note-row">
+                <strong>Use patient status to prioritize follow-up.</strong>
+                <p>Inactive profiles are useful for outreach and rebooking opportunities.</p>
+              </article>
+              <article class="note-row">
+                <strong>Appointment visibility stays connected.</strong>
+                <p>Open the appointments page when a patient needs a quick schedule check or change.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="help-card">
+            <div class="help-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3c-2.7 0-4.9 1.8-5.5 4.2-.4 1.6-.1 3.2.8 4.5l4 6.3a.8.8 0 0 0 1.4 0l4-6.3c.9-1.3 1.2-2.9.8-4.5C16.9 4.8 14.7 3 12 3Z" />
+                <path d="M10 8.8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2Z" />
+              </svg>
+            </div>
+            <div>
+              <h3>Need patient support guidance?</h3>
+              <p>Open the staff help center for workflow reminders and communication tips.</p>
+            </div>
+            <a routerLink="/staff-help-center" class="primary-action-btn">Staff Help Center</a>
+          </section>
+        </aside>
+      </section>
+    </section>
+  </main>
+</div>

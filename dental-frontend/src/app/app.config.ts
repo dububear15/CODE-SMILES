@@ -1,6 +1,6 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -8,10 +8,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({
-        scrollPositionRestoration: 'top', // ✅ ALWAYS go to top on navigation
-        anchorScrolling: 'enabled' // ✅ allows fragment scrolling (services, about, etc.)
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled',
       })
     ),
-    provideHttpClient()
-  ]
+    provideHttpClient(),
+  ],
 };

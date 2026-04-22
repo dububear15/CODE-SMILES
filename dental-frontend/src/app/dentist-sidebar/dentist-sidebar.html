@@ -1,0 +1,82 @@
+<aside class="dentist-sidebar">
+  <div class="dentist-sidebar-shell">
+    <div class="dentist-brand">
+      <div class="dentist-brand-mark">
+        <span class="dentist-brand-badge">CS</span>
+      </div>
+      <div class="dentist-brand-copy">
+        <span class="dentist-eyebrow">Code Smiles</span>
+        <h1>Dentist Portal</h1>
+      </div>
+    </div>
+
+    <section class="dentist-panel">
+      <span class="dentist-panel-label">Main Menu</span>
+
+      <nav class="dentist-sidebar-nav" aria-label="Dentist portal navigation">
+        <a class="dentist-nav-link" routerLink="/dentist-dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="dentist-nav-icon" aria-hidden="true">DB</span>
+          <span class="dentist-nav-label">Dashboard</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-appointments" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">AP</span>
+          <span class="dentist-nav-label">My Appointments</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-patients" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">PT</span>
+          <span class="dentist-nav-label">My Patients</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-medical-vault" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">MR</span>
+          <span class="dentist-nav-label">Medical Records</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-treatment-plans" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">TP</span>
+          <span class="dentist-nav-label">Treatment Plans</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-schedule" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">SC</span>
+          <span class="dentist-nav-label">Schedule</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-notifications" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">NT</span>
+          <span class="dentist-nav-label">Notifications</span>
+          <span class="dentist-nav-count">3</span>
+        </a>
+      </nav>
+    </section>
+
+    <section class="dentist-panel dentist-support-panel">
+      <span class="dentist-panel-label">Account</span>
+
+      <nav class="dentist-sidebar-nav" aria-label="Dentist account navigation">
+        <a class="dentist-nav-link" routerLink="/dentist-profile" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">PR</span>
+          <span class="dentist-nav-label">Profile</span>
+        </a>
+
+        <a class="dentist-nav-link" routerLink="/dentist-settings" routerLinkActive="active">
+          <span class="dentist-nav-icon" aria-hidden="true">ST</span>
+          <span class="dentist-nav-label">Settings</span>
+        </a>
+
+        <button class="dentist-nav-link dentist-logout-link" type="button" (click)="logout()">
+          <span class="dentist-nav-icon" aria-hidden="true">LO</span>
+          <span class="dentist-nav-label">Log Out</span>
+        </button>
+      </nav>
+    </section>
+
+    <div class="dentist-footer">
+      <a routerLink="/privacy-policy">privacy policy</a>
+      <span>·</span>
+      <a routerLink="/dentist-settings">settings</a>
+    </div>
+  </div>
+</aside>

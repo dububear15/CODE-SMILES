@@ -1,0 +1,102 @@
+<div class="staff-help-page">
+  <app-staff-sidebar></app-staff-sidebar>
+
+  <main class="help-main">
+    <section class="help-shell">
+      <header class="page-topbar">
+        <div class="page-copy">
+          <h1>Help Center</h1>
+          <p>Find staff workflow tips, approval guidance, and support resources for daily clinic coordination.</p>
+        </div>
+
+        <div class="topbar-profile">
+          <button type="button" class="alert-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar" aria-hidden="true">M</div>
+            <div class="profile-copy">
+              <strong>Maria Santos</strong>
+              <span>Front Desk Staff</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="search-card">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="6"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+          <input type="text" placeholder="Search staff help topics..." />
+          <button type="button">Search</button>
+        </div>
+      </section>
+
+      <section class="cards-grid">
+        <article class="support-card" *ngFor="let card of supportCards">
+          <div class="support-icon" aria-hidden="true">
+            <svg [attr.viewBox]="card.iconViewBox">
+              <path *ngFor="let path of card.iconPaths" [attr.d]="path"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>{{ card.title }}</h2>
+            <p>{{ card.description }}</p>
+            <a [routerLink]="card.route">Open Page</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <section class="faq-card">
+          <div class="section-head">
+            <h2>Frequently Asked Questions</h2>
+            <a routerLink="/staff-requests">Go to Requests</a>
+          </div>
+
+          <div class="faq-list">
+            <article class="faq-row" *ngFor="let item of faqs">
+              <span>{{ item }}</span>
+              <strong>+</strong>
+            </article>
+          </div>
+        </section>
+
+        <aside class="contact-card">
+          <h2>Still Need Help?</h2>
+          <p>Reach out to support or visit the staff profile page for account-related changes.</p>
+
+          <div class="contact-list">
+            <article>
+              <strong>Call Support</strong>
+              <span>(555) 123-4567</span>
+            </article>
+            <article>
+              <strong>Email Support</strong>
+              <span>support@codesmiles.com</span>
+            </article>
+            <article>
+              <strong>Open Profile</strong>
+              <a routerLink="/staff-profile">Manage Account</a>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <section class="help-banner">
+        <div>
+          <h2>Need immediate help with a live patient concern?</h2>
+          <p>Use the requests or appointments pages first, then contact support if the issue blocks clinic flow.</p>
+        </div>
+        <a routerLink="/staff-appointments" class="primary-action-btn">Open Appointments</a>
+      </section>
+    </section>
+  </main>
+</div>

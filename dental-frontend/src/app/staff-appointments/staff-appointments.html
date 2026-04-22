@@ -1,0 +1,359 @@
+<div class="staff-appointments-page">
+  <app-staff-sidebar></app-staff-sidebar>
+
+  <main class="appointments-main">
+    <section class="appointments-shell">
+      <header class="page-topbar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 19c-2.2 0-3.7-1.7-4.1-4.1-.1-.7-.4-1.2-.9-1.7A4.4 4.4 0 0 1 5.5 10C5.5 6.4 8.4 3.5 12 3.5s6.5 2.9 6.5 6.5c0 1.2-.4 2.3-1.1 3.2-.5.6-.8 1.1-.9 1.8C16 17.4 14.4 19 12 19Z" />
+              <path d="M9.2 9.8c0 1.4 1.2 2.6 2.8 2.6s2.8-1.2 2.8-2.6" />
+            </svg>
+          </div>
+
+          <div class="brand-copy">
+            <span>Appointment Review Desk</span>
+          </div>
+        </div>
+
+        <label class="top-search" aria-label="Search">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="6"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="syncSelection()" placeholder="Search patient name or service..." />
+          <small>Ctrl + K</small>
+        </label>
+
+        <div class="topbar-actions">
+          <button type="button" class="icon-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M10 18a2 2 0 0 0 4 0" />
+            </svg>
+            <span class="alert-dot"></span>
+          </button>
+
+          <button type="button" class="icon-btn" aria-label="Messages">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H10l-4 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" />
+            </svg>
+          </button>
+
+          <div class="profile-chip">
+            <div class="profile-avatar" aria-hidden="true">MS</div>
+            <div class="profile-copy">
+              <strong>Maria Santos</strong>
+              <span>Front Desk Staff</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="page-heading">
+        <h1>Staff Appointments</h1>
+        <p>Review, verify, and confirm patient appointment requests before scheduling.</p>
+      </section>
+
+      <section class="info-banner">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 10v5"></path>
+          <path d="M12 7h.01"></path>
+        </svg>
+        <p>Appointments require <strong>staff approval</strong> before final confirmation. Patients will be notified once verified.</p>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card" *ngFor="let card of summaryCards" [attr.data-tone]="card.tone">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path *ngFor="let path of getStatIconPath(card.icon)" [attr.d]="path"></path>
+            </svg>
+          </div>
+
+          <div class="stat-copy">
+            <span>{{ card.label }}</span>
+            <strong>{{ card.value }}</strong>
+            <small>{{ card.note }}</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <section class="queue-card">
+          <div class="toolbar">
+            <label class="toolbar-search">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6"></circle>
+                <path d="m20 20-3.5-3.5"></path>
+              </svg>
+              <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="syncSelection()" placeholder="Search patient or service..." />
+            </label>
+
+            <select [(ngModel)]="dentistFilter" (ngModelChange)="syncSelection()">
+              <option *ngFor="let dentist of dentists" [ngValue]="dentist">{{ dentist }}</option>
+            </select>
+
+            <select [(ngModel)]="dateFilter" (ngModelChange)="syncSelection()">
+              <option *ngFor="let date of dates" [ngValue]="date">{{ date }}</option>
+            </select>
+
+            <select [(ngModel)]="statusFilter" (ngModelChange)="syncSelection()">
+              <option *ngFor="let status of statuses" [ngValue]="status">{{ status }}</option>
+            </select>
+
+            <button type="button" class="reset-btn" (click)="resetFilters()">Reset</button>
+          </div>
+
+          <div class="queue-head">
+            <div class="tabs-row">
+              <button
+                type="button"
+                class="tab-btn"
+                *ngFor="let tab of tabs"
+                [class.active]="activeTab === tab"
+                (click)="setActiveTab(tab)">
+                {{ tab }} <span>({{ countForTab(tab) }})</span>
+              </button>
+            </div>
+
+            <label class="sort-select">
+              <span>Sort by:</span>
+              <select [(ngModel)]="sortBy" (ngModelChange)="syncSelection()">
+                <option *ngFor="let option of sortOptions" [ngValue]="option">{{ option }}</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="queue-list">
+            <article
+              class="appointment-card"
+              *ngFor="let item of filteredAppointments"
+              [class.selected]="selectedAppointment?.id === item.id"
+              [class.has-conflict]="!!item.conflict"
+              (click)="selectAppointment(item)">
+              <div class="card-topline" *ngIf="item.conflict">
+                <span class="conflict-pill">Conflict Detected</span>
+                <span class="review-pill">{{ item.listStatusLabel || item.status }}</span>
+              </div>
+
+              <div class="appointment-grid">
+                <section class="patient-panel">
+                  <div class="patient-avatar">{{ item.initials }}</div>
+
+                  <div class="patient-copy">
+                  <strong>{{ item.patient }}</strong>
+                  <span class="patient-tag">{{ item.patientTag }}</span>
+                  <small>{{ item.phone }}</small>
+                  <small>Age: {{ item.age }}</small>
+                </div>
+                </section>
+
+                <section class="request-panel">
+                  <span class="meta-label">Appointment Request</span>
+                  <strong>{{ item.service }}</strong>
+
+                  <div class="time-meta">
+                    <span>{{ item.date }}</span>
+                    <span>{{ item.startTime }} - {{ item.endTime }}</span>
+                    <span>{{ item.durationMinutes }} min</span>
+                  </div>
+
+                  <div class="time-range">
+                    <small>{{ item.startTime }}</small>
+                    <div class="range-track">
+                      <span class="range-fill" [ngStyle]="getTimelineStyle(item)"></span>
+                    </div>
+                    <small>{{ item.endTime }}</small>
+                  </div>
+                </section>
+
+                <section class="assignment-panel">
+                  <span class="meta-label">Assignment</span>
+
+                  <label>
+                    <span class="sr-only">Dentist</span>
+                    <select [(ngModel)]="item.dentist">
+                      <option *ngFor="let dentist of dentists.slice(1)" [ngValue]="dentist">{{ dentist }}</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span class="sr-only">Chair</span>
+                    <select [(ngModel)]="item.chair">
+                      <option *ngFor="let chair of chairs" [ngValue]="chair">{{ chair }}</option>
+                    </select>
+                  </label>
+
+                  <div class="conflict-box" *ngIf="item.conflict">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 8v5"></path>
+                      <path d="M12 17h.01"></path>
+                      <path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.74 3h14.92a2 2 0 0 0 1.74-3L13.74 3.9a2 2 0 0 0-3.48 0Z"></path>
+                    </svg>
+                    <span>{{ item.conflict }}</span>
+                  </div>
+                </section>
+              </div>
+
+              <div class="card-actions">
+                <button type="button" class="ghost-mini-btn" (click)="selectAppointment(item); $event.stopPropagation()">View Details</button>
+                <button type="button" class="ghost-mini-btn danger" (click)="reject(item); $event.stopPropagation()">Reject</button>
+                <button type="button" class="ghost-mini-btn accent" (click)="suggestNewTime(item); $event.stopPropagation()">Suggest New Time</button>
+                <button type="button" class="primary-mini-btn" (click)="approve(item); $event.stopPropagation()">Approve</button>
+              </div>
+            </article>
+          </div>
+
+          <footer class="queue-footer">
+            <span>Showing {{ filteredAppointments.length }} of {{ countForTab(activeTab) }} {{ activeTab.toLowerCase() }} appointments</span>
+          </footer>
+        </section>
+
+        <aside class="side-rail">
+          <section class="detail-card">
+            <div class="detail-head">
+              <div>
+                <h2>Review & Appointment Details</h2>
+              </div>
+
+              <button type="button" class="clear-link" (click)="clearSelection()">Clear Selection</button>
+            </div>
+
+            <ng-container *ngIf="selectedAppointment; else emptyState">
+              <div class="detail-patient">
+                <div class="patient-avatar large">{{ selectedAppointment.initials }}</div>
+
+                <div class="detail-copy">
+                  <strong>{{ selectedAppointment.patient }}</strong>
+                  <div class="detail-inline-meta">
+                    <span>{{ selectedAppointment.date }}</span>
+                    <span>{{ selectedAppointment.startTime }}</span>
+                    <span>{{ selectedAppointment.durationMinutes }} min</span>
+                  </div>
+                </div>
+
+                <span class="status-badge" [ngClass]="getStatusClass(selectedAppointment.status)">
+                  {{ selectedAppointment.status === 'Pending' ? 'Pending Review' : selectedAppointment.status }}
+                </span>
+              </div>
+
+              <div class="detail-meta">
+                <span>Selected Service</span>
+                <strong>{{ selectedAppointment.service }}</strong>
+              </div>
+
+              <div class="detail-grid">
+                <div>
+                  <span>Dentist</span>
+                  <strong>{{ selectedAppointment.dentist }}</strong>
+                </div>
+                <div>
+                  <span>Chair</span>
+                  <strong>{{ selectedAppointment.chair }}</strong>
+                </div>
+                <div>
+                  <span>Time</span>
+                  <strong>{{ selectedAppointment.startTime }}</strong>
+                </div>
+                <div>
+                  <span>Duration</span>
+                  <strong>{{ selectedAppointment.durationMinutes }} min</strong>
+                </div>
+              </div>
+
+              <div class="notes-box">
+                <span>Staff Notes</span>
+                <p>{{ selectedAppointment.note }}</p>
+              </div>
+
+              <small class="updated-copy">Last updated: {{ selectedAppointment.updatedAt }}</small>
+
+              <div class="approval-banner">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 10v5"></path>
+                  <path d="M12 7h.01"></path>
+                </svg>
+                <p>Appointments require <strong>staff approval</strong> before final confirmation. Patients will be notified once verified.</p>
+              </div>
+
+              <div class="approval-actions">
+                <button type="button" class="primary-mini-btn" (click)="approve(selectedAppointment)">Approve</button>
+                <button type="button" class="ghost-mini-btn danger" (click)="reject(selectedAppointment)">Reject</button>
+                <button type="button" class="ghost-mini-btn accent" (click)="suggestNewTime(selectedAppointment)">Suggest New Time</button>
+              </div>
+            </ng-container>
+
+            <ng-template #emptyState>
+              <div class="empty-card">
+                <strong>Select an appointment card</strong>
+                <p>The right panel will show notes, assignments, and approval actions here.</p>
+              </div>
+            </ng-template>
+          </section>
+
+          <section class="calendar-card">
+            <div class="rail-head">
+              <h3>Calendar Preview</h3>
+              <a routerLink="/staff-calendar">Open Calendar</a>
+            </div>
+
+            <div class="calendar-topline">
+              <button type="button" class="calendar-nav-btn" aria-label="Previous day">
+                <svg viewBox="0 0 24 24">
+                  <path d="m15 18-6-6 6-6"></path>
+                </svg>
+              </button>
+              <strong>April 13, 2026</strong>
+              <button type="button" class="calendar-nav-btn" aria-label="Next day">
+                <svg viewBox="0 0 24 24">
+                  <path d="m9 18 6-6-6-6"></path>
+                </svg>
+              </button>
+              <span class="today-pill">Today</span>
+            </div>
+
+            <div class="calendar-frame">
+              <div class="calendar-hours">
+                <span>10:00 AM</span>
+                <span>11:00 AM</span>
+                <span>12:00 PM</span>
+                <span>1:00 PM</span>
+                <span>2:00 PM</span>
+                <span>3:00 PM</span>
+                <span>4:00 PM</span>
+              </div>
+
+              <div class="calendar-list">
+                <article class="calendar-item" *ngFor="let item of calendarPreview" [attr.data-tone]="item.calendarTone">
+                  <small>{{ item.startTime }}</small>
+                  <strong>{{ item.patient }}</strong>
+                  <span>{{ item.service }}</span>
+                  <em>{{ item.chair }}</em>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="quick-card">
+            <h3>Quick Actions</h3>
+
+            <div class="quick-grid">
+              <a class="quick-action" *ngFor="let action of quickActions" [routerLink]="action.route">
+                <div class="quick-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path *ngFor="let path of getQuickActionIcon(action.icon)" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <span>{{ action.label }}</span>
+              </a>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </section>
+  </main>
+</div>

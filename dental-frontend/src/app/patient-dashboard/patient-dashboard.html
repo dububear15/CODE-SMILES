@@ -1,440 +1,298 @@
-<div class="patient-dashboard-page" [class.sidebar-collapsed]="sidebarCollapsed()">
-  <aside class="dashboard-sidebar">
-    <div class="sidebar-inner">
-      <div class="brand-block">
-        <div class="brand-mark">
-          <img src="logo.png" alt="Code Smiles logo" class="brand-logo" />
-        </div>
-        <div class="brand-copy">
-          <span class="eyebrow">Code Smiles</span>
-          <h2>Patient Concierge</h2>
-        </div>
-        <button
-          class="sidebar-toggle-btn"
-          type="button"
-          (click)="toggleSidebar()"
-          [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
-          <span class="sidebar-toggle-icon">{{ sidebarCollapsed() ? '›' : '‹' }}</span>
-        </button>
-      </div>
-
-      <div class="sidebar-panel">
-        <span class="sidebar-panel-label">Navigation</span>
-        <nav class="sidebar-nav">
-          <a class="nav-item active" routerLink="/patient-dashboard" title="Dashboard">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.8v-6.2H9.8V21H5a1 1 0 0 1-1-1z"/></svg>
-            </span>
-            <span class="nav-label">Dashboard</span>
-          </a>
-          <a class="nav-item" routerLink="/my-appointments" title="Appointments">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M7 3h2v2h6V3h2v2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2zm12 7H5v9h14z"/></svg>
-            </span>
-            <span class="nav-label">Appointments</span>
-          </a>
-          <a class="nav-item" routerLink="/patient-medical-vault" title="Medical Vault">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8h-9z"/><path d="M10 4v4h4"/></svg>
-            </span>
-            <span class="nav-label">Medical Vault</span>
-          </a>
-          <a class="nav-item" href="javascript:void(0)" title="Services">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="m12 2 2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2z"/></svg>
-            </span>
-            <span class="nav-label">Services</span>
-          </a>
-          <a class="nav-item" href="javascript:void(0)" title="About Clinic">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
-            </span>
-            <span class="nav-label">About Clinic</span>
-          </a>
-          <a class="nav-item" href="javascript:void(0)" title="Contact">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
-            </span>
-            <span class="nav-label">Contact</span>
-          </a>
-          <a class="nav-item" href="javascript:void(0)" title="Notifications">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22zm7-4H5l1.6-1.8V11a5.4 5.4 0 1 1 10.8 0v5.2z"/></svg>
-            </span>
-            <span class="nav-label">Notifications</span>
-          </a>
-          <a class="nav-item" href="javascript:void(0)" title="Profile">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
-            </span>
-            <span class="nav-label">Profile</span>
-          </a>
-        </nav>
-      </div>
-
-      <div class="sidebar-cta-wrap sidebar-cta-button-only">
-        <button class="sidebar-book-btn" type="button">
-          <span class="nav-icon sidebar-btn-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M11 5h2v14h-2z"/><path d="M5 11h14v2H5z"/></svg>
-          </span>
-          <span class="sidebar-book-label">Book Appointment</span>
-        </button>
-      </div>
-
-      <div class="sidebar-panel sidebar-panel-secondary">
-        <span class="sidebar-panel-label">Account</span>
-        <nav class="sidebar-nav">
-          <a class="nav-item nav-item-muted" href="javascript:void(0)" title="Profile Settings">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="m12 8.5 1.3-2.8 2.8 1.3 2.2-1.1 1.5 2.6-2 1.6.2 1.9 2.3 1.2-1.1 2.9-2.8-.4-1.4 1.3.4 2.8-2.9 1.1-1.2-2.3-1.9-.2-1.6 2-2.6-1.5 1.1-2.2-1.3-2.8 2.8-1.3.7-1.8-.7-1.8-2.8-1.3 1.3-2.8 2.2 1.1 1.6-2zM12 15.5A3.5 3.5 0 1 0 8.5 12 3.5 3.5 0 0 0 12 15.5z"/></svg>
-            </span>
-            <span class="nav-label">Profile Settings</span>
-          </a>
-          <a class="nav-item nav-item-muted" href="javascript:void(0)" title="Help Center">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm.2 15.5h-1.8v-1.8h1.8zm2-7.1-.8.8a3 3 0 0 0-1 2.3h-1.8v-.4a3.8 3.8 0 0 1 1.2-2.8l1.1-1.1a1.7 1.7 0 1 0-2.9-1.2H8.2a3.5 3.5 0 1 1 6 2.3z"/></svg>
-            </span>
-            <span class="nav-label">Help Center</span>
-          </a>
-        </nav>
-      </div>
-
-      <div class="sidebar-footer">
-        <a class="nav-item nav-item-muted logout-item" href="javascript:void(0)" title="Log Out">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M10 17v-2h6V9h-6V7h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2z"/><path d="m13 12-4 4v-3H4v-2h5V8z"/></svg>
-          </span>
-          <span class="nav-label">Log Out</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+<div class="patient-dashboard-page">
+  <app-patient-sidebar></app-patient-sidebar>
 
   <main class="dashboard-main">
-    <div class="dashboard-layout">
-      <section class="dashboard-center">
-        <section class="hero-card">
-          <div class="hero-copy">
-            <span class="eyebrow">Patient overview</span>
-            <h1>Welcome back, Mark Anthony</h1>
-            <p>
-              Your treatment plan is moving steadily. Here is your next visit,
-              current care phase, and the actions that matter this week.
-            </p>
+    <section class="dashboard-header">
+      <div class="header-copy">
+        <h1>Good morning, Mark Anthony! <span aria-hidden="true">&#128075;</span></h1>
+        <p>Welcome back to Code Smiles. Here&rsquo;s your smile snapshot for today.</p>
+      </div>
+
+      <div class="header-profile">
+        <button
+          class="header-icon-btn"
+          type="button"
+          aria-label="Notifications"
+          routerLink="/patient-notifications">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
+            <path d="M10 18a2 2 0 0 0 4 0" />
+          </svg>
+          <span class="header-icon-dot"></span>
+        </button>
+
+        <a class="header-user" routerLink="/patient-profile">
+          <div class="header-avatar" aria-hidden="true">M</div>
+          <div class="header-user-copy">
+            <strong>Mark Anthony</strong>
+            <span>Patient ID: CS-48291</span>
           </div>
+        </a>
+      </div>
+    </section>
 
-          <div class="hero-visit-card">
-            <span class="hero-visit-label">Next consultation</span>
-            <strong>April 02, 2026</strong>
-            <p>2:30 PM to 3:30 PM with Dr. Lee Sung-Kyung</p>
-            <button class="primary-action-btn" type="button">View appointment</button>
-          </div>
-        </section>
-
-        <section class="summary-grid">
-          <article class="summary-card">
-            <div class="summary-card-top">
-              <span class="summary-kicker">Care calendar</span>
-              <span class="summary-badge">02</span>
-            </div>
-            <h3>Upcoming appointments</h3>
-            <p>Two scheduled visits across adjustment and preventive care.</p>
-            <strong>Next: Orthodontic Adjustment</strong>
-          </article>
-
-          <article class="summary-card">
-            <div class="summary-card-top">
-              <span class="summary-kicker">Records vault</span>
-              <span class="summary-badge">12</span>
-            </div>
-            <h3>Medical history</h3>
-            <p>X-rays, treatment notes, prescriptions, and uploaded documents.</p>
-            <strong>Last update: today</strong>
-          </article>
-
-          <article class="summary-card summary-card-accent">
-            <div class="summary-card-top">
-              <span class="summary-kicker">Clinical services</span>
-              <span class="summary-badge">04</span>
-            </div>
-            <h3>Active care options</h3>
-            <p>Cleaning, whitening, braces, and tailored oral maintenance plans.</p>
-            <strong>Premium guidance available</strong>
-          </article>
-        </section>
-
-        <section class="content-card appointments-card">
-          <div class="section-head">
-            <div>
-              <span class="eyebrow">Schedule</span>
-              <h2>Upcoming appointments</h2>
-            </div>
-            <a href="javascript:void(0)">View all</a>
-          </div>
-
-          <div class="appointment-list">
-            <article class="appointment-item featured-appointment">
-              <div class="appointment-date-chip">
-                <span>APR</span>
-                <strong>02</strong>
-              </div>
-
-              <div class="appointment-main">
-                <div class="appointment-headline">
-                  <h3>Orthodontic Adjustment</h3>
-                  <span class="appointment-status">Priority visit</span>
-                </div>
-
-                <div class="appointment-meta">
-                  <span>Dr. Lee Sung-Kyung</span>
-                  <span>2:30 PM to 3:30 PM</span>
-                  <span>Chairside review and adjustment</span>
-                </div>
-              </div>
-
-              <div class="appointment-actions">
-                <button class="primary-action-btn" type="button">View details</button>
-              </div>
-            </article>
-
-            <article class="appointment-item">
-              <div class="appointment-date-chip appointment-date-chip-muted">
-                <span>APR</span>
-                <strong>12</strong>
-              </div>
-
-              <div class="appointment-main">
-                <div class="appointment-headline">
-                  <h3>Dental Cleaning Session</h3>
-                  <span class="appointment-status appointment-status-soft">Standard care</span>
-                </div>
-
-                <div class="appointment-meta">
-                  <span>Dr. Ju Ji-Hoon</span>
-                  <span>10:00 AM to 10:45 AM</span>
-                  <span>Preventive hygiene and polish</span>
-                </div>
-              </div>
-
-              <div class="appointment-actions secondary-actions">
-                <button class="ghost-btn cancel-btn" type="button">Cancel</button>
-                <button class="ghost-btn" type="button">Reschedule</button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="bottom-layout">
-          <article class="content-card treatment-care-card">
-            <div class="section-head">
-              <div>
-                <span class="eyebrow">Treatment progress</span>
-                <h2>Progress and prescriptions</h2>
-              </div>
-            </div>
-
-            <div class="treatment-board">
-              <div class="treatment-progress-wrap">
-                <div class="treatment-progress-top">
-                  <div class="treatment-progress-copy">
-                    <span>Alignment phase</span>
-                    <h3>Steady progress toward your final adjustment</h3>
-                    <p>3 of 4 visits completed with healthy movement and stable bite improvement.</p>
-                  </div>
-                  <div class="treatment-progress-value">
-                    <small>Overall progress</small>
-                    <strong>75%</strong>
-                  </div>
-                </div>
-
-                <div class="treatment-progress-bar">
-                  <div class="treatment-progress-fill" style="width: 75%;"></div>
-                </div>
-
-                <div class="treatment-progress-meta">
-                  <div class="progress-meta-chip">
-                    <span class="progress-meta-label">Current cycle</span>
-                    <strong>Visit 3 of 4</strong>
-                  </div>
-                  <div class="progress-meta-chip">
-                    <span class="progress-meta-label">Next review</span>
-                    <strong>Final adjustment this month</strong>
-                  </div>
-                  <div class="progress-meta-chip">
-                    <span class="progress-meta-label">Status</span>
-                    <strong>On track</strong>
-                  </div>
-                </div>
-              </div>
-
-              <div class="treatment-care-layout">
-                <div class="care-column prescription-column">
-                  <div class="mini-head">
-                    <span class="mini-kicker">Medication log</span>
-                    <h3 class="mini-title">Recent prescriptions</h3>
-                  </div>
-
-                  <div class="prescription-list">
-                    <div class="prescription-item">
-                      <div class="prescription-date">26 Oct, 2023</div>
-                      <div class="prescription-copy">
-                        <strong>Amoxicillin 500mg</strong>
-                        <small>Take after meals.</small>
-                      </div>
-                      <div class="prescription-side">
-                        <span class="prescription-tag">Antibiotic</span>
-                        <span class="tile-meta">3 days left</span>
-                      </div>
-                    </div>
-
-                    <div class="prescription-item">
-                      <div class="prescription-date">26 Oct, 2023</div>
-                      <div class="prescription-copy">
-                        <strong>Ibuprofen 400mg</strong>
-                        <small>Use for pain management.</small>
-                      </div>
-                      <div class="prescription-side">
-                        <span class="prescription-tag">Relief</span>
-                        <span class="tile-meta">2x daily</span>
-                      </div>
-                    </div>
-
-                    <div class="prescription-item">
-                      <div class="prescription-date">26 Oct, 2023</div>
-                      <div class="prescription-copy">
-                        <strong>Chlorhexidine</strong>
-                        <small>Mouthwash for daily aftercare.</small>
-                      </div>
-                      <div class="prescription-side">
-                        <span class="prescription-tag">Aftercare</span>
-                        <span class="tile-meta">7 day cycle</span>
-                      </div>
-                    </div>
-
-                    <div class="prescription-item">
-                      <div class="prescription-date">27 Oct, 2023</div>
-                      <div class="prescription-copy">
-                        <strong>Paracetamol 500mg</strong>
-                        <small>For mild discomfort when needed.</small>
-                      </div>
-                      <div class="prescription-side">
-                        <span class="prescription-tag">Comfort</span>
-                        <span class="tile-meta">As needed</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-        </section>
-      </section>
-
-      <aside class="dashboard-right-panel">
-        <div class="patient-card">
-          <div class="patient-avatar-wrap">
-            <div class="patient-avatar">M</div>
-          </div>
-
-          <span class="eyebrow">Patient profile</span>
-          <h3>Mark Anthony</h3>
-
-          <div class="patient-stats">
-            <div>
-              <span>Status</span>
-              <strong class="stat-positive">Active</strong>
-            </div>
-            <div>
-              <span>Upcoming</span>
-              <strong>2</strong>
-            </div>
-            <div>
-              <span>Records</span>
-              <strong>12</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="care-tips-card premium-tips-card">
-          <div class="tips-header">
-            <div class="tips-icon-wrap" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 21c-4.4-3.4-7-6.2-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 11c0 3.8-2.6 6.6-7 10z"/></svg>
-            </div>
-
-            <div class="tips-header-copy">
-              <span class="eyebrow">Smile care tips</span>
-            </div>
-          </div>
-
-          <div class="tips-list">
-            <div class="tip-row">
-              <span class="tip-dot"></span>
-              <span>Drink more water daily to support enamel and gum health.</span>
-            </div>
-
-            <div class="tip-row">
-              <span class="tip-dot"></span>
-              <span>Brush for two full minutes twice a day.</span>
-            </div>
-
-            <div class="tip-row">
-              <span class="tip-dot"></span>
-              <span>Avoid very hard foods after orthodontic treatment.</span>
-            </div>
-
-            <div class="tip-row">
-              <span class="tip-dot"></span>
-              <span>Follow your dentist's aftercare instructions consistently.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="quick-links">
-          <a class="quick-link" href="javascript:void(0)">
-            <span class="quick-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>
+    <section class="dashboard-top-grid">
+      <article class="top-card top-card-appointment">
+        <div class="top-card-head">
+          <div class="top-card-title">
+            <span class="top-card-icon top-card-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3v3M17 3v3M4 8h16" />
+                <rect x="4" y="5" width="16" height="15" rx="3" ry="3" />
+              </svg>
             </span>
-            <div>
-              <strong>Open records</strong>
-              <small>View treatment history and clinical files</small>
+          </div>
+        </div>
+
+        <div class="top-card-body">
+          <div class="top-card-copy">
+            <h3>Next Appointment</h3>
+            <h2>Apr 21 &bull; 2:30 PM</h2>
+            <p>Dr. Lee</p>
+            <small>Orthodontic Adjustment</small>
+          </div>
+        </div>
+
+        <a class="card-action-btn" routerLink="/my-appointments">View Details</a>
+      </article>
+
+      <article class="top-card top-card-progress">
+        <div class="top-card-head">
+          <div class="top-card-title">
+            <span class="top-card-icon top-card-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 6V3M16 6V3M4 10h16" />
+                <rect x="4" y="6" width="16" height="14" rx="4" />
+                <path d="M9 14l2 2 4-5" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="top-card-body">
+          <div class="top-card-copy">
+            <h3>Treatment Progress</h3>
+            <h2>75% Complete</h2>
+            <div class="progress-bar" aria-label="Treatment progress">
+              <div class="progress-fill" style="width: 75%;"></div>
             </div>
+            <small>Final Adjustment Phase</small>
+          </div>
+        </div>
+
+        <a class="card-action-btn" routerLink="/patient-treatment-progress">View Progress</a>
+      </article>
+
+      <article class="top-card top-card-notifications">
+        <div class="top-card-head">
+          <div class="top-card-title">
+            <span class="top-card-icon top-card-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
+                <path d="M10 18a2 2 0 0 0 4 0" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="top-card-body">
+          <div class="top-card-copy">
+            <h3>Notifications</h3>
+            <h2>2 New Updates</h2>
+            <ul class="notification-preview-list">
+              <li>Appointment Confirmed</li>
+              <li>Reminder Sent</li>
+            </ul>
+          </div>
+        </div>
+
+        <a class="card-action-btn" routerLink="/patient-notifications">View All</a>
+      </article>
+
+      <article class="top-card top-card-tip">
+        <div class="top-card-head">
+          <div class="top-card-title">
+            <span class="top-card-icon top-card-icon-box top-card-icon-box-tip" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3a6 6 0 0 0-4 10.5c1.2 1 2 2.2 2.2 3.5h3.6c.2-1.3 1-2.5 2.2-3.5A6 6 0 0 0 12 3z" />
+                <path d="M10 20h4M10.5 17.5h3" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="top-card-body">
+          <div class="top-card-copy">
+            <h3>Dental Tip</h3>
+            <h2>Brush for 2 minutes, twice a day.</h2>
+            <p>Healthy habits lead to a brighter smile!</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="dashboard-content-grid">
+      <article class="panel-card appointments-panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="top-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 8v5l3 2" />
+              </svg>
+            </span>
+            <strong>Upcoming Appointments</strong>
+          </div>
+        </div>
+
+        <div class="appointment-list">
+          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
+            <div class="appointment-date">
+              <span>APR</span>
+              <strong>21</strong>
+            </div>
+
+            <div class="appointment-info">
+              <strong>Orthodontic Adjustment</strong>
+              <span>2:30 PM - 3:30 PM</span>
+              <small>Dr. Lee Sung-Kyung</small>
+            </div>
+
+            <span class="status-pill confirmed">Confirmed</span>
+          </article>
+
+          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
+            <div class="appointment-date">
+              <span>MAY</span>
+              <strong>08</strong>
+            </div>
+
+            <div class="appointment-info">
+              <strong>Progress Review</strong>
+              <span>10:00 AM - 10:45 AM</span>
+              <small>Dr. Lee Sung-Kyung</small>
+            </div>
+
+            <span class="status-pill scheduled">Scheduled</span>
+          </article>
+
+          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
+            <div class="appointment-date">
+              <span>MAY</span>
+              <strong>29</strong>
+            </div>
+
+            <div class="appointment-info">
+              <strong>Cleaning &amp; Checkup</strong>
+              <span>1:00 PM - 2:00 PM</span>
+              <small>Dr. Kim</small>
+            </div>
+
+            <span class="status-pill scheduled">Scheduled</span>
+          </article>
+        </div>
+
+        <a class="panel-footer-link" routerLink="/my-appointments">View All Appointments</a>
+      </article>
+
+      <article class="panel-card tools-panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="top-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 12h6V6H4zM14 6h6v6h-6zM4 20h6v-6H4zM14 20h6v-6h-6z" />
+              </svg>
+            </span>
+            <strong>Quick Actions</strong>
+          </div>
+        </div>
+
+        <div class="tool-grid">
+          <a class="tool-card" routerLink="/patient-medical-vault">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                <path d="M15 3v4h4" />
+              </svg>
+            </span>
+            <strong>Medical Vault</strong>
+            <small>View your records</small>
           </a>
 
-          <a class="quick-link" href="javascript:void(0)">
-            <span class="quick-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M7 3h2v2h6V3h2v2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2z"/><path d="M8 11h8M8 15h5"/></svg>
+          <a class="tool-card" routerLink="/patient-treatment-progress">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 16l4-5 3 3 5-7 2 2" />
+              </svg>
             </span>
-            <div>
-              <strong>Book follow-up</strong>
-              <small>Secure your next review visit</small>
-            </div>
+            <strong>Treatment Progress</strong>
+            <small>Track your smile journey</small>
           </a>
 
-          <a class="quick-link" href="javascript:void(0)">
-            <span class="quick-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1.2 1.2 0 0 1 1.2-.3 12 12 0 0 0 3.8.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.4a1 1 0 0 1 1 1 12 12 0 0 0 .6 3.8 1.2 1.2 0 0 1-.3 1.2z"/></svg>
+          <a class="tool-card" routerLink="/patient-profile">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="3" />
+                <path d="M6 19c1.5-3 4-4.5 6-4.5S16.5 16 18 19" />
+              </svg>
             </span>
-            <div>
-              <strong>Contact clinic</strong>
-              <small>Reach the front desk quickly</small>
-            </div>
+            <strong>Profile</strong>
+            <small>Update your information</small>
+          </a>
+
+          <a class="tool-card" routerLink="/patient-notifications">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
+                <path d="M10 18a2 2 0 0 0 4 0" />
+              </svg>
+            </span>
+            <strong>Notifications</strong>
+            <small>Stay in the loop</small>
+          </a>
+
+          <a class="tool-card" routerLink="/booking">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3v3M17 3v3M4 8h16" />
+                <rect x="4" y="5" width="16" height="15" rx="3" ry="3" />
+                <path d="M12 11v6M9 14h6" />
+              </svg>
+            </span>
+            <strong>Book Appointment</strong>
+            <small>Schedule your next visit</small>
+          </a>
+
+          <a class="tool-card" routerLink="/patient-help-center">
+            <span class="tool-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-.9.8-1.7 1.3-1.7 2.7" />
+                <circle cx="12" cy="17" r="1" />
+                <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z" />
+              </svg>
+            </span>
+            <strong>Help Center</strong>
+            <small>Get support &amp; answers</small>
           </a>
         </div>
+      </article>
+    </section>
 
-        <div class="promo-card">
-          <span class="promo-kicker">Personal care reminder</span>
-          <h4>Keep your smile on schedule</h4>
-          <p>
-            Reserve your next visit early and stay aligned with your treatment milestones.
-          </p>
-          <button class="primary-action-btn" type="button">Book now</button>
+    <section class="help-banner">
+      <div class="help-banner-copy">
+        <div class="help-banner-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M31 10c-5.7 0-10 3.4-10 9.2 0 5.6 3.8 9.6 6.5 14.2 2.5 4.3 3.2 9.6 3.5 15.6h2c.3-6 1-11.3 3.5-15.6C39.2 28.8 43 24.8 43 19.2 43 13.4 38.7 10 33 10h-2z" />
+          </svg>
         </div>
 
-        <div class="right-legal-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms</a>
+        <div>
+          <strong>We&rsquo;re Here to Help You Smile!</strong>
+          <p>Have questions about your treatment? Call us at (555) 123-4567</p>
         </div>
-      </aside>
-    </div>
+      </div>
+
+      <a class="help-banner-btn" routerLink="/patient-contact">Contact Clinic</a>
+    </section>
   </main>
 </div>
