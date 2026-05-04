@@ -5,27 +5,30 @@
     <section class="profile-shell">
       <header class="page-topbar">
         <div class="page-copy">
-          <span class="page-kicker">Patient Profile</span>
           <h1>My Profile</h1>
           <p>Manage your information and account settings.</p>
         </div>
 
         <div class="topbar-profile">
-          <button type="button" class="alert-btn" aria-label="Notifications">
+          <button
+            class="header-icon-btn"
+            type="button"
+            aria-label="Notifications"
+            routerLink="/patient-notifications">
             <svg viewBox="0 0 24 24">
-              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
               <path d="M10 18a2 2 0 0 0 4 0" />
             </svg>
-            <span class="alert-dot"></span>
+            <span class="header-icon-dot"></span>
           </button>
 
-          <div class="profile-chip">
-            <div class="profile-avatar-small" aria-hidden="true">{{ initials }}</div>
-            <div class="profile-copy">
+          <a class="header-user" routerLink="/patient-profile">
+            <div class="header-avatar" aria-hidden="true">{{ initials }}</div>
+            <div class="header-user-copy">
               <strong>{{ profile.fullName }}</strong>
               <span>Patient ID: {{ profile.patientId }}</span>
             </div>
-          </div>
+          </a>
         </div>
       </header>
 
@@ -33,7 +36,14 @@
         <div class="hero-main">
           <div class="hero-identity">
             <div class="hero-primary">
-              <div class="profile-avatar-large">{{ initials }}</div>
+              <div class="profile-avatar-large-wrap">
+                <div class="profile-avatar-large" *ngIf="!avatarUrl">{{ initials }}</div>
+                <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile photo" class="profile-avatar-large profile-avatar-img" />
+                <label class="avatar-upload-btn" title="Change photo">
+                  <input type="file" accept="image/*" (change)="onAvatarSelected($event)" style="display:none" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </label>
+              </div>
 
               <div class="hero-copy">
                 <span class="hero-kicker">Profile Overview</span>

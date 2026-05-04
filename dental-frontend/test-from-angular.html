@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test from Angular Port</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .log { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; white-space: pre-wrap; font-family: monospace; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test from Angular Dev Server Port</h1>
+    <p>This tests if CORS is working when called from the Angular port (4200)</p>
+    <button onclick="testBooking()">Test Booking from Port 4200</button>
+    <div id="log" class="log"></div>
+
+    <script>
+        function log(msg, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+            logDiv.innerHTML += `<span class="${className}">${msg}</span>\n`;
+        }
+
+        async function testBooking() {
+            log('Testing from Angular port...');
+            log('Current URL: ' + window.location.href);
+            
+            const data = {
+                patient_id: 1,
+                full_name: 'Test from Angular Port',
+                phone: '09123456789',
+                email: 'test@test.com',
+                treatment: 'General Dentistry',
+                services: ['Test'],
+                appointment_date: '2026-05-20',
+                appointment_time: '10:00',
+                duration_minutes: 60,
+                notes: 'Test from port 4200'
+            };
+
+            try {
+                log('Sending request to http://localhost:3000/add-appointment...');
+                const response = await fetch('http://localhost:3000/add-appointment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                log(`Status: ${response.status}`);
+                const result = await response.json();
+                log('Response: ' + JSON.stringify(result, null, 2));
+
+                if (response.ok) {
+                    log('✓ SUCCESS from Angular port!', 'success');
+                } else {
+                    log('✗ Failed', 'error');
+                }
+            } catch (error) {
+                log('✗ Error: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

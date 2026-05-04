@@ -39,21 +39,6 @@
         </div>
       </section>
 
-      <section class="cards-grid">
-        <article class="support-card" *ngFor="let card of supportCards">
-          <div class="support-icon" aria-hidden="true">
-            <svg [attr.viewBox]="card.iconViewBox">
-              <path *ngFor="let path of card.iconPaths" [attr.d]="path"></path>
-            </svg>
-          </div>
-          <div>
-            <h2>{{ card.title }}</h2>
-            <p>{{ card.description }}</p>
-            <a [routerLink]="card.route">Open Page</a>
-          </div>
-        </article>
-      </section>
-
       <section class="content-grid">
         <section class="faq-card">
           <div class="section-head">
@@ -62,9 +47,15 @@
           </div>
 
           <div class="faq-list">
-            <article class="faq-row" *ngFor="let item of faqs">
-              <span>{{ item }}</span>
-              <strong>+</strong>
+            <article
+              class="faq-row"
+              *ngFor="let item of faqs; let i = index"
+              [class.open]="activeFaqIndex === i">
+              <button type="button" class="faq-question" (click)="toggleFaq(i)">
+                <span>{{ item.question }}</span>
+                <strong aria-hidden="true">{{ activeFaqIndex === i ? '-' : '+' }}</strong>
+              </button>
+              <p class="faq-answer" *ngIf="activeFaqIndex === i">{{ item.answer }}</p>
             </article>
           </div>
         </section>
@@ -88,6 +79,96 @@
             </article>
           </div>
         </aside>
+      </section>
+
+      <section class="legal-hub-card" aria-labelledby="staff-legal-title">
+        <div class="legal-hub-head">
+          <div>
+            <h2 id="staff-legal-title">Privacy Policy & Terms</h2>
+            <p>Review staff portal policies for patient data, account access, and clinic workflow responsibilities.</p>
+          </div>
+
+          <div class="legal-jump-links" aria-label="Staff policy shortcuts">
+            <button
+              type="button"
+              [class.active]="activeLegalSection === 'privacy-policy'"
+              (click)="showLegalSection('privacy-policy')">
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              [class.active]="activeLegalSection === 'terms-of-use'"
+              (click)="showLegalSection('terms-of-use')">
+              Terms of Use
+            </button>
+          </div>
+        </div>
+
+        <div class="legal-grid">
+          <article
+            class="legal-panel"
+            id="privacy-policy"
+            *ngIf="activeLegalSection === 'privacy-policy'">
+            <div class="legal-panel-head">
+              <div class="legal-icon shield" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4 19 7.5v4.8c0 4.1-2.7 7.6-7 8.7-4.3-1.1-7-4.6-7-8.7V7.5Z" />
+                  <path d="M9.5 12.5 11.2 14 14.8 10.5" />
+                </svg>
+              </div>
+              <div>
+                <h3>Privacy Policy</h3>
+                <p>How staff should access, protect, and report concerns about patient portal information.</p>
+              </div>
+            </div>
+
+            <div class="legal-point-list">
+              <article class="legal-point" *ngFor="let point of privacyPoints">
+                <div class="legal-point-icon" [ngClass]="point.tone" aria-hidden="true">
+                  <svg [attr.viewBox]="point.iconViewBox">
+                    <path *ngFor="let path of point.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <div>
+                  <strong>{{ point.title }}</strong>
+                  <p>{{ point.description }}</p>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article
+            class="legal-panel"
+            id="terms-of-use"
+            *ngIf="activeLegalSection === 'terms-of-use'">
+            <div class="legal-panel-head">
+              <div class="legal-icon document" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z" />
+                  <path d="M15 3.5v4h4M9 12h6M9 16h4" />
+                </svg>
+              </div>
+              <div>
+                <h3>Terms of Use</h3>
+                <p>The basic rules for staff portal use, scheduling decisions, and account responsibility.</p>
+              </div>
+            </div>
+
+            <div class="legal-point-list">
+              <article class="legal-point" *ngFor="let point of termsPoints">
+                <div class="legal-point-icon" [ngClass]="point.tone" aria-hidden="true">
+                  <svg [attr.viewBox]="point.iconViewBox">
+                    <path *ngFor="let path of point.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <div>
+                  <strong>{{ point.title }}</strong>
+                  <p>{{ point.description }}</p>
+                </div>
+              </article>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="help-banner">

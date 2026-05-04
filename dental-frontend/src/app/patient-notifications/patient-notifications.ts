@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
+import { ApiService } from '../services/api.service';
+import { AuthService } from '../services/auth.service';
 
 type NotificationFilterKey =
   | 'all'
@@ -75,7 +77,7 @@ interface NotificationPreference {
   templateUrl: './patient-notifications.html',
   styleUrl: './patient-notifications.css',
 })
-export class PatientNotificationsComponent {
+export class PatientNotificationsComponent implements OnInit {
   protected selectedFilter: NotificationFilterKey = 'all';
   protected activeMenuId: string | null = null;
   protected toastMessage = '';
@@ -248,7 +250,39 @@ export class PatientNotificationsComponent {
     },
   ];
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router, private api: ApiService, private auth: AuthService) {}
+
+  ngOnInit() {
+    const user = this.auth.getUser();
+    if (!user?.id) return;
+    this.api.getNotifications(user.id).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          // Map real DB notifications into the NotificationItem shape
+          const dbNotifs: NotificationItem[] = data.map((n: any) => ({
+            id:          String(n.id),
+            section:     n.is_read ? 'recent' : 'needs-action',
+            filter:      'appointments' as const,
+            type:        'appointment' as const,
+            title:       n.title,
+            subtitle:    new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            description: n.detail,
+            status:      (n.level === 'Update' ? 'approved' : n.level === 'Warning' ? 'pending' : 'info') as NotificationStatus,
+            isRead:      n.is_read,
+            createdAt:   new Date(n.created_at),
+            badge:       n.title,
+            tone:        (n.level === 'Update' ? 'green' : n.level === 'Warning' ? 'orange' : 'blue') as NotificationTone,
+            actions:     [{ label: 'View Appointment', kind: 'view-appointment' as const, style: 'primary' as const }],
+            iconViewBox: '0 0 24 24',
+            iconPaths:   ['M7 3v3M17 3v3M4 8h16', 'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z'],
+          }));
+          // Prepend real notifications, keep static ones at the end
+          this.notifications = [...dbNotifs, ...this.notifications.filter(n => !n.id.startsWith('NTF-00'))];
+        }
+      },
+      error: () => {} // keep static fallback on error
+    });
+  }
 
   protected setFilter(filter: NotificationFilterKey): void {
     this.selectedFilter = filter;

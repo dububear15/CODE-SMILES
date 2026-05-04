@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { NotificationKey, PatientProfile } from './patient-profile.models';
 import { PatientProfileStore } from './patient-profile.store';
+import { AvatarService } from '../services/avatar.service';
 
 interface HeroMetaItem {
   label: string;
@@ -37,12 +38,35 @@ interface NotificationItem {
 export class PatientProfileComponent {
   protected profile: PatientProfile;
   protected toastMessage = '';
+  protected avatarUrl = '';
+  protected isUploadingAvatar = false;
 
   constructor(
     private readonly router: Router,
     private readonly profileStore: PatientProfileStore,
+    private readonly avatarSvc: AvatarService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
     this.profile = this.profileStore.getProfile();
+    this.avatarUrl = this.avatarSvc.getAvatar();
+  }
+
+  protected onAvatarSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    if (!file) return;
+    this.isUploadingAvatar = true;
+    this.avatarSvc.uploadFromFile(file).then(url => {
+      this.avatarUrl = url;
+      this.toastMessage = 'Profile photo updated!';
+      this.isUploadingAvatar = false;
+      this.cdr.detectChanges();
+      setTimeout(() => { this.toastMessage = ''; this.cdr.detectChanges(); }, 2500);
+    }).catch(err => {
+      this.toastMessage = typeof err === 'string' ? err : 'Upload failed.';
+      this.isUploadingAvatar = false;
+      this.cdr.detectChanges();
+      setTimeout(() => { this.toastMessage = ''; this.cdr.detectChanges(); }, 3000);
+    });
   }
 
   protected readonly notificationItems: NotificationItem[] = [

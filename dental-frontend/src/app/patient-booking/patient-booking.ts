@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PatientAppointmentStore } from '../patient-appointments/patient-appointment-store';
+import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
+import { ApiService } from '../services/api.service';
+import { AuthService } from '../services/auth.service';
 
 interface TimeSlot {
   time: string;
@@ -17,7 +20,7 @@ interface ServiceDetail {
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PatientSidebarComponent],
   templateUrl: './patient-booking.html',
   styleUrls: ['./patient-booking.css']
 })
@@ -25,6 +28,11 @@ export class PatientBookingComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly appointmentStore = inject(PatientAppointmentStore);
+  private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
+
+  isSubmitting = false;
+  submitError = '';
 
   currentStep: any = 1;
   selectedCategory: string = '';
@@ -44,8 +52,14 @@ export class PatientBookingComponent implements OnInit {
   calendarDays: any[] = [];
 
   bookingConfirmed: boolean = false;
+  showSuccessModal: boolean = false;
   isRescheduleFlow: boolean = false;
+  wasRescheduleFlow: boolean = false; // tracks if the completed booking was a reschedule
   rescheduleAppointmentId: string | null = null;
+
+  showCancelConfirm: boolean = false;
+  showLeaveConfirm: boolean = false;
+  pendingNavigationUrl: string = '';
 
   confirmedBooking = {
     appointmentId: '',
@@ -61,7 +75,8 @@ export class PatientBookingComponent implements OnInit {
     email: '',
     phone: '',
     age: '',
-    notes: ''
+    notes: '',
+    rescheduleReason: ''
   };
 
   serviceMap: { [key: string]: ServiceDetail[] } = {
@@ -72,7 +87,7 @@ export class PatientBookingComponent implements OnInit {
       { name: 'Tooth Fillings', duration: 60 },
       { name: 'Fluoride Treatment', duration: 15 },
       { name: 'Dental Sealants', duration: 30 },
-      { name: 'Simple Extraction', duration: 45 },
+      { name: 'Simple Tooth Extraction', duration: 45 },
       { name: 'Emergency Dental Care', duration: 60 }
     ],
     'Cosmetic Arts': [
@@ -92,7 +107,7 @@ export class PatientBookingComponent implements OnInit {
       { name: 'Orthodontic Consultation', duration: 30 }
     ],
     'Oral Surgery': [
-      { name: 'Surgical Extraction', duration: 60 },
+      { name: 'Surgical Tooth Extraction', duration: 60 },
       { name: 'Wisdom Tooth Removal', duration: 90 },
       { name: 'Cyst Removal', duration: 60 },
       { name: 'Minor Oral Surgery', duration: 45 },
@@ -115,11 +130,29 @@ export class PatientBookingComponent implements OnInit {
     ]
   };
 
+  get confirmedServiceNames(): string {
+    return this.confirmedBooking.services.map(s => s.name).join(', ');
+  }
+
+  get hasBookingStarted(): boolean {
+    return this.selectedServices.length > 0 || this.currentStep > 1;
+  }
+
   ngOnInit() {
     this.generateCalendar();
     this.route.queryParamMap.subscribe((params) => {
       this.handleRescheduleState(params.get('reschedule'));
     });
+    this.prefillPatientDetails();
+  }
+
+  private prefillPatientDetails() {
+    const user = this.auth.getUser();
+    if (user) {
+      this.patientDetails.firstName = user.first_name || '';
+      this.patientDetails.lastName = user.last_name || '';
+      this.patientDetails.email = user.email || '';
+    }
   }
 
   get currentSubServices() {
@@ -153,18 +186,28 @@ export class PatientBookingComponent implements OnInit {
   }
 
   get canProceedToReview(): boolean {
-    return (
+    const baseValid = (
       this.isFirstNameValid &&
       this.isLastNameValid &&
       this.isEmailValid &&
       this.isPhoneValid &&
       this.isAgeValid
     );
+    // Reschedule flow requires a reason
+    if (this.isRescheduleFlow) {
+      return baseValid && this.patientDetails.rescheduleReason.trim().length >= 5;
+    }
+    return baseValid;
+  }
+
+  get stepNumber(): number {
+    if (this.currentStep === 1 || this.currentStep === 1.5) return 1;
+    return this.currentStep;
   }
 
   selectCategory(category: string) {
     this.selectedCategory = category;
-    this.currentStep = 1.5;
+    // Don't auto-advance — user clicks Continue button
   }
 
   toggleService(serviceName: string) {
@@ -190,7 +233,6 @@ export class PatientBookingComponent implements OnInit {
 
     if (this.selectedDate) {
       this.availableSlots = this.generateAvailableSlots(this.selectedDate);
-
       if (!this.availableSlots.some(slot => slot.time === this.selectedTime && slot.slotsLeft > 0)) {
         this.selectedTime = '';
       }
@@ -213,7 +255,8 @@ export class PatientBookingComponent implements OnInit {
       email: '',
       phone: '',
       age: '',
-      notes: ''
+      notes: '',
+      rescheduleReason: ''
     };
   }
 
@@ -286,7 +329,6 @@ export class PatientBookingComponent implements OnInit {
 
   selectDate(date: string) {
     const dayObj = this.calendarDays.find(d => d.date === date);
-
     if (dayObj && dayObj.isAvailable && !dayObj.isPast && !dayObj.isFullyBooked) {
       this.selectedDate = date;
       this.selectedTime = '';
@@ -329,9 +371,7 @@ export class PatientBookingComponent implements OnInit {
     let hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const suffix = hours >= 12 ? 'PM' : 'AM';
-
     hours = hours % 12 || 12;
-
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${suffix}`;
   }
 
@@ -343,7 +383,6 @@ export class PatientBookingComponent implements OnInit {
     if (start === 16 * 60) return 1;
     if (start === 17 * 60 + 30) return 2;
     if (start === 19 * 60) return 1;
-
     return 2;
   }
 
@@ -355,100 +394,202 @@ export class PatientBookingComponent implements OnInit {
   }
 
   completeBooking() {
-    if (!this.canProceedToReview) {
+    if (this.isSubmitting) return;
+    if (!this.canProceedToReview) return;
+    if (!this.selectedDate || !this.selectedTime || this.selectedSubServices.length === 0) {
+      this.submitError = 'Please complete the service, date, and time before submitting.';
       return;
     }
 
+    const user = this.auth.getUser();
     const fullName = `${this.patientDetails.firstName.trim()} ${this.patientDetails.lastName.trim()}`;
-    const selectedServiceNames = this.selectedSubServices.map((service) => service.name);
+    const selectedServiceNames = this.selectedSubServices.map((s) => s.name);
+    const time24Hour = this.convertTo24Hour(this.selectedTime);
 
-    const appointment = this.rescheduleAppointmentId
-      ? this.appointmentStore.rescheduleAppointment(
-          this.rescheduleAppointmentId,
-          this.selectedDate,
-          this.selectedTime,
-          selectedServiceNames,
-          this.totalSelectedDuration,
-        )
-      : this.appointmentStore.createAppointment({
-          service: this.selectedCategory,
-          category: this.selectedCategory,
-          time: this.selectedTime,
-          date: this.selectedDate,
+    const bookingData = {
+      patient_id:       user?.id ?? null,
+      full_name:        fullName,
+      phone:            this.patientDetails.phone.trim(),
+      email:            this.patientDetails.email.trim(),
+      treatment:        this.selectedCategory,
+      services:         selectedServiceNames,
+      appointment_date: this.selectedDate,
+      appointment_time: time24Hour,
+      duration_minutes: this.totalSelectedDuration,
+      notes:            this.patientDetails.notes.trim(),
+    };
+
+    this.isSubmitting = true;
+    this.submitError = '';
+
+    // Use native fetch — bypasses Angular HTTP pipe issues entirely
+    fetch('http://localhost:3000/add-appointment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData),
+    })
+      .then(res => res.json())
+      .then(res => {
+        const appointment = this.appointmentStore.createAppointment({
+          service:         this.selectedCategory,
+          category:        this.selectedCategory,
+          time:            this.selectedTime,
+          date:            this.selectedDate,
           durationMinutes: this.totalSelectedDuration,
-          patientName: fullName,
-          patientEmail: this.patientDetails.email.trim(),
-          patientPhone: this.patientDetails.phone.trim(),
-          patientAge: this.patientDetails.age.toString(),
-          notes: this.patientDetails.notes.trim(),
+          patientName:     fullName,
+          patientEmail:    this.patientDetails.email.trim(),
+          patientPhone:    this.patientDetails.phone.trim(),
+          patientAge:      this.patientDetails.age.toString(),
+          notes:           this.patientDetails.notes.trim(),
           servicesSummary: selectedServiceNames,
         });
 
-    if (!appointment) {
-      return;
+        this.confirmedBooking = {
+          appointmentId: res.id?.toString() ?? appointment.id,
+          fullName,
+          date:     this.selectedDate,
+          time:     this.selectedTime,
+          services: [...this.selectedSubServices],
+        };
+
+        this.wasRescheduleFlow = this.isRescheduleFlow;
+        this.isSubmitting = false;
+        this.isRescheduleFlow = false;
+        this.rescheduleAppointmentId = null;
+        this.resetSelection();
+        this.resetPatientDetails();
+        this.showSuccessModal = true;
+      })
+      .catch(err => {
+        this.isSubmitting = false;
+        this.submitError = 'Booking failed. Please make sure the server is running and try again.';
+        console.error('Booking error:', err);
+      });
+  }
+
+  convertTo24Hour(time12h: string): string {
+    if (!time12h) {
+      return '';
     }
 
-    this.confirmedBooking = {
-      appointmentId: appointment.id,
-      fullName,
-      date: this.selectedDate,
-      time: this.selectedTime,
-      services: [...this.selectedSubServices]
-    };
-
-    this.bookingConfirmed = true;
-    this.currentStep = 1;
-    this.selectedCategory = '';
-    this.isRescheduleFlow = false;
-    this.rescheduleAppointmentId = null;
-
-    this.resetSelection();
-    this.resetPatientDetails();
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    
+    let hour = parseInt(hours, 10);
+    
+    // Convert 12-hour to 24-hour format
+    if (modifier === 'AM') {
+      if (hour === 12) {
+        hour = 0; // 12 AM is 00:XX
+      }
+    } else if (modifier === 'PM') {
+      if (hour !== 12) {
+        hour += 12; // 1 PM is 13, 2 PM is 14, etc.
+      }
+      // 12 PM stays as 12
+    }
+    
+    // Pad hours and minutes with leading zeros
+    const paddedHours = String(hour).padStart(2, '0');
+    const paddedMinutes = String(minutes).padStart(2, '0');
+    
+    return `${paddedHours}:${paddedMinutes}`;
   }
 
   startNewBooking() {
+    this.showSuccessModal = false;
     this.bookingConfirmed = false;
     this.currentStep = 1;
     this.selectedCategory = '';
     this.isRescheduleFlow = false;
     this.rescheduleAppointmentId = null;
-
     this.resetSelection();
     this.resetPatientDetails();
     this.resetConfirmedBooking();
   }
 
-  goHome() {
-    this.bookingConfirmed = false;
-    this.currentStep = 1;
-    this.selectedCategory = '';
-    this.isRescheduleFlow = false;
-    this.rescheduleAppointmentId = null;
+  goToDashboardFromModal() {
+    this.showSuccessModal = false;
+    this.bookingConfirmed = true; // Set to show success state before leaving
+    this.router.navigate(['/patient-dashboard']);
+  }
 
-    this.resetSelection();
-    this.resetPatientDetails();
-    this.resetConfirmedBooking();
+  goToAppointmentsFromModal() {
+    this.showSuccessModal = false;
+    this.bookingConfirmed = true; // Set to show success state before leaving
+    this.router.navigate(['/patient-appointments']);
+  }
 
-    this.router.navigate(['/']);
+  goToDashboard() {
+    this.router.navigate(['/patient-dashboard']);
   }
 
   goToAppointments() {
     this.router.navigate(['/patient-appointments']);
   }
 
+  /** Called by "← Back to Dashboard" button */
+  requestBackToDashboard() {
+    if (this.hasBookingStarted && !this.bookingConfirmed) {
+      this.pendingNavigationUrl = '/patient-dashboard';
+      this.showLeaveConfirm = true;
+    } else {
+      this.router.navigate(['/patient-dashboard']);
+    }
+  }
+
+  /** Called by "Cancel Booking" buttons */
+  requestCancel() {
+    if (this.hasBookingStarted && !this.bookingConfirmed) {
+      this.showCancelConfirm = true;
+    } else {
+      this.doCancel();
+    }
+  }
+
+  confirmLeave() {
+    this.showLeaveConfirm = false;
+    this.doFullReset();
+    this.router.navigate([this.pendingNavigationUrl || '/patient-dashboard']);
+  }
+
+  dismissLeave() {
+    this.showLeaveConfirm = false;
+    this.pendingNavigationUrl = '';
+  }
+
+  confirmCancel() {
+    this.showCancelConfirm = false;
+    this.doCancel();
+  }
+
+  dismissCancel() {
+    this.showCancelConfirm = false;
+  }
+
+  private doCancel() {
+    this.doFullReset();
+  }
+
+  private doFullReset() {
+    this.bookingConfirmed = false;
+    this.currentStep = 1;
+    this.selectedCategory = '';
+    this.isRescheduleFlow = false;
+    this.rescheduleAppointmentId = null;
+    this.resetSelection();
+    this.resetPatientDetails();
+    this.resetConfirmedBooking();
+  }
+
   private handleRescheduleState(appointmentId: string | null): void {
     this.isRescheduleFlow = false;
     this.rescheduleAppointmentId = null;
 
-    if (!appointmentId) {
-      return;
-    }
+    if (!appointmentId) return;
 
     const appointment = this.appointmentStore.getAppointmentById(appointmentId);
-
-    if (!appointment) {
-      return;
-    }
+    if (!appointment) return;
 
     this.isRescheduleFlow = true;
     this.rescheduleAppointmentId = appointment.id;
@@ -466,6 +607,7 @@ export class PatientBookingComponent implements OnInit {
       phone: appointment.patientPhone,
       age: appointment.patientAge,
       notes: appointment.notes,
+      rescheduleReason: '',
     };
   }
 }

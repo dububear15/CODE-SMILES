@@ -5,26 +5,30 @@
     <section class="vault-shell">
       <header class="vault-topbar">
         <div class="page-copy">
-          <p class="eyebrow">Medical Vault</p>
           <h1>Medical Vault</h1>
           <p>Your secure health records, organized and always accessible.</p>
         </div>
 
         <div class="topbar-profile">
-          <button type="button" class="alert-btn" aria-label="Notifications">
+          <button
+            class="header-icon-btn"
+            type="button"
+            aria-label="Notifications"
+            routerLink="/patient-notifications">
             <svg viewBox="0 0 24 24">
-              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
               <path d="M10 18a2 2 0 0 0 4 0" />
             </svg>
+            <span class="header-icon-dot"></span>
           </button>
 
-          <div class="profile-chip">
-            <div class="profile-avatar" aria-hidden="true">L</div>
-            <div class="profile-copy">
+          <a class="header-user" routerLink="/patient-profile">
+            <div class="header-avatar" aria-hidden="true">L</div>
+            <div class="header-user-copy">
               <strong>{{ patientProfile.name }}</strong>
               <span>Patient ID: {{ patientProfile.id }}</span>
             </div>
-          </div>
+          </a>
         </div>
       </header>
 
@@ -42,46 +46,6 @@
             <small>{{ card.detail }}</small>
           </div>
         </article>
-      </section>
-
-      <section class="health-grid">
-        <article class="panel health-panel">
-          <div class="panel-head">
-            <div>
-              <p class="section-kicker">Health Summary</p>
-            </div>
-          </div>
-
-          <div class="health-stats">
-            <div class="health-stat" *ngFor="let item of healthSummary">
-              <span>{{ item.label }}</span>
-              <strong [ngClass]="'value-' + item.tone">
-                <ng-container *ngIf="item.iconViewBox && item.iconPaths; else plainValue">
-                  <span class="health-inline-icon" aria-hidden="true">
-                    <svg [attr.viewBox]="item.iconViewBox">
-                      <path *ngFor="let path of item.iconPaths" [attr.d]="path"></path>
-                    </svg>
-                  </span>
-                </ng-container>
-                <ng-template #plainValue></ng-template>
-                {{ item.value }}
-              </strong>
-            </div>
-          </div>
-        </article>
-
-        <aside class="panel reminders-panel">
-          <div class="panel-head">
-            <div>
-              <p class="section-kicker">Important Reminders</p>
-              <h2>Important</h2>
-            </div>
-          </div>
-
-          <ul class="reminder-list">
-            <li *ngFor="let item of reminderItems">{{ item }}</li>
-          </ul>
-        </aside>
       </section>
 
       <section class="vault-content">
@@ -232,53 +196,29 @@
             </div>
           </section>
 
-          <section class="panel sidebar-panel">
+          <section class="panel sidebar-panel health-summary-panel">
             <div class="panel-head compact-head">
               <div>
-                <p class="section-kicker">Recently Added</p>
-                <h2>Latest files</h2>
+                <p class="section-kicker">Health Summary</p>
+                <h2>My Health Info</h2>
               </div>
-
-              <button type="button" class="inline-link" (click)="viewAllDocuments()">View All</button>
             </div>
 
-            <div class="recent-list">
-              <button
-                *ngFor="let record of recentRecords"
-                type="button"
-                class="recent-item"
-                (click)="openRecord(record)">
-                <div class="document-icon recent-icon" [ngClass]="record.category" aria-hidden="true">
-                  <svg [attr.viewBox]="record.iconViewBox">
-                    <path *ngFor="let path of record.iconPaths" [attr.d]="path"></path>
-                  </svg>
-                </div>
-
-                <div class="recent-copy">
-                  <strong>{{ record.title }}</strong>
-                  <span>{{ record.date }} &middot; {{ record.uploadedBy }}</span>
-                </div>
-              </button>
-            </div>
-          </section>
-
-          <section class="panel sidebar-panel support-panel">
-            <div class="support-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M8 11a4 4 0 1 1 8 0v2.5a2.5 2.5 0 0 1-2.5 2.5H12" />
-                <path d="M6.5 10.5H5a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h1.5" />
-                <path d="M17.5 10.5H19a2 2 0 0 1 2 2V14a2 2 0 0 1-2 2h-1.5" />
-              </svg>
-            </div>
-
-            <div class="support-copy">
-              <p class="section-kicker">Support</p>
-              <h2>Need help with your records?</h2>
-              <p>
-                If a file is missing, unclear, or needs to be resent, use the request action or
-                contact the clinic support line.
-              </p>
-              <strong>(555) 123-4567</strong>
+            <div class="health-stats sidebar-health-stats">
+              <div class="health-stat" *ngFor="let item of healthSummary">
+                <span>{{ item.label }}</span>
+                <strong [ngClass]="'value-' + item.tone">
+                  <ng-container *ngIf="item.iconViewBox && item.iconPaths; else plainValue">
+                    <span class="health-inline-icon" aria-hidden="true">
+                      <svg [attr.viewBox]="item.iconViewBox">
+                        <path *ngFor="let path of item.iconPaths" [attr.d]="path"></path>
+                      </svg>
+                    </span>
+                  </ng-container>
+                  <ng-template #plainValue></ng-template>
+                  {{ item.value }}
+                </strong>
+              </div>
             </div>
           </section>
         </aside>

@@ -1,0 +1,518 @@
+﻿<div class="staff-billing-page">
+  <app-staff-sidebar></app-staff-sidebar>
+
+  <main class="billing-main">
+
+    <!-- TOPBAR -->
+    <header class="billing-topbar">
+      <div class="topbar-copy">
+        <h1>Billing &amp; Payments</h1>
+        <p>Track invoices, record payments, and manage outstanding balances.</p>
+      </div>
+      <div class="topbar-actions">
+        <a class="topbar-action-btn" routerLink="/staff-patients">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Add New Patient
+        </a>
+        <a class="topbar-action-btn topbar-action-primary" routerLink="/staff-appointments">
+          <svg viewBox="0 0 24 24"><path d="M11 5h2v14h-2z"/><path d="M5 11h14v2H5z"/></svg>
+          Quick Appointment
+        </a>
+      </div>
+    </header>
+
+    <!-- SUMMARY CARDS -->
+    <section class="summary-grid">
+      <article class="summary-card tone-mint">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M13 15h4"/></svg>
+        </div>
+        <div class="summary-copy">
+          <span>Total Revenue</span>
+          <strong>{{ formatPesoPlain(totalRevenue) }}</strong>
+          <small>From paid invoices</small>
+        </div>
+      </article>
+      <article class="summary-card tone-amber">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <div class="summary-copy">
+          <span>Outstanding</span>
+          <strong>{{ formatPesoPlain(totalOutstanding) }}</strong>
+          <small>Unpaid + partial + overdue</small>
+        </div>
+      </article>
+      <article class="summary-card tone-rose">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.74 3h14.92a2 2 0 0 0 1.74-3L13.74 3.9a2 2 0 0 0-3.48 0Z"/></svg>
+        </div>
+        <div class="summary-copy">
+          <span>Overdue</span>
+          <strong>{{ overdueCount }} invoice{{ overdueCount !== 1 ? 's' : '' }}</strong>
+          <small>Require follow-up</small>
+        </div>
+      </article>
+      <article class="summary-card tone-violet">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="summary-copy">
+          <span>Partial Payments</span>
+          <strong>{{ partialCount }} invoice{{ partialCount !== 1 ? 's' : '' }}</strong>
+          <small>Balance still due</small>
+        </div>
+      </article>
+    </section>
+
+    <!-- BILLING TABLE CARD -->
+    <section class="billing-card">
+      <div class="billing-card-header">
+        <div class="tab-row">
+          <button type="button" class="tab-btn" *ngFor="let tab of statusTabs"
+            [class.active]="activeTab === tab" (click)="activeTab = tab">
+            {{ tab }}<span class="tab-count">{{ countForTab(tab) }}</span>
+          </button>
+        </div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" class="search-input" placeholder="Search patient, service, invoice…" [(ngModel)]="searchTerm">
+          <button type="button" class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''">&#x2715;</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="billing-table" *ngIf="filtered.length > 0; else emptyState">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Patient</th>
+              <th>Service</th>
+              <th>Dentist</th>
+              <th>Date</th>
+              <th>Due Date</th>
+              <th>Method</th>
+              <th class="num-col">Amount</th>
+              <th class="num-col">Paid</th>
+              <th class="num-col">Balance</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let r of filtered">
+              <tr class="data-row">
+                <td>
+                  <div class="invoice-no">{{ r.invoiceNo }}</div>
+                  <div class="patient-id-tag">{{ r.patientId }}</div>
+                </td>
+                <td>
+                  <div class="patient-cell">
+                    <div class="patient-avatar">{{ r.patient.charAt(0) }}</div>
+                    <span class="patient-name">{{ r.patient }}</span>
+                  </div>
+                </td>
+                <td class="service-cell">{{ r.service }}</td>
+                <td class="muted-cell">{{ r.dentist }}</td>
+                <td class="muted-cell nowrap">{{ r.date }}</td>
+                <td class="nowrap" [class.overdue-date]="isOverdue(r)">
+                  {{ r.dueDate }}
+                  <span class="overdue-flag" *ngIf="isOverdue(r)">Overdue</span>
+                </td>
+                <td>
+                  <span class="method-tag" *ngIf="r.paymentMethod">{{ r.paymentMethod }}</span>
+                  <span class="method-tag method-none" *ngIf="!r.paymentMethod">—</span>
+                </td>
+                <td class="num-col amount-cell">{{ formatPesoPlain(r.amount) }}</td>
+                <td class="num-col paid-cell">{{ formatPesoPlain(r.amountPaid) }}</td>
+                <td class="num-col balance-cell" [class.zero]="getBalance(r) === 0">
+                  {{ getBalance(r) === 0 ? '—' : formatPesoPlain(getBalance(r)) }}
+                </td>
+                <td>
+                  <div class="status-stack">
+                    <span class="status-badge" [ngClass]="statusClass(r.status)">{{ r.status }}</span>
+                    <span class="status-badge" [ngClass]="waiverBadgeClass(r.waiverStatus)"
+                      *ngIf="r.waiverStatus === 'Pending'">Waiver Pending</span>
+                  </div>
+                </td>
+                <td class="actions-cell">
+                  <!-- VIEW INVOICE -->
+                  <button type="button" class="act-btn act-view" (click)="openInvoice(r)" title="View Invoice">
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    View
+                  </button>
+                  <!-- RECORD PAYMENT -->
+                  <button type="button" class="act-btn act-pay"
+                    *ngIf="r.status === 'Unpaid' || r.status === 'Partial' || r.status === 'Overdue'"
+                    (click)="openPayModal(r)" title="Record Payment">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M13 15h4"/></svg>
+                    Pay
+                  </button>
+                  <!-- PRINT RECEIPT -->
+                  <button type="button" class="act-btn act-receipt"
+                    *ngIf="r.status === 'Paid' || r.amountPaid > 0"
+                    (click)="openReceipt(r)" title="Print Receipt">
+                    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Receipt
+                  </button>
+                  <!-- REQUEST WAIVER -->
+                  <button type="button" class="act-btn act-waiver"
+                    *ngIf="(r.status === 'Unpaid' || r.status === 'Overdue') && r.waiverStatus === 'None'"
+                    (click)="openWaiverModal(r)" title="Request Waiver">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Waiver
+                  </button>
+                  <span class="waiver-pending-tag" *ngIf="r.waiverStatus === 'Pending'">
+                    <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+                    Awaiting Approval
+                  </span>
+                </td>
+              </tr>
+              <tr class="notes-row" *ngIf="r.notes">
+                <td colspan="12">
+                  <div class="notes-inner">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span class="notes-label">Note:</span>
+                    <span class="notes-text">{{ r.notes }}</span>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M13 15h4"/></svg>
+            <p>No {{ activeTab.toLowerCase() }} invoices found.</p>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== INVOICE PANEL (SLIDE-IN) ===== -->
+<div class="panel-overlay" *ngIf="showInvoice" (click)="closeInvoice()">
+  <aside class="invoice-panel" (click)="$event.stopPropagation()">
+
+    <div class="panel-header">
+      <div class="panel-header-left">
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <h3>Invoice Details</h3>
+          <p *ngIf="invoiceRecord">{{ invoiceRecord.invoiceNo }} &mdash; {{ invoiceRecord.patient }}</p>
+        </div>
+      </div>
+      <button type="button" class="panel-close" (click)="closeInvoice()">&#x2715;</button>
+    </div>
+
+    <div class="panel-body" *ngIf="invoiceRecord">
+
+      <!-- CLINIC HEADER -->
+      <div class="inv-clinic-header">
+        <div class="inv-clinic-logo">CS</div>
+        <div>
+          <strong>Code Smiles Dental Clinic</strong>
+          <span>123 Smile Street, Quezon City &bull; (02) 8123-4567</span>
+        </div>
+        <div class="inv-status-wrap">
+          <span class="status-badge" [ngClass]="statusClass(invoiceRecord.status)">{{ invoiceRecord.status }}</span>
+        </div>
+      </div>
+
+      <!-- META ROW -->
+      <div class="inv-meta-grid">
+        <div class="inv-meta-item"><span>Invoice No.</span><strong>{{ invoiceRecord.invoiceNo }}</strong></div>
+        <div class="inv-meta-item"><span>Patient</span><strong>{{ invoiceRecord.patient }}</strong></div>
+        <div class="inv-meta-item"><span>Patient ID</span><strong>{{ invoiceRecord.patientId }}</strong></div>
+        <div class="inv-meta-item"><span>Dentist</span><strong>{{ invoiceRecord.dentist }}</strong></div>
+        <div class="inv-meta-item"><span>Date Issued</span><strong>{{ invoiceRecord.date }}</strong></div>
+        <div class="inv-meta-item" [class.overdue-meta]="isOverdue(invoiceRecord)">
+          <span>Due Date</span>
+          <strong>{{ invoiceRecord.dueDate }}
+            <span class="overdue-flag" *ngIf="isOverdue(invoiceRecord)">Overdue</span>
+          </strong>
+        </div>
+      </div>
+
+      <!-- TREATMENT BREAKDOWN -->
+      <div class="inv-section">
+        <div class="inv-section-title">Treatment Breakdown</div>
+        <table class="inv-line-table">
+          <thead>
+            <tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Discount</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of invoiceRecord.lineItems">
+              <td>{{ item.description }}</td>
+              <td class="tc">{{ item.qty }}</td>
+              <td class="tr">{{ formatPesoPlain(item.unitPrice) }}</td>
+              <td class="tr disc-cell">{{ item.discount > 0 ? '- ' + formatPesoPlain(item.discount) : '—' }}</td>
+              <td class="tr"><strong>{{ formatPesoPlain((item.qty * item.unitPrice) - item.discount) }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="inv-totals">
+          <div class="inv-total-row"><span>Subtotal</span><span>{{ formatPesoPlain(getLineSubtotal(invoiceRecord)) }}</span></div>
+          <div class="inv-total-row disc-row" *ngIf="getLineDiscounts(invoiceRecord) > 0">
+            <span>Total Discount</span><span>- {{ formatPesoPlain(getLineDiscounts(invoiceRecord)) }}</span>
+          </div>
+          <div class="inv-total-row grand-row"><span>Grand Total</span><strong>{{ formatPesoPlain(invoiceRecord.amount) }}</strong></div>
+          <div class="inv-total-row paid-row"><span>Amount Paid</span><strong class="paid-green">{{ formatPesoPlain(invoiceRecord.amountPaid) }}</strong></div>
+          <div class="inv-total-row balance-row"><span>Balance Due</span><strong class="balance-red">{{ formatPesoPlain(getBalance(invoiceRecord)) }}</strong></div>
+        </div>
+      </div>
+
+      <!-- PAYMENT HISTORY -->
+      <div class="inv-section" *ngIf="invoiceRecord.paymentHistory.length > 0">
+        <div class="inv-section-title">Payment History</div>
+        <div class="pay-history-list">
+          <div class="pay-history-row" *ngFor="let ph of invoiceRecord.paymentHistory">
+            <div class="pay-history-dot"></div>
+            <div class="pay-history-body">
+              <div class="pay-history-top">
+                <strong>{{ formatPesoPlain(ph.amount) }}</strong>
+                <span class="method-tag">{{ ph.method }}</span>
+                <span class="pay-history-date">{{ ph.date }}</span>
+              </div>
+              <div class="pay-history-meta">
+                Received by {{ ph.receivedBy }} &bull; Ref: {{ ph.reference }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="inv-section" *ngIf="invoiceRecord.paymentHistory.length === 0">
+        <div class="inv-section-title">Payment History</div>
+        <p class="inv-empty-note">No payments recorded yet.</p>
+      </div>
+
+      <!-- WAIVER INFO -->
+      <div class="inv-section waiver-info-block" *ngIf="invoiceRecord.waiverStatus !== 'None'">
+        <div class="inv-section-title">Waiver Information</div>
+        <div class="waiver-info-row">
+          <span class="status-badge" [ngClass]="waiverBadgeClass(invoiceRecord.waiverStatus)">
+            {{ invoiceRecord.waiverStatus === 'Pending' ? 'Pending Manager Approval' : invoiceRecord.waiverStatus }}
+          </span>
+          <p>{{ invoiceRecord.waiverReason }}</p>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="inv-section" *ngIf="invoiceRecord.notes">
+        <div class="inv-section-title">Staff Notes</div>
+        <p class="inv-notes-text">{{ invoiceRecord.notes }}</p>
+      </div>
+
+    </div>
+
+    <!-- PANEL FOOTER ACTIONS -->
+    <div class="panel-footer" *ngIf="invoiceRecord">
+      <button type="button" class="pf-btn pf-secondary" (click)="closeInvoice()">Close</button>
+      <button type="button" class="pf-btn pf-receipt"
+        *ngIf="invoiceRecord.amountPaid > 0"
+        (click)="openReceipt(invoiceRecord); closeInvoice()">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print Receipt
+      </button>
+      <button type="button" class="pf-btn pf-waiver"
+        *ngIf="(invoiceRecord.status === 'Unpaid' || invoiceRecord.status === 'Overdue') && invoiceRecord.waiverStatus === 'None'"
+        (click)="openWaiverFromInvoice()">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Request Waiver
+      </button>
+      <button type="button" class="pf-btn pf-pay"
+        *ngIf="invoiceRecord.status === 'Unpaid' || invoiceRecord.status === 'Partial' || invoiceRecord.status === 'Overdue'"
+        (click)="openPayFromInvoice()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M13 15h4"/></svg>
+        Record Payment
+      </button>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ===== PAYMENT MODAL ===== -->
+<div class="modal-overlay" *ngIf="showPayModal" (click)="closePayModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M13 15h4"/></svg>
+      </div>
+      <div>
+        <h3>Record Payment</h3>
+        <p *ngIf="payRecord">{{ payRecord.invoiceNo }} &mdash; {{ payRecord.patient }}</p>
+      </div>
+      <button type="button" class="modal-close" (click)="closePayModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" *ngIf="payRecord">
+      <div class="modal-summary-row">
+        <div class="modal-summary-item"><span>Total Amount</span><strong>{{ formatPesoPlain(payRecord.amount) }}</strong></div>
+        <div class="modal-summary-item"><span>Already Paid</span><strong class="paid-green">{{ formatPesoPlain(payRecord.amountPaid) }}</strong></div>
+        <div class="modal-summary-item"><span>Balance Due</span><strong class="balance-red">{{ formatPesoPlain(payModalBalance) }}</strong></div>
+      </div>
+      <div class="modal-field">
+        <label>Payment Amount <span class="req">*</span></label>
+        <div class="peso-input-wrap">
+          <span class="peso-sign">&#8369;</span>
+          <input type="number" [(ngModel)]="modalPayAmount" [max]="payModalBalance" min="1" placeholder="0.00" (input)="modalError = ''">
+        </div>
+        <p class="modal-error" *ngIf="modalError">{{ modalError }}</p>
+      </div>
+      <div class="modal-field">
+        <label>Payment Method <span class="req">*</span></label>
+        <div class="method-chips">
+          <!-- Cash -->
+          <button type="button" class="method-chip" [class.active]="modalPayMethod === 'Cash'" (click)="modalPayMethod = 'Cash'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M6 12h.01M18 12h.01"/></svg>
+            Cash
+          </button>
+          <!-- GCash -->
+          <button type="button" class="method-chip method-gcash" [class.active]="modalPayMethod === 'GCash'" (click)="modalPayMethod = 'GCash'">
+            <svg viewBox="0 0 40 40" fill="none" style="width:20px;height:20px;">
+              <circle cx="20" cy="20" r="20" fill="#007DFF"/>
+              <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Arial">G</text>
+            </svg>
+            GCash
+          </button>
+          <!-- Maya -->
+          <button type="button" class="method-chip method-maya" [class.active]="modalPayMethod === 'Maya'" (click)="modalPayMethod = 'Maya'">
+            <svg viewBox="0 0 40 40" fill="none" style="width:20px;height:20px;">
+              <circle cx="20" cy="20" r="20" fill="#00B14F"/>
+              <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="Arial">M</text>
+            </svg>
+            Maya
+          </button>
+          <!-- Card -->
+          <button type="button" class="method-chip method-card" [class.active]="modalPayMethod === 'Card'" (click)="modalPayMethod = 'Card'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            Card
+          </button>
+          <!-- Bank Transfer -->
+          <button type="button" class="method-chip method-bank" [class.active]="modalPayMethod === 'Bank Transfer'" (click)="modalPayMethod = 'Bank Transfer'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Bank Transfer
+          </button>
+          <!-- Insurance -->
+          <button type="button" class="method-chip method-insurance" [class.active]="modalPayMethod === 'Insurance'" (click)="modalPayMethod = 'Insurance'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Insurance
+          </button>
+          <!-- HMO -->
+          <button type="button" class="method-chip method-hmo" [class.active]="modalPayMethod === 'HMO'" (click)="modalPayMethod = 'HMO'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            HMO
+          </button>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Reference / OR No. <span class="optional">(optional)</span></label>
+        <input type="text" class="text-input" [(ngModel)]="modalPayRef" placeholder="e.g. GC-20260420-001">
+      </div>
+      <div class="modal-field">
+        <label>Notes <span class="optional">(optional)</span></label>
+        <textarea [(ngModel)]="modalNotes" placeholder="e.g. Installment 2 of 3…" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-btn-cancel" (click)="closePayModal()">Cancel</button>
+      <button type="button" class="modal-btn-confirm" (click)="recordPayment()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirm Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WAIVER REQUEST MODAL ===== -->
+<div class="modal-overlay" *ngIf="showWaiverModal" (click)="closeWaiverModal()">
+  <div class="modal-dialog modal-dialog-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon modal-icon-warn">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <h3>Request Waiver</h3>
+        <p *ngIf="waiverTarget">{{ waiverTarget.invoiceNo }} &mdash; {{ waiverTarget.patient }}</p>
+      </div>
+      <button type="button" class="modal-close" (click)="closeWaiverModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="waiver-notice">
+        <svg viewBox="0 0 24 24"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.74 3h14.92a2 2 0 0 0 1.74-3L13.74 3.9a2 2 0 0 0-3.48 0Z"/></svg>
+        <p>Waiver requests require <strong>manager approval</strong>. The invoice will remain active until approved.</p>
+      </div>
+      <div class="modal-field">
+        <label>Reason for Waiver <span class="req">*</span></label>
+        <textarea [(ngModel)]="waiverReason" placeholder="e.g. Courtesy waiver for senior patient, financial hardship, clinic error…" rows="4" (input)="waiverError = ''"></textarea>
+        <p class="modal-error" *ngIf="waiverError">{{ waiverError }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-btn-cancel" (click)="closeWaiverModal()">Cancel</button>
+      <button type="button" class="modal-btn-waiver-submit" (click)="submitWaiverRequest()">
+        <svg viewBox="0 0 24 24"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+        Submit for Approval
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RECEIPT MODAL ===== -->
+<div class="modal-overlay" *ngIf="showReceiptModal" (click)="closeReceipt()">
+  <div class="modal-dialog modal-dialog-receipt" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon modal-icon-mint">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      </div>
+      <div><h3>Official Receipt</h3><p *ngIf="receiptRecord">{{ receiptRecord.invoiceNo }}</p></div>
+      <button type="button" class="modal-close" (click)="closeReceipt()">&#x2715;</button>
+    </div>
+    <div class="modal-body receipt-body" *ngIf="receiptRecord">
+      <div class="receipt-clinic">
+        <div class="receipt-logo">CS</div>
+        <div>
+          <strong>Code Smiles Dental Clinic</strong>
+          <span>123 Smile Street, Quezon City</span>
+          <span>Tel: (02) 8123-4567</span>
+        </div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-meta">
+        <div class="receipt-meta-row"><span>Receipt No.</span><strong>{{ receiptRecord.invoiceNo }}</strong></div>
+        <div class="receipt-meta-row"><span>Patient</span><strong>{{ receiptRecord.patient }}</strong></div>
+        <div class="receipt-meta-row"><span>Service</span><strong>{{ receiptRecord.service }}</strong></div>
+        <div class="receipt-meta-row"><span>Dentist</span><strong>{{ receiptRecord.dentist }}</strong></div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-payments">
+        <div class="receipt-pay-row" *ngFor="let ph of receiptRecord.paymentHistory">
+          <div>
+            <strong>{{ formatPesoPlain(ph.amount) }}</strong>
+            <span>via {{ ph.method }} &bull; {{ ph.date }}</span>
+            <span class="receipt-ref">Ref: {{ ph.reference }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-totals">
+        <div class="receipt-total-row"><span>Total Billed</span><span>{{ formatPesoPlain(receiptRecord.amount) }}</span></div>
+        <div class="receipt-total-row receipt-paid-row"><span>Total Paid</span><strong class="paid-green">{{ formatPesoPlain(receiptRecord.amountPaid) }}</strong></div>
+        <div class="receipt-total-row" *ngIf="getBalance(receiptRecord) > 0">
+          <span>Balance</span><strong class="balance-red">{{ formatPesoPlain(getBalance(receiptRecord)) }}</strong>
+        </div>
+      </div>
+      <div class="receipt-footer-note">Thank you for choosing Code Smiles Dental Clinic!</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-btn-cancel" (click)="closeReceipt()">Close</button>
+      <button type="button" class="modal-btn-print" (click)="printReceipt()">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print Receipt
+      </button>
+    </div>
+  </div>
+</div>

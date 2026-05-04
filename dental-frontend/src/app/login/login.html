@@ -149,7 +149,12 @@
             <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
           </div>
 
-          <button type="submit" class="sign-in-btn">
+          <!-- Backend error message -->
+          <div class="error-banner" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="sign-in-btn" [disabled]="isLoading">
             {{ loginButtonText }} &rarr;
           </button>
         </div>

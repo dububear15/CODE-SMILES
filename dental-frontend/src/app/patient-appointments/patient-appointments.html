@@ -244,3 +244,56 @@
     </section>
   </main>
 </div>
+
+<!-- ══ CANCEL APPOINTMENT MODAL ══════════════════════════════════ -->
+<div class="cancel-modal-overlay" *ngIf="showCancelModal" (click)="dismissCancel()">
+  <div class="cancel-modal" (click)="$event.stopPropagation()">
+
+    <div class="cancel-modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+
+    <h2>Cancel Appointment</h2>
+    <p class="cancel-modal-subtitle">Are you sure you want to cancel this appointment?</p>
+
+    <div class="cancel-appt-summary" *ngIf="cancelTarget">
+      <div class="cancel-appt-row">
+        <span>Service</span>
+        <strong>{{ cancelTarget.service }}</strong>
+      </div>
+      <div class="cancel-appt-row">
+        <span>Date & Time</span>
+        <strong>{{ cancelTarget.dateMonth }} {{ cancelTarget.dateDay }} · {{ cancelTarget.time }}</strong>
+      </div>
+      <div class="cancel-appt-row">
+        <span>Dentist</span>
+        <strong>{{ cancelTarget.dentist }}</strong>
+      </div>
+    </div>
+
+    <div class="cancel-reason-field">
+      <label>Reason for Cancellation <span class="req">*</span></label>
+      <textarea
+        [(ngModel)]="cancelReason"
+        rows="3"
+        placeholder="Please tell us why you're cancelling (e.g. schedule conflict, feeling better, etc.)"
+      ></textarea>
+      <p class="cancel-hint">This helps the clinic manage their schedule and improve service.</p>
+    </div>
+
+    <div class="cancel-modal-actions">
+      <button class="cancel-modal-keep" (click)="dismissCancel()">Keep Appointment</button>
+      <button
+        class="cancel-modal-confirm"
+        (click)="confirmCancel()"
+        [disabled]="!cancelReason.trim()">
+        Confirm Cancellation
+      </button>
+    </div>
+
+  </div>
+</div>

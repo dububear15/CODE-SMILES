@@ -23,6 +23,8 @@ export interface ScheduleItem {
 export interface AppointmentRequest {
   id: string;
   patient: string;
+  email?: string;
+  phone?: string;
   service: string;
   dentist: string;
   preferredDate: string;
@@ -32,6 +34,13 @@ export interface AppointmentRequest {
   notes: string;
   validation: string;
   urgency: string;
+  // Additional booking details
+  reason?: string;
+  medicalHistory?: string;
+  allergies?: string;
+  medications?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
 }
 
 export interface AppointmentRecord {
@@ -45,6 +54,7 @@ export interface AppointmentRecord {
 }
 
 export interface PatientRecord {
+  id: string;
   name: string;
   contact: string;
   email: string;
@@ -116,18 +126,20 @@ export const STAFF_SUMMARY_CARDS: SummaryCard[] = [
 ];
 
 export const TODAY_SCHEDULE: ScheduleItem[] = [
-  { patient: 'Isabella Cruz', service: 'Dental Cleaning', time: '9:00 AM', status: 'Confirmed' },
-  { patient: 'Miguel Reyes', service: 'Tooth Extraction', time: '10:30 AM', status: 'In Progress' },
-  { patient: 'Ariana Santos', service: 'Orthodontic Review', time: '1:00 PM', status: 'Confirmed' },
-  { patient: 'Daniel Flores', service: 'Root Canal Follow-up', time: '3:30 PM', status: 'Needs Prep' },
+  { patient: 'Isabella Cruz',  service: 'Dental Cleaning',         time: '9:00 AM',  status: 'Confirmed'   },
+  { patient: 'Miguel Reyes',   service: 'Simple Tooth Extraction',  time: '10:30 AM', status: 'In Progress' },
+  { patient: 'Ariana Santos',  service: 'Traditional Braces',       time: '1:00 PM',  status: 'Confirmed'   },
+  { patient: 'Daniel Flores',  service: 'Oral Consultation / Check-up', time: '3:30 PM', status: 'Needs Prep' },
 ];
 
 export const STAFF_REQUESTS: AppointmentRequest[] = [
   {
     id: 'REQ-2084',
     patient: 'Sofia Bautista',
-    service: 'Teeth Whitening and Consultation',
-    dentist: 'Dr. Angela Lim',
+    email: 'sofia.bautista@email.com',
+    phone: '+63 917 555 0198',
+    service: 'Teeth Whitening',
+    dentist: 'Dr. Derence Acojedo',
     preferredDate: 'April 13, 2026',
     preferredTime: '11:00 AM',
     duration: 90,
@@ -135,12 +147,20 @@ export const STAFF_REQUESTS: AppointmentRequest[] = [
     notes: 'Requested a morning slot before school dismissal hours.',
     validation: 'Fits service-duration rules and stays within the 120-minute booking limit.',
     urgency: 'Standard',
+    reason: 'Cosmetic enhancement for upcoming event',
+    medicalHistory: 'No significant medical history',
+    allergies: 'None',
+    medications: 'None',
+    emergencyContact: 'Maria Bautista (Mother)',
+    emergencyPhone: '+63 917 555 0199',
   },
   {
     id: 'REQ-2085',
     patient: 'Noah Villanueva',
-    service: 'Deep Cleaning',
-    dentist: 'Dr. Marcus Rivera',
+    email: 'noah.villanueva@email.com',
+    phone: '+63 917 555 0245',
+    service: 'Dental Cleaning',
+    dentist: 'Dr. Raphoncel Eduria',
     preferredDate: 'April 13, 2026',
     preferredTime: '2:00 PM',
     duration: 75,
@@ -148,12 +168,20 @@ export const STAFF_REQUESTS: AppointmentRequest[] = [
     notes: 'Patient prefers the same dentist from the previous visit.',
     validation: 'Preferred chair is free, but dentist turnaround is tight.',
     urgency: 'High',
+    reason: 'Regular 6-month cleaning',
+    medicalHistory: 'Hypertension (controlled)',
+    allergies: 'Penicillin',
+    medications: 'Losartan 50mg daily',
+    emergencyContact: 'Ana Villanueva (Wife)',
+    emergencyPhone: '+63 917 555 0246',
   },
   {
     id: 'REQ-2086',
     patient: 'Camille Navarro',
-    service: 'Braces Adjustment',
-    dentist: 'Dr. Angela Lim',
+    email: 'camille.navarro@email.com',
+    phone: '+63 917 555 0370',
+    service: 'Traditional Braces',
+    dentist: 'Dr. Christine Faith Metillo',
     preferredDate: 'April 14, 2026',
     preferredTime: '9:30 AM',
     duration: 45,
@@ -161,6 +189,33 @@ export const STAFF_REQUESTS: AppointmentRequest[] = [
     notes: 'Asked to align with guardian availability.',
     validation: 'No service conflict found. Slot is available and below the session threshold.',
     urgency: 'Standard',
+    reason: 'Monthly braces adjustment',
+    medicalHistory: 'No significant medical history',
+    allergies: 'Latex',
+    medications: 'None',
+    emergencyContact: 'Roberto Navarro (Father)',
+    emergencyPhone: '+63 917 555 0371',
+  },
+  {
+    id: 'REQ-2087',
+    patient: 'Lucas Reyes',
+    email: 'lucas.reyes@email.com',
+    phone: '+63 917 555 0412',
+    service: 'Pediatric Check-up',
+    dentist: 'Dr. Nico Bongolto',
+    preferredDate: 'April 14, 2026',
+    preferredTime: '10:00 AM',
+    duration: 20,
+    status: 'Pending',
+    notes: 'First visit for the child. Parent will accompany.',
+    validation: 'Slot available. Short duration fits within morning block.',
+    urgency: 'Standard',
+    reason: 'Routine pediatric check-up',
+    medicalHistory: 'No known conditions',
+    allergies: 'None',
+    medications: 'None',
+    emergencyContact: 'Maria Reyes (Mother)',
+    emergencyPhone: '+63 917 555 0413',
   },
 ];
 
@@ -190,8 +245,8 @@ export const STAFF_ACTIVITY: ActivityItem[] = [
 export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   {
     patient: 'Sofia Bautista',
-    services: 'Teeth Whitening and Consultation',
-    dentist: 'Dr. Angela Lim',
+    services: 'Teeth Whitening',
+    dentist: 'Dr. Derence Acojedo',
     date: 'April 13, 2026',
     time: '11:00 AM',
     duration: '90 min',
@@ -199,8 +254,8 @@ export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     patient: 'Noah Villanueva',
-    services: 'Deep Cleaning',
-    dentist: 'Dr. Marcus Rivera',
+    services: 'Dental Cleaning',
+    dentist: 'Dr. Raphoncel Eduria',
     date: 'April 13, 2026',
     time: '2:00 PM',
     duration: '75 min',
@@ -208,8 +263,8 @@ export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     patient: 'Ariana Santos',
-    services: 'Orthodontic Review',
-    dentist: 'Dr. Angela Lim',
+    services: 'Traditional Braces',
+    dentist: 'Dr. Christine Faith Metillo',
     date: 'April 11, 2026',
     time: '1:00 PM',
     duration: '60 min',
@@ -217,8 +272,8 @@ export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     patient: 'Daniel Flores',
-    services: 'Root Canal Follow-up',
-    dentist: 'Dr. Marcus Rivera',
+    services: 'Simple Tooth Extraction',
+    dentist: 'Dr. Raphoncel Eduria',
     date: 'April 10, 2026',
     time: '3:30 PM',
     duration: '45 min',
@@ -226,8 +281,8 @@ export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     patient: 'Jasmine Torres',
-    services: 'Consultation',
-    dentist: 'Dr. Angela Lim',
+    services: 'Smile Makeover',
+    dentist: 'Dr. Derence Acojedo',
     date: 'April 10, 2026',
     time: '4:00 PM',
     duration: '30 min',
@@ -235,17 +290,27 @@ export const STAFF_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     patient: 'Paolo Mendoza',
-    services: 'Crown Fitting',
-    dentist: 'Dr. Marcus Rivera',
+    services: 'Single Tooth Implant',
+    dentist: 'Dr. Christine Faith Metillo',
     date: 'April 12, 2026',
     time: '10:00 AM',
     duration: '90 min',
     status: 'Rescheduled',
   },
+  {
+    patient: 'Lucas Reyes',
+    services: 'Pediatric Check-up',
+    dentist: 'Dr. Nico Bongolto',
+    date: 'April 14, 2026',
+    time: '10:00 AM',
+    duration: '20 min',
+    status: 'Pending',
+  },
 ];
 
 export const STAFF_PATIENTS: PatientRecord[] = [
   {
+    id: 'CS-1001',
     name: 'Isabella Cruz',
     contact: '+63 917 555 0182',
     email: 'isabella.cruz@email.com',
@@ -254,6 +319,7 @@ export const STAFF_PATIENTS: PatientRecord[] = [
     status: 'Active',
   },
   {
+    id: 'CS-1002',
     name: 'Miguel Reyes',
     contact: '+63 917 555 0214',
     email: 'miguel.reyes@email.com',
@@ -262,6 +328,7 @@ export const STAFF_PATIENTS: PatientRecord[] = [
     status: 'Active',
   },
   {
+    id: 'CS-1003',
     name: 'Camille Navarro',
     contact: '+63 917 555 0370',
     email: 'camille.navarro@email.com',
@@ -270,6 +337,7 @@ export const STAFF_PATIENTS: PatientRecord[] = [
     status: 'Active',
   },
   {
+    id: 'CS-1004',
     name: 'Liam Mendoza',
     contact: '+63 917 555 0446',
     email: 'liam.mendoza@email.com',
@@ -319,7 +387,7 @@ export const STAFF_WEEKLY_EVENTS: WeeklyCalendarEvent[] = [
     endTime: '10:00 AM',
     patient: 'Isabella Cruz',
     service: 'Dental Cleaning',
-    dentist: 'Dr. Angela Lim',
+    dentist: 'Dr. Raphoncel Eduria',
     status: 'Booked',
     chair: 'Chair A1',
   },
@@ -338,8 +406,8 @@ export const STAFF_WEEKLY_EVENTS: WeeklyCalendarEvent[] = [
     startTime: '2:00 PM',
     endTime: '3:30 PM',
     patient: 'Noah Villanueva',
-    service: 'Deep Cleaning',
-    dentist: 'Dr. Marcus Rivera',
+    service: 'Dental Cleaning',
+    dentist: 'Dr. Raphoncel Eduria',
     status: 'Booked',
     chair: 'Chair B1',
   },
@@ -368,8 +436,8 @@ export const STAFF_WEEKLY_EVENTS: WeeklyCalendarEvent[] = [
     startTime: '4:00 PM',
     endTime: '5:00 PM',
     patient: 'Camille Navarro',
-    service: 'Braces Adjustment',
-    dentist: 'Dr. Angela Lim',
+    service: 'Traditional Braces',
+    dentist: 'Dr. Christine Faith Metillo',
     status: 'Available',
     chair: 'Chair A1',
   },
@@ -378,8 +446,8 @@ export const STAFF_WEEKLY_EVENTS: WeeklyCalendarEvent[] = [
     startTime: '1:00 PM',
     endTime: '2:00 PM',
     patient: 'Ariana Santos',
-    service: 'Orthodontic Review',
-    dentist: 'Dr. Angela Lim',
+    service: 'Clear Aligners',
+    dentist: 'Dr. Christine Faith Metillo',
     status: 'Booked',
     chair: 'Chair A3',
   },
@@ -412,7 +480,7 @@ export const STAFF_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     title: 'Dentist availability update',
-    detail: 'Dr. Angela Lim opened an extra review block for Friday afternoon.',
+    detail: 'Dr. Christine Faith Metillo opened an extra review block for Friday afternoon.',
     level: 'Update',
     time: '48 minutes ago',
   },

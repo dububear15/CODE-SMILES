@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
+import { AuthService } from '../services/auth.service';
 
 type VaultFilterKey =
   | 'all'
@@ -86,28 +87,25 @@ export class PatientMedicalVault {
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly route: ActivatedRoute,
+    private readonly auth: AuthService,
   ) {
     this.route.queryParamMap.subscribe((params) => {
       const recordTitle = params.get('record');
-
-      if (!recordTitle) {
-        return;
-      }
-
+      if (!recordTitle) return;
       const matchedRecord = this.records.find((record) =>
         record.title.toLowerCase().includes(recordTitle.toLowerCase()),
       );
-
-      if (matchedRecord) {
-        this.openRecord(matchedRecord);
-      }
+      if (matchedRecord) this.openRecord(matchedRecord);
     });
   }
 
-  patientProfile = {
-    name: 'Laura Martinez',
-    id: 'CS-48291',
-  };
+  get patientProfile() {
+    const user = this.auth.getUser();
+    return {
+      name: user ? `${user.first_name} ${user.last_name}` : 'Patient',
+      id:   user ? `CS-${String(user.id).padStart(5, '0')}` : '—',
+    };
+  }
 
   searchTerm = '';
   selectedFilter: VaultFilterKey = 'all';
@@ -127,7 +125,7 @@ export class PatientMedicalVault {
 
   shareDraft = {
     recordId: '',
-    recipient: 'Dr. Patel',
+    recipient: 'Dr. Derence Acojedo',
     message: '',
   };
 
@@ -211,7 +209,7 @@ export class PatientMedicalVault {
     },
     {
       label: 'Primary Dentist',
-      value: 'Dr. Patel',
+      value: 'Dr. Acojedo',
       tone: 'green',
       iconViewBox: '0 0 24 24',
       iconPaths: [
@@ -241,7 +239,7 @@ export class PatientMedicalVault {
       id: 'REC-1001',
       title: 'Panoramic X-Ray - 2024',
       description: 'Full mouth panoramic review',
-      uploadedBy: 'Dr. Patel',
+      uploadedBy: 'Dr. Raphoncel Eduria',
       uploadedOrg: 'Code Smiles Dental',
       date: 'Aug 22, 2024',
       type: 'X-Ray',
@@ -267,7 +265,7 @@ export class PatientMedicalVault {
       id: 'REC-1002',
       title: 'Amoxicillin 500mg',
       description: '1 capsule every 8 hours for 7 days',
-      uploadedBy: 'Dr. Patel',
+      uploadedBy: 'Dr. Derence Acojedo',
       uploadedOrg: 'Code Smiles Dental',
       date: 'Aug 18, 2024',
       type: 'Prescription',
@@ -293,7 +291,7 @@ export class PatientMedicalVault {
       id: 'REC-1003',
       title: 'Orthodontic Treatment Plan',
       description: 'Braces and alignment roadmap',
-      uploadedBy: 'Dr. Patel',
+      uploadedBy: 'Dr. Christine Faith Metillo',
       uploadedOrg: 'Code Smiles Dental',
       date: 'Aug 10, 2024',
       type: 'Treatment Plan',
@@ -320,13 +318,13 @@ export class PatientMedicalVault {
     {
       id: 'REC-1004',
       title: 'Insurance Card',
-      description: 'Delta Dental PPO',
+      description: 'PhilHealth / HMO',
       uploadedBy: 'You Uploaded',
       uploadedOrg: 'Patient Upload',
       date: 'Jul 15, 2024',
       type: 'Insurance',
       category: 'insurance',
-      fileName: 'delta-dental-card.jpg',
+      fileName: 'insurance-card.jpg',
       fileSize: '1.1 MB',
       source: 'Patient',
       summary: 'Insurance copy uploaded for verification and claims support.',
@@ -348,7 +346,7 @@ export class PatientMedicalVault {
       id: 'REC-1005',
       title: 'Post-Op Instructions',
       description: 'After tooth extraction care',
-      uploadedBy: 'Dr. Kim',
+      uploadedBy: 'Dr. Nico Bongolto',
       uploadedOrg: 'Code Smiles Dental',
       date: 'Jun 05, 2024',
       type: 'Medical Form',
@@ -520,7 +518,7 @@ export class PatientMedicalVault {
   openShareModal(record?: VaultRecord): void {
     this.shareDraft = {
       recordId: record?.id || this.filteredRecords[0]?.id || '',
-      recipient: 'Dr. Patel',
+      recipient: 'Dr. Derence Acojedo',
       message: record ? `Sharing ${record.title} for review.` : '',
     };
     this.activeModal = 'share';

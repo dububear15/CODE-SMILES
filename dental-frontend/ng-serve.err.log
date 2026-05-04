@@ -1,0 +1,433 @@
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of StaffRequestsComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/staff-requests/staff-requests.ts:11:26:
+[37m      11 │   imports: [CommonModule, [32mRouterLink[37m, FormsModule, StaffSidebar],
+         ╵                           [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'supportCards' does not exist on type 'StaffHelpCenter'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/staff-help-center/staff-help-center.html:43:58:
+[37m      43 │ ...  <article class="support-card" *ngFor="let card of [32msupportCards[37m">
+         ╵                                                        [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component StaffHelpCenter.
+
+    src/app/staff-help-center/staff-help-center.ts:10:15:
+[37m      10 │   templateUrl: [32m'./staff-help-center.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: RouterLink is not used within the template of PatientBookingComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/patient-booking/patient-booking.ts:22:64:
+[37m      22 │ ... [CommonModule, FormsModule, PatientSidebarComponent, [32mRouterLink[37m],
+         ╵                                                          [32m~~~~~~~~~~[0m
+
+[39m[22m

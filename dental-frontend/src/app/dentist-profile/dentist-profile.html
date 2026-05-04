@@ -1,34 +1,400 @@
-<div class="dentist-shell">
+<div class="dentist-shell dp-shell">
   <app-dentist-sidebar></app-dentist-sidebar>
 
-  <main class="dentist-main">
-    <section class="dentist-page-hero">
-      <div>
-        <span class="dentist-eyebrow">Profile</span>
-        <h2>Dentist workspace preferences and clinical access overview.</h2>
-        <p>
-          Keep a simple profile page inside the portal so the role has a complete destination
-          for support, workflow reminders, and personal dashboard context.
-        </p>
-      </div>
-    </section>
+  <!-- Toast -->
+  <div *ngIf="toastMessage" style="position:fixed;bottom:24px;right:24px;background:#1a56db;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+    {{ toastMessage }}
+  </div>
 
-    <section class="dentist-card-grid">
-      <article class="dentist-card">
-        <span>Role</span>
-        <strong>Lead dentist</strong>
-        <p>Daily focus on consultations, procedures, active treatment monitoring, and chart completion.</p>
-      </article>
-      <article class="dentist-card">
-        <span>Clinical preferences</span>
-        <strong>Record completion before closeout</strong>
-        <p>Prioritize chart accuracy, prescription clarity, and milestone updates before end of day.</p>
-      </article>
-      <article class="dentist-card">
-        <span>Support links</span>
-        <strong>Portal shortcuts</strong>
-        <p>Use Medical Vault for records, Treatment Plans for milestones, and Notifications for care alerts.</p>
-      </article>
-    </section>
+  <main class="dp-main">
+
+    <!-- ── Header ──────────────────────────────────────── -->
+    <header class="dp-header">
+      <div>
+        <h1 class="dp-title">My Profile</h1>
+        <p class="dp-subtitle">View and manage your professional information, credentials, and account settings.</p>
+      </div>
+      <a class="dp-back-btn" routerLink="/dentist-dashboard">← Dashboard</a>
+    </header>
+
+    <!-- ── Body ────────────────────────────────────────── -->
+    <div class="dp-body">
+
+      <!-- LEFT: Profile summary card -->
+      <aside class="dp-profile-card">
+
+        <!-- Avatar -->
+        <div class="dp-avatar-wrap">
+          <input type="file" id="dentist-photo-upload" accept="image/*" style="display:none" (change)="onPhotoSelect($event)" />
+          <div class="dp-avatar-circle" *ngIf="!avatarUrl">{{ avatarInitials }}</div>
+          <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile photo" class="dp-avatar-img" />
+          <button class="dp-avatar-edit" type="button" title="Change photo" (click)="triggerPhotoUpload()">📷</button>
+        </div>
+
+        <h2 class="dp-card-name">Dr. {{ personal.firstName }} {{ personal.lastName }}</h2>
+        <span class="dp-card-spec">{{ professional.specialization }}</span>
+        <span class="dp-card-id">{{ professional.dentistId }}</span>
+
+        <div class="dp-card-divider"></div>
+
+        <!-- Patient stats -->
+        <div class="dp-card-stats">
+          <div class="dp-card-stat" *ngFor="let s of patientStats" [attr.data-tone]="s.tone">
+            <span class="dp-card-stat-icon">{{ s.icon }}</span>
+            <div>
+              <strong>{{ s.value }}</strong>
+              <span>{{ s.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dp-card-divider"></div>
+
+        <!-- Quick info -->
+        <div class="dp-card-info">
+          <div class="dp-card-info-row">
+            <span>📞</span><span>{{ personal.phone }}</span>
+          </div>
+          <div class="dp-card-info-row">
+            <span>✉</span><span>{{ personal.email }}</span>
+          </div>
+          <div class="dp-card-info-row">
+            <span>🏥</span><span>{{ professional.clinic }}</span>
+          </div>
+          <div class="dp-card-info-row">
+            <span>📅</span><span>{{ schedule.clinicDays.slice(0,3).join(', ') }}…</span>
+          </div>
+        </div>
+
+        <div class="dp-card-divider"></div>
+
+        <!-- Tab nav shortcuts -->
+        <nav class="dp-card-nav">
+          <button *ngFor="let tab of tabs" type="button"
+                  [class.active]="activeTab === tab.key"
+                  (click)="setTab(tab.key)">
+            {{ tab.label }}
+          </button>
+        </nav>
+
+      </aside>
+
+      <!-- RIGHT: Detail tabs -->
+      <section class="dp-detail-col">
+
+        <!-- Tabs -->
+        <div class="dp-tabs">
+          <button *ngFor="let tab of tabs" type="button"
+                  [class.active]="activeTab === tab.key"
+                  (click)="setTab(tab.key)">{{ tab.label }}</button>
+        </div>
+
+        <div class="dp-tab-content">
+
+          <!-- PERSONAL INFO -->
+          <div *ngIf="activeTab === 'personal'" class="dp-pane">
+            <div class="dp-section-title">Personal Information</div>
+            <div class="dp-form-grid">
+              <div class="dp-field">
+                <label class="dp-label">First Name</label>
+                <input class="dp-input" type="text" [(ngModel)]="personal.firstName" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Last Name</label>
+                <input class="dp-input" type="text" [(ngModel)]="personal.lastName" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Gender</label>
+                <select class="dp-input" [(ngModel)]="personal.gender">
+                  <option>Female</option><option>Male</option><option>Prefer not to say</option>
+                </select>
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Birthdate</label>
+                <input class="dp-input" type="date" [(ngModel)]="personal.birthdate" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Contact Number</label>
+                <input class="dp-input" type="tel" [(ngModel)]="personal.phone" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Email Address</label>
+                <input class="dp-input" type="email" [(ngModel)]="personal.email" />
+              </div>
+              <div class="dp-field dp-field-full">
+                <label class="dp-label">Home Address</label>
+                <input class="dp-input" type="text" [(ngModel)]="personal.address" />
+              </div>
+            </div>
+            <div class="dp-form-actions">
+              <button class="dp-btn-primary" type="button" (click)="savePersonal()">💾 Save Changes</button>
+            </div>
+          </div>
+
+          <!-- PROFESSIONAL INFO -->
+          <div *ngIf="activeTab === 'professional'" class="dp-pane">
+            <div class="dp-section-title">Professional Information</div>
+            <div class="dp-info-grid">
+              <div class="dp-info-card">
+                <span class="dp-info-label">Dentist ID</span>
+                <strong>{{ professional.dentistId }}</strong>
+              </div>
+              <div class="dp-info-card">
+                <span class="dp-info-label">PRC License Number</span>
+                <strong>{{ professional.licenseNumber }}</strong>
+              </div>
+              <div class="dp-info-card">
+                <span class="dp-info-label">Primary Specialization</span>
+                <strong>{{ professional.specialization }}</strong>
+              </div>
+              <div class="dp-info-card">
+                <span class="dp-info-label">Secondary Specialization</span>
+                <strong>{{ professional.secondarySpec }}</strong>
+              </div>
+              <div class="dp-info-card">
+                <span class="dp-info-label">Years of Experience</span>
+                <strong>{{ professional.yearsExperience }} years</strong>
+              </div>
+              <div class="dp-info-card">
+                <span class="dp-info-label">Department</span>
+                <strong>{{ professional.department }}</strong>
+              </div>
+              <div class="dp-info-card dp-info-card-full">
+                <span class="dp-info-label">Assigned Clinic</span>
+                <strong>{{ professional.clinic }}</strong>
+              </div>
+              <div class="dp-info-card dp-info-card-full">
+                <span class="dp-info-label">Education</span>
+                <strong>{{ professional.education }}</strong>
+              </div>
+            </div>
+
+            <div class="dp-section-title">Assigned Patients Overview</div>
+            <div class="dp-stats-grid">
+              <div class="dp-stat-card" *ngFor="let s of patientStats" [attr.data-tone]="s.tone">
+                <div class="dp-stat-icon">{{ s.icon }}</div>
+                <div>
+                  <strong>{{ s.value }}</strong>
+                  <span>{{ s.label }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCHEDULE -->
+          <div *ngIf="activeTab === 'schedule'" class="dp-pane">
+            <div class="dp-section-title">Availability Settings</div>
+
+            <div class="dp-schedule-section">
+              <span class="dp-info-label">Clinic Days</span>
+              <div class="dp-day-grid">
+                <button *ngFor="let day of allDays" type="button"
+                        class="dp-day-btn"
+                        [class.active]="isDayActive(day)"
+                        (click)="toggleDay(day)">
+                  {{ day.slice(0, 3) }}
+                </button>
+              </div>
+            </div>
+
+            <div class="dp-form-grid">
+              <div class="dp-field">
+                <label class="dp-label">Start Time</label>
+                <input class="dp-input" type="time" [(ngModel)]="schedule.startTime" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">End Time</label>
+                <input class="dp-input" type="time" [(ngModel)]="schedule.endTime" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Lunch Break</label>
+                <input class="dp-input" type="text" [(ngModel)]="schedule.lunchBreak" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Consultation Slot</label>
+                <select class="dp-input" [(ngModel)]="schedule.consultationSlot">
+                  <option>15 minutes</option>
+                  <option>30 minutes</option>
+                  <option>45 minutes</option>
+                  <option>60 minutes</option>
+                </select>
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Max Patients Per Day</label>
+                <input class="dp-input" type="number" [(ngModel)]="schedule.maxPatientsPerDay" min="1" max="30" />
+              </div>
+            </div>
+
+            <div class="dp-form-actions">
+              <button class="dp-btn-primary" type="button" (click)="saveSchedule()">💾 Save Schedule</button>
+            </div>
+          </div>
+
+          <!-- SECURITY -->
+          <div *ngIf="activeTab === 'security'" class="dp-pane">
+            <div class="dp-section-title">Change Password</div>
+            <div class="dp-form-grid">
+              <div class="dp-field dp-field-full">
+                <label class="dp-label">Current Password</label>
+                <input class="dp-input" type="password" [(ngModel)]="security.currentPassword" placeholder="Enter current password" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">New Password</label>
+                <input class="dp-input" type="password" [(ngModel)]="security.newPassword" placeholder="Enter new password" />
+              </div>
+              <div class="dp-field">
+                <label class="dp-label">Confirm New Password</label>
+                <input class="dp-input" type="password" [(ngModel)]="security.confirmPassword" placeholder="Confirm new password" />
+              </div>
+            </div>
+            <div class="dp-form-actions">
+              <button class="dp-btn-primary" type="button" (click)="savePassword()">🔒 Update Password</button>
+            </div>
+
+            <div class="dp-section-title">Update Email</div>
+            <div class="dp-form-grid">
+              <div class="dp-field dp-field-full">
+                <label class="dp-label">Email Address</label>
+                <input class="dp-input" type="email" [(ngModel)]="security.email" />
+              </div>
+            </div>
+            <div class="dp-form-actions">
+              <button class="dp-btn-ghost" type="button">✉ Update Email</button>
+            </div>
+
+            <div class="dp-section-title">Two-Factor Authentication</div>
+            <div class="dp-toggle-row">
+              <div>
+                <strong>Enable 2FA</strong>
+                <span>Add an extra layer of security to your account.</span>
+              </div>
+              <label class="dp-toggle">
+                <input type="checkbox" [(ngModel)]="security.twoFactor" />
+                <span class="dp-toggle-track"></span>
+              </label>
+            </div>
+
+            <div class="dp-section-title">Login Activity</div>
+            <div class="dp-activity-list">
+              <div class="dp-activity-row" *ngFor="let a of loginActivity" [attr.data-status]="a.status">
+                <div class="dp-activity-icon">{{ a.status === 'current' ? '🟢' : '⚪' }}</div>
+                <div class="dp-activity-info">
+                  <strong>{{ a.device }}</strong>
+                  <span>{{ a.location }} · {{ a.time }}</span>
+                </div>
+                <span class="dp-activity-badge" *ngIf="a.status === 'current'">Current</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DOCUMENTS -->
+          <div *ngIf="activeTab === 'documents'" class="dp-pane">
+            <div class="dp-section-title">Professional Documents</div>
+            <div class="dp-doc-list">
+              <div class="dp-doc-card" *ngFor="let d of documents">
+                <div class="dp-doc-icon">{{ docIcon(d.type) }}</div>
+                <div class="dp-doc-info">
+                  <strong>{{ d.name }}</strong>
+                  <span>{{ d.type }} · Uploaded {{ d.date }} · {{ d.size }}</span>
+                </div>
+                <div class="dp-doc-right">
+                  <span class="dp-doc-status">✓ {{ d.status }}</span>
+                  <button class="dp-doc-btn" type="button" title="Download">↓</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="dp-upload-zone">
+              <span>📎</span>
+              <strong>Upload New Document</strong>
+              <span>PRC License, Certifications, Training Records, or Specialization Documents</span>
+              <button class="dp-btn-ghost" type="button">Choose File</button>
+            </div>
+          </div>
+
+          <!-- SETTINGS -->
+          <div *ngIf="activeTab === 'settings'" class="dp-pane">
+            <div class="dp-section-title">Notification Preferences</div>
+            <div class="dp-settings-list">
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Appointment Reminders</strong>
+                  <span>Alerts for upcoming patient appointments and session schedules.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.appointments" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Treatment Updates</strong>
+                  <span>Notifications for pending procedures and incomplete sessions.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.treatmentUpdates" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Follow-up Reminders</strong>
+                  <span>Reminders for post-treatment checkups and recovery monitoring.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.followUpReminders" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Prescription Notifications</strong>
+                  <span>Alerts for prescription follow-up and medication review.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.prescriptionAlerts" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Lab Results & Attachments</strong>
+                  <span>Notifications when new X-rays or files are uploaded.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.labResults" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>Urgent Case Alerts</strong>
+                  <span>Priority alerts for emergency dental concerns.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.urgentCases" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+              <div class="dp-toggle-row">
+                <div>
+                  <strong>System Updates</strong>
+                  <span>Changes in assigned patients or updated treatment plans.</span>
+                </div>
+                <label class="dp-toggle">
+                  <input type="checkbox" [(ngModel)]="notifPrefs.systemUpdates" />
+                  <span class="dp-toggle-track"></span>
+                </label>
+              </div>
+            </div>
+            <div class="dp-form-actions">
+              <button class="dp-btn-primary" type="button" (click)="saveSettings()">💾 Save Preferences</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
   </main>
 </div>

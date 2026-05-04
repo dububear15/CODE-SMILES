@@ -1,24 +1,29 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin.html',
-  styleUrl: './admin.css'
+  styleUrl: './admin.css',
 })
 export class AdminComponent implements OnInit {
   patients: any[] = [];
-  appointments: any[] = []; 
-  editingAppointmentId: number | null = null; 
+  appointments: any[] = [];
+  editingAppointmentId: number | null = null;
 
   newPatient = { first_name: '', last_name: '', phone: '' };
-  newAppointment = { patient_id: '', appointment_date: '', appointment_time: '', treatment: '' };
+  newAppointment = {
+    patient_id: '',
+    appointment_date: '',
+    appointment_time: '',
+    treatment: '',
+  };
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.getPatients();
@@ -26,68 +31,90 @@ export class AdminComponent implements OnInit {
   }
 
   getPatients() {
-    this.http.get<any[]>('http://localhost:3000/list-patients').subscribe({
-      next: (data) => { this.patients = data; this.cdr.detectChanges(); },
-      error: (err) => console.error("Server Down! Could not get patients.", err)
+    this.api.getPatients().subscribe({
+      next: (data) => {
+        this.patients = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Server Down! Could not get patients.', err),
     });
   }
 
   savePatient() {
-    this.http.post('http://localhost:3000/add-patient', this.newPatient, { responseType: 'text' }).subscribe({
-      next: () => { this.getPatients(); this.newPatient = { first_name: '', last_name: '', phone: '' }; },
-      error: (err) => alert("Failed to add patient. Is your Node server running?")
+    this.api.addPatient(this.newPatient).subscribe({
+      next: () => {
+        this.getPatients();
+        this.newPatient = { first_name: '', last_name: '', phone: '' };
+      },
+      error: () => alert('Failed to add patient. Is your Node server running?'),
     });
   }
 
   deletePatient(id: number) {
-    if(confirm("Are you sure?")) {
-      this.http.delete(`http://localhost:3000/delete-patient/${id}`, { responseType: 'text' }).subscribe({
+    if (confirm('Are you sure?')) {
+      this.api.deletePatient(id).subscribe({
         next: () => this.getPatients(),
-        error: (err) => console.error("Delete failed.", err)
+        error: (err) => console.error('Delete failed.', err),
       });
     }
   }
 
   getAppointments() {
-    this.http.get<any[]>('http://localhost:3000/list-appointments').subscribe({
-      next: (data) => { this.appointments = data; this.cdr.detectChanges(); }
+    this.api.getAppointments().subscribe({
+      next: (data) => {
+        this.appointments = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Could not get appointments.', err),
     });
   }
 
   saveAppointment() {
-    const url = this.editingAppointmentId 
-      ? `http://localhost:3000/update-appointment/${this.editingAppointmentId}`
-      : 'http://localhost:3000/add-appointment';
-    
-    const request = this.editingAppointmentId 
-      ? this.http.put(url, this.newAppointment, { responseType: 'text' })
-      : this.http.post(url, this.newAppointment, { responseType: 'text' });
+    const request$ = this.editingAppointmentId
+      ? this.api.updateAppointment(this.editingAppointmentId, this.newAppointment)
+      : this.api.bookAppointment({
+          patient_id:       null,
+          full_name:        this.newAppointment.patient_id,
+          phone:            '',
+          email:            '',
+          treatment:        this.newAppointment.treatment,
+          services:         [],
+          appointment_date: this.newAppointment.appointment_date,
+          appointment_time: this.newAppointment.appointment_time,
+          duration_minutes: 60,
+          notes:            '',
+        });
 
-    request.subscribe({
+    request$.subscribe({
       next: () => {
-        alert(this.editingAppointmentId ? "Updated!" : "Booked!");
-        this.resetAppointmentForm(); // Updated name here
+        alert(this.editingAppointmentId ? 'Updated!' : 'Booked!');
+        this.resetAppointmentForm();
       },
-      error: (err) => console.error("Booking Error:", err)
+      error: (err: any) => console.error('Booking Error:', err),
     });
   }
 
   editAppointment(appt: any) {
     this.editingAppointmentId = appt.appointment_id;
-    this.newAppointment = { ...appt }; 
+    this.newAppointment = { ...appt };
   }
 
-  // CHOICE 2: Function renamed to match your HTML click event
-  resetAppointmentForm() { 
+  resetAppointmentForm() {
     this.editingAppointmentId = null;
-    this.newAppointment = { patient_id: '', appointment_date: '', appointment_time: '', treatment: '' };
+    this.newAppointment = {
+      patient_id: '',
+      appointment_date: '',
+      appointment_time: '',
+      treatment: '',
+    };
     this.getAppointments();
   }
 
   deleteAppointment(id: number) {
-    if(confirm("Cancel this?")) {
-      this.http.delete(`http://localhost:3000/delete-appointment/${id}`, { responseType: 'text' }).subscribe({
-        next: () => this.getAppointments()
+    if (confirm('Cancel this?')) {
+      this.api.deleteAppointment(id).subscribe({
+        next: () => this.getAppointments(),
+        error: (err) => console.error('Delete failed.', err),
       });
     }
   }

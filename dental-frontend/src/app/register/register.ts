@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './register.html',
-  styleUrls: ['./register.css']
+  styleUrls: ['./register.css'],
 })
 export class RegisterComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private auth: AuthService) {}
 
   registerData = {
     firstName: '',
@@ -21,40 +21,26 @@ export class RegisterComponent {
     contactNumber: '',
     password: '',
     confirmPassword: '',
-    agreeTerms: false
+    agreeTerms: false,
   };
 
   submitted = false;
+  isLoading = false;
   showPassword = false;
   showConfirmPassword = false;
+  errorMessage = '';
+  successMessage = '';
 
   // -------------------------
   // NAME VALIDATION HELPER
   // -------------------------
   private isHumanLikeName(name: string): boolean {
     const trimmedName = name.trim();
-
-    // basic allowed characters and length
-    if (!/^[A-Za-zÀ-ÿ\s'-]{2,30}$/.test(trimmedName)) {
-      return false;
-    }
-
-    // block same character repeated too much, like "aaaaaa"
-    if (/(.)\1{3,}/i.test(trimmedName)) {
-      return false;
-    }
-
-    // block names with too many consonants in a row, like "rtfgdrg"
-    if (/[bcdfghjklmnpqrstvwxyz]{6,}/i.test(trimmedName)) {
-      return false;
-    }
-
-    // each word part should have at least 2 letters
+    if (!/^[A-Za-zÀ-ÿ\s'-]{2,30}$/.test(trimmedName)) return false;
+    if (/(.)\1{3,}/i.test(trimmedName)) return false;
+    if (/[bcdfghjklmnpqrstvwxyz]{6,}/i.test(trimmedName)) return false;
     const parts = trimmedName.split(/[\s'-]+/).filter(Boolean);
-    if (parts.some(part => part.length < 2)) {
-      return false;
-    }
-
+    if (parts.some((part) => part.length < 2)) return false;
     return true;
   }
 
@@ -74,12 +60,10 @@ export class RegisterComponent {
   }
 
   get isContactValid(): boolean {
-    // Philippines mobile format: 09XXXXXXXXX
     return /^09\d{9}$/.test(this.registerData.contactNumber.trim());
   }
 
   get isRegisterPasswordValid(): boolean {
-    // At least 8 chars, one uppercase, one lowercase, one number
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(this.registerData.password);
   }
 
@@ -110,6 +94,10 @@ export class RegisterComponent {
     );
   }
 
+  get submitButtonText(): string {
+    return this.isLoading ? 'Creating Account…' : 'Create Account';
+  }
+
   // -------------------------
   // TOGGLES
   // -------------------------
@@ -121,7 +109,6 @@ export class RegisterComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  // only allow digits for contact number while typing
   onContactInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.value = input.value.replace(/\D/g, '').slice(0, 11);
@@ -130,30 +117,48 @@ export class RegisterComponent {
 
   register(form: NgForm): void {
     this.submitted = true;
+    this.errorMessage = '';
 
     if (!this.isFormValid) {
       form.control.markAllAsTouched();
       return;
     }
 
-    alert('Account created successfully! 🎉');
-    this.router.navigate(['/login']);
+    this.isLoading = true;
+
+    this.auth
+      .register({
+        first_name: this.registerData.firstName.trim(),
+        last_name: this.registerData.lastName.trim(),
+        email: this.registerData.email.trim(),
+        phone: this.registerData.contactNumber.trim(),
+        password: this.registerData.password,
+      })
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage =
+            err?.error?.message ?? 'Registration failed. Please try again.';
+        },
+      });
   }
 
   signUpWithGoogle(): void {
-    alert('Google Sign-Up (to be implemented)');
+    // Google auth — to be implemented
+    console.log('Google Sign-Up');
   }
 
   handleAccentMove(event: MouseEvent): void {
     const target = event.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
-
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
     const moveX = ((x - rect.width / 2) / rect.width) * 20;
     const moveY = ((y - rect.height / 2) / rect.height) * 20;
-
     target.style.setProperty('--mx', `${moveX}px`);
     target.style.setProperty('--my', `${moveY}px`);
   }
@@ -161,7 +166,6 @@ export class RegisterComponent {
   resetAccentMove(): void {
     const el = document.querySelector('.register-left') as HTMLElement;
     if (!el) return;
-
     el.style.setProperty('--mx', '0px');
     el.style.setProperty('--my', '0px');
   }

@@ -1,72 +1,330 @@
-<div class="dentist-shell">
+<div class="dentist-shell tp-shell" style="display:flex; flex:1; min-height:0; overflow:hidden;">
   <app-dentist-sidebar></app-dentist-sidebar>
 
-  <main class="dentist-main">
-    <section class="dentist-page-hero">
+  <main class="tp-main">
+
+    <!-- ── Header ──────────────────────────────────────── -->
+    <header class="tp-header">
       <div>
-        <span class="dentist-eyebrow">Treatment plans</span>
-        <h2>Track every treatment journey from consultation to completion.</h2>
-        <p>
-          Use this page for active braces, adjustments, review visits, and any care path
-          that needs milestones, next steps, and follow-up recommendations.
-        </p>
+        <h1 class="tp-title">Treatment Plans</h1>
+        <p class="tp-subtitle">Create, monitor, and update planned dental procedures for each patient.</p>
       </div>
-    </section>
+      <a class="tp-back-btn" routerLink="/dentist-dashboard">← Dashboard</a>
+    </header>
 
-    <section class="dentist-panel">
-      <div class="dentist-section-head">
-        <div>
-          <span class="dentist-eyebrow">Ongoing care</span>
-          <h3>Milestones and status updates</h3>
-        </div>
-      </div>
+    <!-- ── Body ────────────────────────────────────────── -->
+    <div class="tp-body">
 
-      <div class="dentist-list">
-        <div class="dentist-list-item" *ngFor="let plan of plans">
-          <div class="dentist-row-between">
-            <div>
-              <strong>{{ plan.patient }}</strong>
-              <p>{{ plan.treatmentType }}</p>
-            </div>
-            <span class="dentist-pill">{{ plan.status }}</span>
+      <!-- LEFT: Plan list -->
+      <aside class="tp-list-col">
+        <div class="tp-list-top">
+          <div class="tp-search-wrap">
+            <span>🔍</span>
+            <input class="tp-search" type="text" placeholder="Search plans…" [(ngModel)]="searchQuery" />
           </div>
-          <div class="dentist-detail-grid">
-            <div>
-              <span>Current phase</span>
-              <strong>{{ plan.milestone }}</strong>
+          <select class="tp-select" [(ngModel)]="filterStatus">
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s === 'All' ? 'All Status' : s }}</option>
+          </select>
+        </div>
+
+        <div class="tp-list-label">{{ filtered.length }} treatment plans</div>
+
+        <div class="tp-plan-list">
+          <div class="tp-plan-item"
+               *ngFor="let p of filtered"
+               [class.active]="selectedPlan?.id === p.id"
+               (click)="selectPlan(p)">
+            <div class="tp-avatar">{{ p.initials }}</div>
+            <div class="tp-item-info">
+              <strong>{{ p.patient }}</strong>
+              <span>{{ p.id }} · {{ p.age }} yrs</span>
+              <span class="tp-item-type">{{ p.treatmentType }}</span>
+              <div class="tp-item-progress">
+                <div class="tp-mini-bar">
+                  <div class="tp-mini-fill" [style.width]="progressWidth(p.progress)"></div>
+                </div>
+                <span>{{ p.progress }}%</span>
+              </div>
             </div>
-            <div>
-              <span>Next step</span>
-              <strong>{{ plan.nextStep }}</strong>
-            </div>
-            <div>
-              <span>Status</span>
-              <strong>{{ plan.status }}</strong>
-            </div>
-            <div>
-              <span>Follow-up</span>
-              <strong>{{ plan.followUp }}</strong>
+            <div class="tp-item-badges">
+              <span class="tp-status-dot" [attr.data-status]="statusTone(p.status)"></span>
+              <span class="tp-priority-dot" [attr.data-priority]="priorityTone(p.priority)"></span>
             </div>
           </div>
-          <div class="dentist-progress-label">
-            <span>Milestone progress</span>
-            <strong>{{ plan.progress }}%</strong>
+          <div class="tp-list-empty" *ngIf="filtered.length === 0">No treatment plans found.</div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Plan detail -->
+      <section class="tp-detail-col">
+
+        <!-- Empty state -->
+        <div class="tp-empty-state" *ngIf="!selectedPlan">
+          <span>📋</span>
+          <strong>Select a treatment plan</strong>
+          <p>Choose a patient from the list to view their full treatment plan, procedures, and progress.</p>
+        </div>
+
+        <!-- Detail -->
+        <div class="tp-detail" *ngIf="selectedPlan">
+
+          <!-- Banner -->
+          <div class="tp-banner">
+            <div class="tp-banner-left">
+              <div class="tp-avatar tp-avatar-lg">{{ selectedPlan.initials }}</div>
+              <div class="tp-banner-info">
+                <h2>{{ selectedPlan.patient }}</h2>
+                <span>{{ selectedPlan.id }} · {{ selectedPlan.age }} yrs · {{ selectedPlan.gender }}</span>
+                <div class="tp-banner-sub">
+                  <span>🦷 {{ selectedPlan.treatmentType }}</span>
+                  <span>👨‍⚕️ {{ selectedPlan.assignedDentist }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="tp-banner-right">
+              <div class="tp-banner-pills">
+                <span class="tp-status-pill" [attr.data-status]="statusTone(selectedPlan.status)">{{ selectedPlan.status }}</span>
+                <span class="tp-priority-pill" [attr.data-priority]="priorityTone(selectedPlan.priority)">{{ selectedPlan.priority }}</span>
+              </div>
+              <div class="tp-banner-stats">
+                <div class="tp-stat-chip">
+                  <span>Sessions</span>
+                  <strong>{{ selectedPlan.completedSessions }}/{{ selectedPlan.estimatedSessions }}</strong>
+                </div>
+                <div class="tp-stat-chip">
+                  <span>Progress</span>
+                  <strong>{{ selectedPlan.progress }}%</strong>
+                </div>
+                <div class="tp-stat-chip">
+                  <span>Target</span>
+                  <strong>{{ selectedPlan.targetDate }}</strong>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="dentist-progress-bar">
-            <div class="dentist-progress-fill" [style.width]="progressWidth(plan.progress)"></div>
+
+          <!-- Progress bar -->
+          <div class="tp-progress-bar-wrap">
+            <div class="tp-progress-bar">
+              <div class="tp-progress-fill" [style.width]="progressWidth(selectedPlan.progress)"></div>
+            </div>
+            <span>{{ selectedPlan.progress }}% complete · Started {{ selectedPlan.startDate }}</span>
           </div>
-          <div class="dentist-note">
-            <span>Pending care task</span>
-            <p>{{ plan.pendingTask }}</p>
+
+          <!-- Tabs -->
+          <div class="tp-tabs">
+            <button *ngFor="let tab of tabs" type="button"
+                    [class.active]="activeTab === tab.key"
+                    (click)="setTab(tab.key)">{{ tab.label }}</button>
           </div>
-          <div class="dentist-actions">
-            <a class="dentist-btn" routerLink="/dentist-treatment-plans">Update Phase</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-appointments">Schedule Follow-up Recommendation</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">Mark Milestone Completed</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Add Treatment Instruction</a>
+
+          <!-- Tab content -->
+          <div class="tp-tab-content">
+
+            <!-- DIAGNOSIS -->
+            <div *ngIf="activeTab === 'diagnosis'" class="tp-pane">
+              <div class="tp-section-title">Diagnosis & Chief Complaint</div>
+              <div class="tp-two-col">
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Chief Complaint</span>
+                  <p>{{ selectedPlan.chiefComplaint }}</p>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Diagnosis</span>
+                  <p>{{ selectedPlan.diagnosis }}</p>
+                </div>
+              </div>
+
+              <div class="tp-section-title">Treatment Overview</div>
+              <div class="tp-three-col">
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Treatment Type</span>
+                  <strong>{{ selectedPlan.treatmentType }}</strong>
+                  <span class="tp-category-badge">{{ selectedPlan.category }}</span>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Priority</span>
+                  <span class="tp-priority-pill" [attr.data-priority]="priorityTone(selectedPlan.priority)">{{ selectedPlan.priority }}</span>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Estimated Sessions</span>
+                  <strong>{{ selectedPlan.estimatedSessions }} visits</strong>
+                  <span>{{ selectedPlan.completedSessions }} completed</span>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Start Date</span>
+                  <strong>{{ selectedPlan.startDate }}</strong>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Target Completion</span>
+                  <strong>{{ selectedPlan.targetDate }}</strong>
+                </div>
+                <div class="tp-info-card">
+                  <span class="tp-info-label">Assigned Dentist</span>
+                  <strong>{{ selectedPlan.assignedDentist }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- PROCEDURES -->
+            <div *ngIf="activeTab === 'procedures'" class="tp-pane">
+              <div class="tp-section-title">Planned Procedures</div>
+              <div class="tp-procedure-list">
+                <div class="tp-procedure-card" *ngFor="let proc of selectedPlan.procedures">
+                  <div class="tp-proc-head">
+                    <div class="tp-proc-head-left">
+                      <strong>{{ proc.name }}</strong>
+                      <div class="tp-proc-meta">
+                        <span class="tp-category-badge">{{ proc.category }}</span>
+                        <span class="tp-tooth-badge">Tooth: {{ proc.tooth }}</span>
+                        <span class="tp-priority-pill" [attr.data-priority]="priorityTone(proc.priority)">{{ proc.priority }}</span>
+                      </div>
+                    </div>
+                    <div class="tp-proc-head-right">
+                      <span class="tp-step-badge" [attr.data-status]="stepTone(proc.status)">
+                        {{ proc.status === 'done' ? '✓ Completed' : proc.status === 'ongoing' ? '⚡ Ongoing' : proc.status === 'pending' ? '⏳ Pending' : '📅 Upcoming' }}
+                      </span>
+                      <span class="tp-sessions-chip">{{ proc.sessions }} session{{ proc.sessions > 1 ? 's' : '' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Step-by-step flow -->
+                  <div class="tp-steps">
+                    <div class="tp-step-row" *ngFor="let step of proc.steps; let last = last">
+                      <div class="tp-step-track">
+                        <div class="tp-step-dot" [attr.data-status]="stepTone(step.status)"></div>
+                        <div class="tp-step-line" *ngIf="!last"></div>
+                      </div>
+                      <div class="tp-step-info">
+                        <div class="tp-step-header">
+                          <strong>Session {{ step.session }}: {{ step.title }}</strong>
+                          <span class="tp-step-badge" [attr.data-status]="stepTone(step.status)">
+                            {{ step.status === 'done' ? '✓ Done' : step.status === 'ongoing' ? '⚡ Ongoing' : step.status === 'pending' ? '⏳ Pending' : '📅 Upcoming' }}
+                          </span>
+                        </div>
+                        <span class="tp-step-date">{{ step.date }}</span>
+                        <p>{{ step.notes }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PROGRESS -->
+            <div *ngIf="activeTab === 'progress'" class="tp-pane">
+              <div class="tp-section-title">Treatment Progress Tracking</div>
+
+              <!-- Overall progress -->
+              <div class="tp-progress-overview">
+                <div class="tp-progress-stat">
+                  <strong>{{ selectedPlan.completedSessions }}</strong>
+                  <span>Completed</span>
+                </div>
+                <div class="tp-progress-stat ongoing">
+                  <strong>{{ selectedPlan.estimatedSessions - selectedPlan.completedSessions }}</strong>
+                  <span>Remaining</span>
+                </div>
+                <div class="tp-progress-stat total">
+                  <strong>{{ selectedPlan.estimatedSessions }}</strong>
+                  <span>Total Sessions</span>
+                </div>
+                <div class="tp-progress-stat pct">
+                  <strong>{{ selectedPlan.progress }}%</strong>
+                  <span>Complete</span>
+                </div>
+              </div>
+
+              <div class="tp-progress-bar-lg">
+                <div class="tp-progress-fill-lg" [style.width]="progressWidth(selectedPlan.progress)"></div>
+              </div>
+
+              <!-- All sessions across all procedures -->
+              <div class="tp-section-title" style="margin-top: 16px;">Session Timeline</div>
+              <div class="tp-all-steps">
+                <ng-container *ngFor="let proc of selectedPlan.procedures">
+                  <div class="tp-proc-label">{{ proc.name }}</div>
+                  <div class="tp-step-row" *ngFor="let step of proc.steps; let last = last">
+                    <div class="tp-step-track">
+                      <div class="tp-step-dot" [attr.data-status]="stepTone(step.status)"></div>
+                      <div class="tp-step-line" *ngIf="!last"></div>
+                    </div>
+                    <div class="tp-step-info">
+                      <div class="tp-step-header">
+                        <strong>Session {{ step.session }}: {{ step.title }}</strong>
+                        <span class="tp-step-badge" [attr.data-status]="stepTone(step.status)">
+                          {{ step.status === 'done' ? '✓ Done' : step.status === 'ongoing' ? '⚡ Ongoing' : step.status === 'pending' ? '⏳ Pending' : '📅 Upcoming' }}
+                        </span>
+                      </div>
+                      <span class="tp-step-date">{{ step.date }}</span>
+                      <p>{{ step.notes }}</p>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- CLINICAL NOTES -->
+            <div *ngIf="activeTab === 'notes'" class="tp-pane">
+              <div class="tp-section-title">Dentist Clinical Notes</div>
+              <div class="tp-empty-block" *ngIf="selectedPlan.clinicalNotes.length === 0">No clinical notes recorded.</div>
+              <div class="tp-notes-list">
+                <div class="tp-note-card" *ngFor="let n of selectedPlan.clinicalNotes" [attr.data-type]="noteTypeColor(n.type)">
+                  <div class="tp-note-head">
+                    <span class="tp-note-type" [attr.data-type]="noteTypeColor(n.type)">{{ n.type }}</span>
+                    <div class="tp-note-meta">
+                      <span class="tp-note-dentist">{{ n.dentist }}</span>
+                      <span class="tp-note-date">{{ n.date }}</span>
+                    </div>
+                  </div>
+                  <p>{{ n.note }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRESCRIPTIONS -->
+            <div *ngIf="activeTab === 'prescriptions'" class="tp-pane">
+              <div class="tp-section-title">Prescriptions & Post-Treatment Care</div>
+              <div class="tp-empty-block" *ngIf="selectedPlan.prescriptions.length === 0">No prescriptions on file.</div>
+              <div class="tp-rx-list">
+                <div class="tp-rx-card" *ngFor="let rx of selectedPlan.prescriptions">
+                  <div class="tp-rx-head">
+                    <strong>💊 {{ rx.medication }}</strong>
+                    <div class="tp-rx-meta">
+                      <span class="tp-rx-status" [attr.data-status]="rxStatusColor(rx.status)">{{ rx.status }}</span>
+                      <span class="tp-rx-date">{{ rx.date }}</span>
+                    </div>
+                  </div>
+                  <div class="tp-rx-body">
+                    <span><b>Dosage:</b> {{ rx.dosage }}</span>
+                    <span><b>Frequency:</b> {{ rx.frequency }}</span>
+                    <span><b>Duration:</b> {{ rx.duration }}</span>
+                  </div>
+                  <p class="tp-rx-instructions">{{ rx.instructions }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ATTACHMENTS -->
+            <div *ngIf="activeTab === 'attachments'" class="tp-pane">
+              <div class="tp-section-title">Supporting Attachments</div>
+              <div class="tp-empty-block" *ngIf="selectedPlan.attachments.length === 0">No attachments on file.</div>
+              <div class="tp-attach-list">
+                <div class="tp-attach-card" *ngFor="let a of selectedPlan.attachments">
+                  <div class="tp-attach-icon">{{ attachIcon(a.type) }}</div>
+                  <div class="tp-attach-info">
+                    <strong>{{ a.name }}</strong>
+                    <span>{{ a.type }} · {{ a.date }} · {{ a.size }}</span>
+                  </div>
+                  <button class="tp-attach-btn" type="button" title="Download">↓</button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
+
   </main>
 </div>

@@ -1,36 +1,438 @@
-<div class="dentist-shell">
+<div class="dentist-shell ds-shell">
   <app-dentist-sidebar></app-dentist-sidebar>
 
-  <main class="dentist-main">
-    <section class="dentist-page-hero">
+  <main class="ds-main">
+
+    <!-- ── Header ──────────────────────────────────────── -->
+    <header class="ds-header">
       <div>
-        <span class="dentist-eyebrow">Settings</span>
-        <h2>Control your dentist portal preferences and clinic workflow defaults.</h2>
-        <p>
-          Update the settings that shape your daily dentist experience, from schedule behavior
-          and chart reminders to notification habits and workspace preferences.
-        </p>
+        <h1 class="ds-title">Settings</h1>
+        <p class="ds-subtitle">Manage your account, security, notifications, and dentist portal preferences.</p>
       </div>
-    </section>
+      <a class="ds-back-btn" routerLink="/dentist-dashboard">← Dashboard</a>
+    </header>
 
-    <section class="dentist-card-grid">
-      <article class="dentist-card">
-        <span>Schedule defaults</span>
-        <strong>Chairside workflow reminders enabled</strong>
-        <p>Keep daily schedule prep and follow-up nudges visible before patient consultations begin.</p>
-      </article>
+    <!-- ── Body ────────────────────────────────────────── -->
+    <div class="ds-body">
 
-      <article class="dentist-card">
-        <span>Notification preferences</span>
-        <strong>Clinical alerts prioritized first</strong>
-        <p>Important chart updates, approvals, and treatment follow-ups appear ahead of lower-priority notices.</p>
-      </article>
+      <!-- LEFT: Category nav -->
+      <aside class="ds-nav-col">
+        <div class="ds-nav-label">Settings</div>
+        <nav class="ds-nav">
+          <button *ngFor="let cat of categories" type="button"
+                  class="ds-nav-item"
+                  [class.active]="activeTab === cat.key"
+                  (click)="setTab(cat.key)">
+            <span class="ds-nav-icon">{{ cat.icon }}</span>
+            <div class="ds-nav-info">
+              <strong>{{ cat.label }}</strong>
+              <span>{{ cat.desc }}</span>
+            </div>
+            <span class="ds-nav-arrow">›</span>
+          </button>
+        </nav>
+      </aside>
 
-      <article class="dentist-card">
-        <span>Record behavior</span>
-        <strong>Prompt before incomplete chart closeout</strong>
-        <p>Reduce missed notes by keeping a reminder active before ending procedures and consultations.</p>
-      </article>
-    </section>
+      <!-- RIGHT: Settings detail -->
+      <section class="ds-detail-col">
+        <div class="ds-detail-content">
+
+          <!-- ACCOUNT ──────────────────────────────────── -->
+          <div *ngIf="activeTab === 'account'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>👤</span>
+              <div>
+                <h2>Account Settings</h2>
+                <p>Manage your name, email, contact number, and username.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Profile Information</div>
+            <div class="ds-form-grid">
+              <div class="ds-field">
+                <label class="ds-label">First Name</label>
+                <input class="ds-input" type="text" [(ngModel)]="account.firstName" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Last Name</label>
+                <input class="ds-input" type="text" [(ngModel)]="account.lastName" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Username</label>
+                <input class="ds-input" type="text" [(ngModel)]="account.username" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Contact Number</label>
+                <input class="ds-input" type="tel" [(ngModel)]="account.phone" />
+              </div>
+              <div class="ds-field ds-field-full">
+                <label class="ds-label">Email Address</label>
+                <input class="ds-input" type="email" [(ngModel)]="account.email" />
+              </div>
+            </div>
+
+            <div class="ds-section-title">Profile Photo</div>
+            <div class="ds-photo-row">
+              <div class="ds-photo-avatar">MS</div>
+              <div class="ds-photo-actions">
+                <button class="ds-btn-primary" type="button">📷 Upload New Photo</button>
+                <button class="ds-btn-ghost" type="button">Remove Photo</button>
+              </div>
+              <span class="ds-photo-hint">JPG or PNG. Max 2MB.</span>
+            </div>
+
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">💾 Save Changes</button>
+              <button class="ds-btn-ghost" type="button">Cancel</button>
+            </div>
+          </div>
+
+          <!-- SECURITY ─────────────────────────────────── -->
+          <div *ngIf="activeTab === 'security'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>🔒</span>
+              <div>
+                <h2>Security Settings</h2>
+                <p>Manage your password, two-factor authentication, and login sessions.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Change Password</div>
+            <div class="ds-form-grid">
+              <div class="ds-field ds-field-full">
+                <label class="ds-label">Current Password</label>
+                <input class="ds-input" type="password" [(ngModel)]="security.currentPassword" placeholder="Enter current password" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">New Password</label>
+                <input class="ds-input" type="password" [(ngModel)]="security.newPassword" placeholder="Enter new password" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Confirm New Password</label>
+                <input class="ds-input" type="password" [(ngModel)]="security.confirmPassword" placeholder="Confirm new password" />
+              </div>
+            </div>
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">🔒 Update Password</button>
+            </div>
+
+            <div class="ds-section-title">Two-Factor Authentication</div>
+            <div class="ds-toggle-row">
+              <div>
+                <strong>Enable 2FA</strong>
+                <span>Add an extra layer of security. You'll be asked for a verification code on login.</span>
+              </div>
+              <label class="ds-toggle">
+                <input type="checkbox" [(ngModel)]="security.twoFactor" />
+                <span class="ds-toggle-track"></span>
+              </label>
+            </div>
+
+            <div class="ds-section-title">Session Management</div>
+            <div class="ds-field" style="max-width: 280px;">
+              <label class="ds-label">Auto Logout After</label>
+              <select class="ds-input" [(ngModel)]="security.sessionTimeout">
+                <option value="15">15 minutes of inactivity</option>
+                <option value="30">30 minutes of inactivity</option>
+                <option value="60">1 hour of inactivity</option>
+                <option value="120">2 hours of inactivity</option>
+                <option value="0">Never</option>
+              </select>
+            </div>
+
+            <div class="ds-section-title">Login Activity</div>
+            <div class="ds-activity-list">
+              <div class="ds-activity-row" *ngFor="let a of loginActivity" [attr.data-status]="a.status">
+                <span class="ds-activity-dot">{{ a.status === 'current' ? '🟢' : '⚪' }}</span>
+                <div class="ds-activity-info">
+                  <strong>{{ a.device }}</strong>
+                  <span>{{ a.location }} · {{ a.time }}</span>
+                </div>
+                <span class="ds-activity-badge" *ngIf="a.status === 'current'">Current Session</span>
+                <button class="ds-revoke-btn" type="button" *ngIf="a.status !== 'current'">Revoke</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS ────────────────────────────── -->
+          <div *ngIf="activeTab === 'notifications'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>🔔</span>
+              <div>
+                <h2>Notification Settings</h2>
+                <p>Control which alerts and reminders you receive in the dentist portal.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Alert Types</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Patient Appointments</strong><span>Upcoming appointments, reschedules, and cancellations.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.appointments" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Follow-up Reminders</strong><span>Post-treatment checkups and recovery monitoring alerts.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.followUps" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Treatment Updates</strong><span>Pending procedures, incomplete sessions, and plan changes.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.treatmentUpdates" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Prescription Notifications</strong><span>Medication follow-up and prescription review alerts.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.prescriptions" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Urgent Case Alerts</strong><span>Priority alerts for emergency dental concerns.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.urgentCases" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Lab Results & Attachments</strong><span>New X-rays, dental images, or files uploaded.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.labResults" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>System Announcements</strong><span>Portal updates, maintenance notices, and system messages.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.systemAnnouncements" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Delivery Channels</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>In-App Notifications</strong><span>Show alerts inside the dentist portal.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.inAppNotif" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Email Notifications</strong><span>Send alerts to your registered email address.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.emailNotif" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>SMS Notifications</strong><span>Send alerts to your registered mobile number.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="notif.smsNotif" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">💾 Save Preferences</button>
+            </div>
+          </div>
+
+          <!-- SCHEDULE ─────────────────────────────────── -->
+          <div *ngIf="activeTab === 'schedule'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>📅</span>
+              <div>
+                <h2>Availability & Schedule</h2>
+                <p>Set your working days, consultation hours, and appointment preferences.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Working Days</div>
+            <div class="ds-day-grid">
+              <button *ngFor="let day of allDays" type="button"
+                      class="ds-day-btn" [class.active]="isDayActive(day)"
+                      (click)="toggleDay(day)">
+                {{ day.slice(0, 3) }}
+              </button>
+            </div>
+
+            <div class="ds-section-title">Consultation Hours</div>
+            <div class="ds-form-grid">
+              <div class="ds-field">
+                <label class="ds-label">Start Time</label>
+                <input class="ds-input" type="time" [(ngModel)]="schedule.startTime" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">End Time</label>
+                <input class="ds-input" type="time" [(ngModel)]="schedule.endTime" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Break Start</label>
+                <input class="ds-input" type="time" [(ngModel)]="schedule.lunchStart" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Break End</label>
+                <input class="ds-input" type="time" [(ngModel)]="schedule.lunchEnd" />
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Appointment Slot Duration</label>
+                <select class="ds-input" [(ngModel)]="schedule.slotDuration">
+                  <option value="15">15 minutes</option>
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                </select>
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Max Patients Per Day</label>
+                <input class="ds-input" type="number" [(ngModel)]="schedule.maxPerDay" min="1" max="30" />
+              </div>
+            </div>
+
+            <div class="ds-section-title">Appointment Preferences</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Accept Walk-in Patients</strong><span>Allow unscheduled patients to be added to your queue.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="schedule.acceptWalkIns" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Auto-Confirm Appointments</strong><span>Automatically confirm new appointments without manual review.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="schedule.autoConfirm" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">💾 Save Schedule</button>
+            </div>
+          </div>
+
+          <!-- PREFERENCES ──────────────────────────────── -->
+          <div *ngIf="activeTab === 'preferences'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>⚙</span>
+              <div>
+                <h2>Display Preferences</h2>
+                <p>Customize your portal layout, theme, language, and professional defaults.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Display Settings</div>
+            <div class="ds-form-grid">
+              <div class="ds-field">
+                <label class="ds-label">Theme Mode</label>
+                <div class="ds-radio-group">
+                  <label class="ds-radio" [class.active]="prefs.theme === 'light'">
+                    <input type="radio" [(ngModel)]="prefs.theme" value="light" />
+                    ☀ Light
+                  </label>
+                  <label class="ds-radio" [class.active]="prefs.theme === 'dark'">
+                    <input type="radio" [(ngModel)]="prefs.theme" value="dark" />
+                    🌙 Dark
+                  </label>
+                  <label class="ds-radio" [class.active]="prefs.theme === 'system'">
+                    <input type="radio" [(ngModel)]="prefs.theme" value="system" />
+                    💻 System
+                  </label>
+                </div>
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Language</label>
+                <select class="ds-input" [(ngModel)]="prefs.language">
+                  <option>English</option>
+                  <option>Filipino</option>
+                </select>
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Calendar View</label>
+                <select class="ds-input" [(ngModel)]="prefs.calendarView">
+                  <option value="day">Day View</option>
+                  <option value="week">Week View</option>
+                  <option value="month">Month View</option>
+                </select>
+              </div>
+              <div class="ds-field">
+                <label class="ds-label">Default Landing Page</label>
+                <select class="ds-input" [(ngModel)]="prefs.defaultTab">
+                  <option value="dashboard">Dashboard</option>
+                  <option value="appointments">My Appointments</option>
+                  <option value="patients">My Patients</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Display Options</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Compact Mode</strong><span>Reduce spacing and show more content on screen.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="prefs.compactMode" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Show Patient Photos</strong><span>Display patient profile photos in lists and records.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="prefs.showPatientPhotos" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Professional Preferences</div>
+            <div class="ds-field">
+              <label class="ds-label">Preferred Treatment Categories</label>
+              <div class="ds-chip-grid">
+                <button *ngFor="let cat of treatmentCategoryOptions" type="button"
+                        class="ds-chip-btn" [class.active]="isCategoryActive(cat)"
+                        (click)="toggleCategory(cat)">
+                  {{ cat }}
+                </button>
+              </div>
+            </div>
+
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">💾 Save Preferences</button>
+            </div>
+          </div>
+
+          <!-- PRIVACY ──────────────────────────────────── -->
+          <div *ngIf="activeTab === 'privacy'" class="ds-pane">
+            <div class="ds-pane-title">
+              <span>🛡</span>
+              <div>
+                <h2>Privacy Settings</h2>
+                <p>Control who can see your contact details, documents, and profile inside the clinic system.</p>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Contact Visibility</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Show Contact to Patients</strong><span>Allow patients to see your phone number and email.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.showContactToPatients" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Show Contact to Staff</strong><span>Allow clinic staff to see your contact details.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.showContactToStaff" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Document Access</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Show Documents to Patients</strong><span>Allow patients to view your professional credentials.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.showDocumentsToPatients" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Show Documents to Admin</strong><span>Allow clinic admin to access your professional documents.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.showDocumentsToAdmin" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-section-title">Profile Visibility</div>
+            <div class="ds-field" style="max-width: 280px;">
+              <label class="ds-label">Who can see your profile</label>
+              <select class="ds-input" [(ngModel)]="privacy.profileVisibility">
+                <option value="clinic">Clinic Staff Only</option>
+                <option value="patients">Patients & Staff</option>
+                <option value="private">Private (Admin Only)</option>
+              </select>
+            </div>
+
+            <div class="ds-section-title">Data & Activity</div>
+            <div class="ds-toggle-list">
+              <div class="ds-toggle-row">
+                <div><strong>Data Sharing</strong><span>Allow anonymized usage data to improve the portal experience.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.dataSharing" /><span class="ds-toggle-track"></span></label>
+              </div>
+              <div class="ds-toggle-row">
+                <div><strong>Activity Tracking</strong><span>Track your portal activity for security and audit purposes.</span></div>
+                <label class="ds-toggle"><input type="checkbox" [(ngModel)]="privacy.activityTracking" /><span class="ds-toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="ds-form-actions">
+              <button class="ds-btn-primary" type="button" (click)="save()">💾 Save Privacy Settings</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
   </main>
 </div>

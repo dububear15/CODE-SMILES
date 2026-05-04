@@ -10,21 +10,25 @@
         </div>
 
         <div class="topbar-profile">
-          <button type="button" class="alert-btn" aria-label="Notifications">
+          <button
+            class="header-icon-btn"
+            type="button"
+            aria-label="Notifications"
+            routerLink="/patient-notifications">
             <svg viewBox="0 0 24 24">
-              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
+              <path d="M12 3a5 5 0 0 0-5 5v2.4c0 .7-.2 1.4-.6 2L5 15h14l-1.4-2.6c-.4-.6-.6-1.3-.6-2V8a5 5 0 0 0-5-5" />
               <path d="M10 18a2 2 0 0 0 4 0" />
             </svg>
-            <span class="alert-dot"></span>
+            <span class="header-icon-dot"></span>
           </button>
 
-          <div class="profile-chip">
-            <div class="profile-avatar" aria-hidden="true">L</div>
-            <div class="profile-copy">
+          <a class="header-user" routerLink="/patient-profile">
+            <div class="header-avatar" aria-hidden="true">L</div>
+            <div class="header-user-copy">
               <strong>Laura Martinez</strong>
               <span>Patient ID: CS-48291</span>
             </div>
-          </div>
+          </a>
         </div>
       </header>
 
@@ -41,24 +45,10 @@
           <strong>Popular:</strong>
           <a routerLink="/patient-appointments">Reschedule Appointment</a>
           <a routerLink="/patient-medical-vault">Upload X-Rays</a>
-          <a routerLink="/patient-privacy-policy">Insurance & Billing</a>
+          <a routerLink="/patient-help-center" fragment="privacy-policy">Privacy Policy</a>
+          <a routerLink="/patient-help-center" fragment="terms-of-use">Terms of Use</a>
           <a routerLink="/patient-treatment-progress">Treatment Plan</a>
         </div>
-      </section>
-
-      <section class="categories-grid">
-        <article class="category-card" *ngFor="let category of categories">
-          <div class="category-icon" [ngClass]="category.tone" aria-hidden="true">
-            <svg [attr.viewBox]="category.iconViewBox">
-              <path *ngFor="let path of category.iconPaths" [attr.d]="path"></path>
-            </svg>
-          </div>
-          <div>
-            <h3>{{ category.title }}</h3>
-            <p>{{ category.description }}</p>
-            <a [routerLink]="category.route" class="section-link">View Articles</a>
-          </div>
-        </article>
       </section>
 
       <section class="content-grid">
@@ -69,9 +59,15 @@
           </div>
 
           <div class="faq-list">
-            <article class="faq-row" *ngFor="let item of faqs">
-              <strong>{{ item.question }}</strong>
-              <span>⌄</span>
+            <article
+              class="faq-row"
+              *ngFor="let item of faqs; let i = index"
+              [class.open]="activeFaqIndex === i">
+              <button type="button" class="faq-question" (click)="toggleFaq(i)">
+                <strong>{{ item.question }}</strong>
+                <span aria-hidden="true">{{ activeFaqIndex === i ? '-' : '+' }}</span>
+              </button>
+              <p class="faq-answer" *ngIf="activeFaqIndex === i">{{ item.answer }}</p>
             </article>
           </div>
         </section>
@@ -95,6 +91,96 @@
             </article>
           </div>
         </aside>
+      </section>
+
+      <section class="legal-hub-card" aria-labelledby="legal-hub-title">
+        <div class="legal-hub-head">
+          <div>
+            <h2 id="legal-hub-title">Privacy Policy & Terms</h2>
+            <p>Review the portal policies that apply to your account, records, and patient care access.</p>
+          </div>
+
+          <div class="legal-jump-links" aria-label="Policy shortcuts">
+            <button
+              type="button"
+              [class.active]="activeLegalSection === 'privacy-policy'"
+              (click)="showLegalSection('privacy-policy')">
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              [class.active]="activeLegalSection === 'terms-of-use'"
+              (click)="showLegalSection('terms-of-use')">
+              Terms of Use
+            </button>
+          </div>
+        </div>
+
+        <div class="legal-grid">
+          <article
+            class="legal-panel"
+            id="privacy-policy"
+            *ngIf="activeLegalSection === 'privacy-policy'">
+            <div class="legal-panel-head">
+              <div class="legal-icon shield" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4 19 7.5v4.8c0 4.1-2.7 7.6-7 8.7-4.3-1.1-7-4.6-7-8.7V7.5Z" />
+                  <path d="M9.5 12.5 11.2 14 14.8 10.5" />
+                </svg>
+              </div>
+              <div>
+                <h3>Privacy Policy</h3>
+                <p>How Code Smiles collects, protects, and manages your patient portal information.</p>
+              </div>
+            </div>
+
+            <div class="legal-point-list">
+              <article class="legal-point" *ngFor="let point of privacyPoints">
+                <div class="legal-point-icon" [ngClass]="point.tone" aria-hidden="true">
+                  <svg [attr.viewBox]="point.iconViewBox">
+                    <path *ngFor="let path of point.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <div>
+                  <strong>{{ point.title }}</strong>
+                  <p>{{ point.description }}</p>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article
+            class="legal-panel"
+            id="terms-of-use"
+            *ngIf="activeLegalSection === 'terms-of-use'">
+            <div class="legal-panel-head">
+              <div class="legal-icon document" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3.5h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z" />
+                  <path d="M15 3.5v4h4M9 12h6M9 16h4" />
+                </svg>
+              </div>
+              <div>
+                <h3>Terms of Use</h3>
+                <p>The basic responsibilities for using your portal, booking visits, and managing records.</p>
+              </div>
+            </div>
+
+            <div class="legal-point-list">
+              <article class="legal-point" *ngFor="let point of termsPoints">
+                <div class="legal-point-icon" [ngClass]="point.tone" aria-hidden="true">
+                  <svg [attr.viewBox]="point.iconViewBox">
+                    <path *ngFor="let path of point.iconPaths" [attr.d]="path"></path>
+                  </svg>
+                </div>
+                <div>
+                  <strong>{{ point.title }}</strong>
+                  <p>{{ point.description }}</p>
+                </div>
+              </article>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="help-banner">

@@ -1,147 +1,155 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
-
-interface DashboardStat {
-  label: string;
-  value: string;
-  unit: string;
-  icon: string;
-  tone: 'blue' | 'green' | 'violet' | 'amber';
-}
-
-interface DashboardScheduleItem {
-  time: string;
-  period: string;
-  initials: string;
-  patient: string;
-  patientId: string;
-  age: number;
-  service: string;
-  status: string;
-  statusTone: 'confirmed' | 'progress' | 'pending';
-  primaryAction: string;
-}
-
-interface QueueItem {
-  patient: string;
-  service: string;
-  date: string;
-  time: string;
-  status: string;
-  statusTone: 'confirmed' | 'progress' | 'pending';
-}
-
-interface QuickAction {
-  label: string;
-  icon: string;
-  route: string;
-}
+import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
+import { getDentistInfo } from '../dentist-portal-data';
 
 @Component({
   selector: 'app-dentist-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, DentistSidebar],
+  imports: [CommonModule, RouterModule, DentistSidebar],
   templateUrl: './dentist-dashboard.html',
   styleUrl: './dentist-dashboard.css',
 })
-export class DentistDashboard {
-  protected readonly notifications = [
-    { title: 'Lab result ready' },
-    { title: 'Patient confirmation' },
-    { title: 'Chair prep update' },
+export class DentistDashboard implements OnInit {
+  fullName: string;
+  initial: string;
+  specialty: string;
+  today: string;
+  isLoading = true;
+
+  private dbStats = { today: 0, upcoming: 0, completed: 0, patients: 0 };
+  private dbRecent: any[] = [];
+
+  readonly quickActions = [
+    { label: 'Add Prescription',      icon: 'Rx', route: '/dentist-prescriptions',   tone: 'blue'   as const },
+    { label: 'Open Patient Record',   icon: '📂', route: '/dentist-medical-vault',   tone: 'green'  as const },
+    { label: 'View Full Schedule',    icon: '📅', route: '/dentist-appointments',    tone: 'violet' as const },
+    { label: 'Create Treatment Plan', icon: '📋', route: '/dentist-treatment-plans', tone: 'amber'  as const },
   ];
 
-  protected readonly summaryCards: DashboardStat[] = [
-    { label: "Today's Appointments", value: '12', unit: 'Visits', icon: 'C', tone: 'blue' },
-    { label: 'Pending Requests', value: '06', unit: 'Reviews', icon: 'R', tone: 'violet' },
-    { label: 'Approved Today', value: '09', unit: 'Cases', icon: 'O', tone: 'green' },
-    { label: 'Cancelled / Rescheduled', value: '04', unit: 'Updates', icon: 'L', tone: 'amber' },
-  ];
+  constructor(private auth: AuthService, private api: ApiService, private cdr: ChangeDetectorRef) {
+    const user     = this.auth.getUser();
+    this.fullName  = user ? `Dr. ${user.first_name} ${user.last_name}` : 'Dentist';
+    this.initial   = (user?.first_name?.charAt(0) ?? 'D').toUpperCase();
+    const info     = getDentistInfo(user?.email ?? '');
+    this.specialty = info?.specialty ?? 'Dentist';
+    this.today     = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    }).format(new Date());
+  }
 
-  protected readonly todaySchedule: DashboardScheduleItem[] = [
-    {
-      time: '9:00',
-      period: 'AM',
-      initials: 'IC',
-      patient: 'Isabella Cruz',
-      patientId: 'CS-0811',
-      age: 26,
-      service: 'Dental Cleaning',
-      status: 'Confirmed',
-      statusTone: 'confirmed',
-      primaryAction: 'Start Consultation',
-    },
-    {
-      time: '10:30',
-      period: 'AM',
-      initials: 'MR',
-      patient: 'Miguel Reyes',
-      patientId: 'CS-1123',
-      age: 28,
-      service: 'Tooth Extraction',
-      status: 'In Progress',
-      statusTone: 'progress',
-      primaryAction: 'Continue',
-    },
-    {
-      time: '1:00',
-      period: 'PM',
-      initials: 'AS',
-      patient: 'Ariana Santos',
-      patientId: 'CS-0767',
-      age: 19,
-      service: 'Orthodontic Review',
-      status: 'Confirmed',
-      statusTone: 'confirmed',
-      primaryAction: 'Open Chart',
-    },
-    {
-      time: '3:30',
-      period: 'PM',
-      initials: 'DF',
-      patient: 'Daniel Flores',
-      patientId: 'CS-0941',
-      age: 34,
-      service: 'Root Canal Follow-up',
-      status: 'Pending',
-      statusTone: 'pending',
-      primaryAction: 'View Details',
-    },
-  ];
+  ngOnInit() {
+    const user = this.auth.getUser();
+    const dentistName = user ? `Dr. ${user.first_name} ${user.last_name}` : '';
+    this.api.getDentistDashboardStats(dentistName).subscribe({
+      next: (data) => {
+        this.dbStats  = data;
+        this.dbRecent = data.recentAppointments || [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.isLoading = false; this.cdr.detectChanges(); }
+    });
+  }
 
-  protected readonly approvalQueue: QueueItem[] = [
-    {
-      patient: 'Sofia Bautista',
-      service: 'Teeth Whitening and Consultation',
-      date: 'Apr 13, 2024',
-      time: '11:00 AM',
-      status: 'Standard',
-      statusTone: 'pending',
-    },
-    {
-      patient: 'Noah Villanueva',
-      service: 'Deep Cleaning',
-      date: 'Apr 13, 2024',
-      time: '2:00 PM',
-      status: 'High',
-      statusTone: 'progress',
-    },
-    {
-      patient: 'Camille Navarro',
-      service: 'Braces Adjustment',
-      date: 'Apr 14, 2024',
-      time: '9:30 AM',
-      status: 'Standard',
-      statusTone: 'pending',
-    },
-  ];
+  get stats() {
+    return [
+      { label: 'Total Patients',       value: String(this.dbStats.patients),  unit: 'Registered', tone: 'blue',   icon: '👥' },
+      { label: "Today's Appointments", value: String(this.dbStats.today),     unit: 'Scheduled',  tone: 'green',  icon: '📅' },
+      { label: 'Upcoming',             value: String(this.dbStats.upcoming),  unit: 'Approved',   tone: 'violet', icon: '🕐' },
+      { label: 'Completed',            value: String(this.dbStats.completed), unit: 'All time',   tone: 'amber',  icon: '✅' },
+    ];
+  }
 
-  protected readonly quickActions: QuickAction[] = [
-    { label: 'My Appointments', icon: 'A', route: '/dentist-appointments' },
-    { label: 'My Patients', icon: 'P', route: '/dentist-patients' },
-    { label: 'Medical Records', icon: 'R', route: '/dentist-medical-vault' },
-    { label: 'Treatment Plans', icon: 'T', route: '/dentist-treatment-plans' },
-  ];
+  // Today's appointments list for the dashboard card
+  get todayAppointments() {
+    const today = new Date().toISOString().split('T')[0];
+    const list = this.dbRecent.filter(a => a.appointment_date === today);
+    // If no today appointments, show upcoming ones
+    const source = list.length > 0 ? list : this.dbRecent;
+    return source.slice(0, 4).map(a => ({
+      time:      this.formatTime(a.appointment_time),
+      initials:  this.getInitials(a.patient_name),
+      patient:   a.patient_name,
+      treatment: a.treatment,
+      status:    this.statusTone(a.status),
+    }));
+  }
+
+  // Pending plans — show upcoming approved appointments as "plans"
+  get pendingPlans() {
+    return this.dbRecent
+      .filter(a => a.status === 'Approved')
+      .slice(0, 3)
+      .map(a => ({
+        initials:  this.getInitials(a.patient_name),
+        patient:   a.patient_name,
+        procedure: a.treatment,
+        followUp:  this.formatDate(a.appointment_date),
+        priority:  'normal' as const,
+      }));
+  }
+
+  // Notifications — recent activity
+  get notifications() {
+    return this.dbRecent.slice(0, 4).map(a => ({
+      type:    this.notifType(a.status),
+      message: `${a.patient_name} — ${a.treatment}`,
+      time:    this.formatDate(a.appointment_date),
+    }));
+  }
+
+  get greeting(): string {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  statusLabel(s: string): string {
+    const map: Record<string, string> = {
+      'confirmed': 'Confirmed', 'progress': 'In Progress',
+      'pending': 'Pending', 'cancelled': 'Cancelled',
+      'Approved': 'Confirmed', 'Completed': 'Completed',
+    };
+    return map[s] || s;
+  }
+
+  notifIcon(type: string): string {
+    const map: Record<string, string> = { cancel: '✕', reschedule: '↻', urgent: '!', followup: '↩', info: 'ℹ' };
+    return map[type] || 'ℹ';
+  }
+
+  private notifType(status: string): string {
+    if (status === 'Cancelled') return 'cancel';
+    if (status === 'Rescheduled') return 'reschedule';
+    return 'info';
+  }
+
+  private statusTone(s: string): string {
+    const map: Record<string, string> = {
+      'Approved': 'confirmed', 'Completed': 'completed',
+      'Pending': 'pending', 'Cancelled': 'cancelled'
+    };
+    return map[s] || 'pending';
+  }
+
+  getInitials(name: string): string {
+    return (name || '?').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  formatDate(d: string): string {
+    if (!d) return '—';
+    return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  formatTime(t: string): string {
+    if (!t) return '—';
+    const [h, m] = t.split(':').map(Number);
+    return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  }
 }
+

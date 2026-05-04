@@ -1,98 +1,276 @@
 :host {
   display: block;
-  min-height: 100vh;
-}
-
-.dentist-shell {
-  --dentist-shell-offset: 270px;
-  display: block;
-  grid-template-columns: none;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(116, 173, 239, 0.12), transparent 24%),
-    linear-gradient(180deg, #eff5fd 0%, #f7fbff 52%, #edf4fb 100%);
-}
-
-.dentist-main {
-  width: calc(100% - var(--dentist-shell-offset));
-  min-height: 100vh;
-  margin-left: var(--dentist-shell-offset);
-  padding: 24px;
-  box-sizing: border-box;
-  color: #22384d;
-}
-
-.dentist-page-hero,
-.dentist-card {
-  border: 1px solid rgba(26, 66, 110, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(249, 252, 255, 0.98));
-  box-shadow: 0 18px 36px rgba(17, 40, 68, 0.07);
-}
-
-.dentist-page-hero {
-  padding: 24px 26px;
-  border-radius: 24px;
-  margin-bottom: 16px;
-}
-
-.dentist-page-hero h2 {
-  margin: 0;
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  font-size: 2rem;
-  line-height: 1.1;
-  color: #22384d;
 }
 
-.dentist-page-hero p,
-.dentist-card p {
-  color: #6f8499;
-  line-height: 1.6;
+.ds-shell { min-height: 100vh; background: #f4f7fb; }
+
+/* ── Main ───────────────────────────────────────────────── */
+.ds-main {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  
+  color: #1a2e45;
 }
 
-.dentist-eyebrow {
-  display: inline-block;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-weight: 700;
-  color: #4c7bb1;
+/* ── Header ─────────────────────────────────────────────── */
+.ds-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 18px 28px 14px;
+  background: #ffffff; border-bottom: 1px solid #e8edf4; flex-shrink: 0;
 }
 
-.dentist-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+.ds-title   { margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f2540; }
+.ds-subtitle { margin: 4px 0 0; font-size: 0.84rem; color: #6a8099; }
+
+.ds-back-btn {
+  font-size: 0.84rem; font-weight: 700; color: #1a7fa0;
+  text-decoration: none; padding: 7px 14px;
+  border-radius: 9px; background: #e0f5f8; border: 1px solid #b8e8f0; white-space: nowrap;
 }
 
-.dentist-card {
-  padding: 20px;
-  border-radius: 18px;
+/* ── Body ───────────────────────────────────────────────── */
+.ds-body {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1 1 0; min-height: 0; overflow: visible;
 }
 
-.dentist-card span {
-  display: block;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #7a90a6;
+/* ── Left nav ───────────────────────────────────────────── */
+.ds-nav-col {
+  background: #ffffff; border-right: 1px solid #e8edf4;
+  padding: 16px 12px; overflow-y: auto; flex-shrink: 0;
 }
 
-.dentist-card strong {
-  display: block;
-  margin-top: 10px;
-  font-size: 1.1rem;
-  color: #22384d;
+.ds-nav-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #9ab0c4; padding: 0 8px; margin-bottom: 8px;
 }
 
+.ds-nav { display: flex; flex-direction: column; gap: 2px; }
+
+.ds-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 12px; border-radius: 12px; border: none;
+  background: transparent; cursor: pointer; text-align: left; width: 100%;
+  transition: background 0.12s ease;
+}
+
+.ds-nav-item:hover { background: #f4f7fb; }
+.ds-nav-item.active { background: #e0f5f8; }
+
+.ds-nav-icon { font-size: 1.1rem; flex-shrink: 0; width: 28px; text-align: center; }
+
+.ds-nav-info { flex: 1; min-width: 0; }
+.ds-nav-info strong { display: block; font-size: 0.88rem; font-weight: 700; color: #0f2540; }
+.ds-nav-info span   { display: block; font-size: 0.72rem; color: #9ab0c4; margin-top: 1px; }
+
+.ds-nav-item.active .ds-nav-info strong { color: #1a7fa0; }
+
+.ds-nav-arrow { font-size: 0.9rem; color: #c0ccd8; flex-shrink: 0; }
+.ds-nav-item.active .ds-nav-arrow { color: #1a7fa0; }
+
+/* ── Right detail ───────────────────────────────────────── */
+.ds-detail-col { display: flex; flex-direction: column; overflow: visible; background: #f4f7fb; }
+
+.ds-detail-content {
+  padding: 24px 28px;
+}
+
+.ds-detail-content::-webkit-scrollbar { width: 5px; }
+.ds-detail-content::-webkit-scrollbar-thumb { background: #dde4ee; border-radius: 999px; }
+
+/* Pane */
+.ds-pane { display: flex; flex-direction: column; gap: 20px; }
+
+/* Pane title */
+.ds-pane-title {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 18px 20px; border-radius: 14px;
+  background: #ffffff; border: 1px solid #e8edf4;
+}
+
+.ds-pane-title > span { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+.ds-pane-title h2 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #0f2540; }
+.ds-pane-title p  { margin: 4px 0 0; font-size: 0.84rem; color: #6a8099; }
+
+/* Section title */
+.ds-section-title {
+  font-size: 0.88rem; font-weight: 800; color: #0f2540;
+  padding-bottom: 8px; border-bottom: 1px solid #e8edf4;
+}
+
+/* Form */
+.ds-form-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+}
+
+.ds-field { display: flex; flex-direction: column; gap: 6px; }
+.ds-field-full { grid-column: 1 / -1; }
+
+.ds-label {
+  font-size: 0.76rem; font-weight: 700; color: #6a8099;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.ds-input {
+  padding: 10px 14px; border-radius: 10px;
+  border: 1px solid #dde4ee; background: #ffffff;
+  font: inherit; font-size: 0.9rem; color: #0f2540; outline: none;
+  transition: border-color 0.14s ease;
+}
+
+.ds-input:focus { border-color: #1a7fa0; }
+
+/* Buttons */
+.ds-form-actions { display: flex; gap: 10px; }
+
+.ds-btn-primary {
+  padding: 10px 20px; border-radius: 10px; border: none;
+  background: linear-gradient(180deg, #1a7fa0, #145a7a); color: #fff;
+  font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  transition: transform 0.14s ease;
+}
+
+.ds-btn-primary:hover { transform: translateY(-1px); }
+
+.ds-btn-ghost {
+  padding: 10px 20px; border-radius: 10px;
+  border: 1px solid #dde4ee; background: #f4f7fb;
+  font: inherit; font-size: 0.88rem; font-weight: 700; color: #2a4a6a; cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.ds-btn-ghost:hover { background: #e0f5f8; }
+
+/* Photo row */
+.ds-photo-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 18px; border-radius: 12px;
+  background: #ffffff; border: 1px solid #e8edf4;
+}
+
+.ds-photo-avatar {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, #4db8d4, #1a7fa0);
+  color: #fff; font-size: 1.1rem; font-weight: 800;
+  display: grid; place-items: center; flex-shrink: 0;
+}
+
+.ds-photo-actions { display: flex; gap: 8px; }
+.ds-photo-hint { font-size: 0.76rem; color: #9ab0c4; }
+
+/* Toggle */
+.ds-toggle-list { display: flex; flex-direction: column; gap: 8px; }
+
+.ds-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 16px; border-radius: 12px;
+  background: #ffffff; border: 1px solid #e8edf4;
+}
+
+.ds-toggle-row strong { display: block; font-size: 0.9rem; font-weight: 700; color: #0f2540; }
+.ds-toggle-row span   { display: block; font-size: 0.8rem; color: #9ab0c4; margin-top: 3px; }
+
+.ds-toggle { position: relative; flex-shrink: 0; cursor: pointer; }
+.ds-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.ds-toggle-track {
+  display: block; width: 44px; height: 24px; border-radius: 999px;
+  background: #dde4ee; transition: background 0.2s ease; position: relative;
+}
+
+.ds-toggle-track::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #ffffff; transition: transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.ds-toggle input:checked + .ds-toggle-track { background: #1a7fa0; }
+.ds-toggle input:checked + .ds-toggle-track::after { transform: translateX(20px); }
+
+/* Day grid */
+.ds-day-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.ds-day-btn {
+  padding: 9px 16px; border-radius: 9px;
+  border: 1px solid #dde4ee; background: #f4f7fb;
+  font: inherit; font-size: 0.84rem; font-weight: 600; color: #6a8099; cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.ds-day-btn.active { background: #1a7fa0; color: #ffffff; border-color: #1a7fa0; }
+
+/* Radio group */
+.ds-radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.ds-radio {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 9px;
+  border: 1px solid #dde4ee; background: #f4f7fb;
+  font-size: 0.84rem; font-weight: 600; color: #6a8099; cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+
+.ds-radio input { display: none; }
+.ds-radio.active { background: #e0f5f8; color: #1a7fa0; border-color: #b8e8f0; }
+
+/* Chip grid */
+.ds-chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ds-chip-btn {
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid #dde4ee; background: #f4f7fb;
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: #6a8099; cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.ds-chip-btn.active { background: #1a7fa0; color: #ffffff; border-color: #1a7fa0; }
+
+/* Login activity */
+.ds-activity-list { display: flex; flex-direction: column; gap: 8px; }
+
+.ds-activity-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 10px;
+  background: #ffffff; border: 1px solid #e8edf4;
+}
+
+.ds-activity-dot { font-size: 0.9rem; flex-shrink: 0; }
+.ds-activity-info { flex: 1; }
+.ds-activity-info strong { display: block; font-size: 0.86rem; font-weight: 700; color: #0f2540; }
+.ds-activity-info span   { display: block; font-size: 0.76rem; color: #9ab0c4; margin-top: 2px; }
+
+.ds-activity-badge {
+  font-size: 0.72rem; font-weight: 700; padding: 3px 9px;
+  border-radius: 999px; background: #d0f0e4; color: #1a7a5a; white-space: nowrap;
+}
+
+.ds-revoke-btn {
+  font-size: 0.76rem; font-weight: 700; color: #e05a3a;
+  background: #fdeaea; border: 1px solid #f5c8c8;
+  padding: 4px 10px; border-radius: 7px; cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.ds-revoke-btn:hover { background: #f5c8c8; }
+
+/* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1080px) {
-  .dentist-main {
-    width: 100%;
-    margin-left: 0;
-  }
+  .ds-main { margin-left: 0; width: 100%; }
+  .ds-body { grid-template-columns: 1fr; }
+  .ds-nav-col { display: flex; flex-wrap: wrap; gap: 4px; padding: 12px; border-right: none; border-bottom: 1px solid #e8edf4; }
+  .ds-nav { flex-direction: row; flex-wrap: wrap; }
+  .ds-nav-item { width: auto; }
+  .ds-nav-info span { display: none; }
+  .ds-detail-col { overflow: visible; }
+  .ds-detail-content { overflow: visible; }
+  .ds-form-grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 720px) {
-  .dentist-main {
-    padding: 18px;
-  }
-}
+
+

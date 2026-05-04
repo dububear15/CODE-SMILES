@@ -38,7 +38,7 @@
 
 .progress-main {
   min-height: 100dvh;
-  padding: 16px 22px 20px;
+  padding: 22px 32px 28px 32px;
 }
 
 .progress-shell {
@@ -158,16 +158,6 @@
   color: var(--navy);
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: 340px 360px 250px 250px 320px;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: thin;
-}
-
-.summary-card,
 .treatment-tab,
 .active-plan-card,
 .side-card,
@@ -179,110 +169,8 @@
   box-shadow: var(--shadow);
 }
 
-.summary-card {
-  min-height: 112px;
-  padding: 16px 18px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
 
-.summary-card-progress {
-  gap: 16px;
-}
 
-.tone-appointment {
-  background: linear-gradient(180deg, #edf9f3, #ecf8f1);
-}
-
-.tone-completed {
-  background: linear-gradient(180deg, #f3efff, #f7f4ff);
-}
-
-.tone-remaining {
-  background: linear-gradient(180deg, #fff5e9, #fffaf3);
-}
-
-.tone-estimate {
-  background: linear-gradient(180deg, #eef3ff, #f5f8ff);
-}
-
-.progress-ring {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: conic-gradient(#2f73ea 0 58%, #e7eef8 58% 100%);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.progress-ring-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #fff;
-  display: grid;
-  place-items: center;
-}
-
-.progress-ring-circle span {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--navy);
-}
-
-.summary-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  color: var(--blue);
-  background: #edf4ff;
-}
-
-.summary-copy {
-  min-width: 0;
-}
-
-.summary-copy span {
-  display: block;
-  margin: 0;
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: #5b6d88;
-}
-
-.summary-copy strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 1.02rem;
-  line-height: 1.2;
-  font-weight: 800;
-  color: var(--navy);
-}
-
-.compact-card .summary-copy strong {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.progress-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 26px;
-  margin-top: 10px;
-  padding: 0 12px;
-  border-radius: 999px;
-  color: var(--green);
-  background: var(--green-soft);
-  font-size: 0.76rem;
-  font-weight: 800;
-}
 
 .summary-copy a,
 .section-link {
@@ -306,28 +194,6 @@
   line-height: 1;
 }
 
-.info-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #eaf2ff, #e5efff);
-  border: 1px solid #dbe7fb;
-}
-
-.info-strip-icon {
-  display: grid;
-  place-items: center;
-  color: var(--blue);
-}
-
-.info-strip p {
-  margin: 0;
-  font-size: 0.84rem;
-  color: #5b7293;
-}
 
 .content-grid {
   display: grid;
@@ -953,7 +819,6 @@
   background: var(--purple-soft);
 }
 
-.summary-card,
 .treatment-tab,
 .active-plan-card,
 .side-card,
@@ -970,7 +835,6 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 
-.summary-card:hover,
 .treatment-tab:hover,
 .quick-action-row:hover,
 .linked-record-chip:hover,
@@ -1159,3 +1023,5 @@
     flex-direction: column;
   }
 }
+
+

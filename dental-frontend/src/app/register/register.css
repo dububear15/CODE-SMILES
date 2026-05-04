@@ -796,3 +796,21 @@
     opacity: 0.11;
   }
 }
+
+/* ── Backend error banner ─────────────────────────────────────────────── */
+.error-banner {
+  margin-bottom: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(223, 107, 120, 0.1);
+  border: 1px solid rgba(223, 107, 120, 0.28);
+  color: #c0404f;
+  font-size: 0.83rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sign-in-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

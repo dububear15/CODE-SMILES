@@ -123,8 +123,8 @@ export const DENTIST_SUMMARY_CARDS: DentistSummaryCard[] = [
 export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   {
     patient: 'Juan Dela Cruz',
-    service: 'Cleaning & Checkup',
-    date: 'April 17, 2024',
+    service: 'Dental Cleaning',
+    date: 'April 17, 2026',
     time: '9:00 AM',
     visitType: 'Routine Visit',
     notes: 'Review cleaning notes, reinforce daily care routine, and check lower molar sensitivity.',
@@ -134,8 +134,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Miguel Reyes',
-    service: 'Orthodontic Adjustment',
-    date: 'April 17, 2024',
+    service: 'Traditional Braces',
+    date: 'April 17, 2026',
     time: '10:30 AM',
     visitType: 'Adjustment',
     notes: 'Check bracket response, review elastic wear, and update progress note after the visit.',
@@ -145,8 +145,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Miguel Torres',
-    service: 'Treatment Consultation',
-    date: 'April 17, 2024',
+    service: 'Orthodontic Consultation',
+    date: 'April 17, 2026',
     time: '1:00 PM',
     visitType: 'Consultation',
     notes: 'Review treatment options, discuss imaging findings, and approve the next care plan.',
@@ -156,8 +156,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Liza Garcia',
-    service: 'Tooth Filling',
-    date: 'April 17, 2024',
+    service: 'Tooth Fillings',
+    date: 'April 17, 2026',
     time: '3:30 PM',
     visitType: 'Procedure',
     notes: 'Confirm shade, isolate upper premolar, and document post-procedure care advice.',
@@ -167,8 +167,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Paolo Mendoza',
-    service: 'Smile Design Review',
-    date: 'April 18, 2024',
+    service: 'Smile Makeover',
+    date: 'April 18, 2026',
     time: '9:30 AM',
     visitType: 'Review',
     notes: 'Prepare before-and-after references and discuss revised cosmetic treatment preferences.',
@@ -178,8 +178,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Camille Navarro',
-    service: 'Braces Adjustment',
-    date: 'April 18, 2024',
+    service: 'Traditional Braces',
+    date: 'April 18, 2026',
     time: '2:00 PM',
     visitType: 'Adjustment',
     notes: 'Guardian joining. Prepare adjustment notes and next wire progression plan.',
@@ -189,8 +189,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Rafael Gomez',
-    service: 'Post-op Follow-up',
-    date: 'April 16, 2024',
+    service: 'Surgical Tooth Extraction',
+    date: 'April 16, 2026',
     time: '11:00 AM',
     visitType: 'Follow-up',
     notes: 'Healing looked stable. Post-op summary already saved to the chart.',
@@ -200,8 +200,8 @@ export const DENTIST_APPOINTMENTS: DentistAppointment[] = [
   },
   {
     patient: 'Sofia Mendoza',
-    service: 'Whitening Consultation',
-    date: 'April 16, 2024',
+    service: 'Teeth Whitening',
+    date: 'April 16, 2026',
     time: '4:00 PM',
     visitType: 'Consultation',
     notes: 'Patient asked to move after finals week. Leave consultation note available for the next slot.',
@@ -445,3 +445,71 @@ export const DENTIST_QUICK_LINKS = [
     route: '/dentist-schedule',
   },
 ];
+
+// ─── DENTIST → SPECIALTY & SERVICES MAPPING ──────────────────────────────────
+// Used by the dentist dashboard/appointments to show only relevant services.
+
+export interface DentistInfo {
+  fullName: string;
+  email: string;
+  specialty: string;
+  categories: string[];
+  services: string[];
+}
+
+export const DENTIST_ROSTER: DentistInfo[] = [
+  {
+    fullName:   'Dr. Raphoncel Eduria',
+    email:      'eduria@codesmiles.com',
+    specialty:  'General Dentistry, Oral Surgery',
+    categories: ['General Dentistry', 'Oral Surgery'],
+    services: [
+      // General Dentistry
+      'Oral Consultation', 'Dental Cleaning', 'Digital X-Rays',
+      'Tooth Fillings', 'Fluoride Treatment', 'Dental Sealants',
+      'Simple Tooth Extraction', 'Emergency Dental Care',
+      // Oral Surgery
+      'Surgical Tooth Extraction', 'Wisdom Tooth Removal',
+      'Cyst Removal', 'Minor Oral Surgery', 'Frenectomy',
+    ],
+  },
+  {
+    fullName:   'Dr. Christine Faith Metillo',
+    email:      'metillo@codesmiles.com',
+    specialty:  'Orthodontics, Dental Implants',
+    categories: ['Orthodontics', 'Dental Implants'],
+    services: [
+      // Orthodontics
+      'Traditional Braces', 'Ceramic Braces', 'Self-Ligating Braces',
+      'Clear Aligners', 'Retainers', 'Orthodontic Consultation',
+      // Dental Implants
+      'Implant Consultation', 'Single Tooth Implant', 'Multiple Tooth Implant',
+      'Implant Crown Placement', 'Implant Maintenance',
+    ],
+  },
+  {
+    fullName:   'Dr. Nico Bongolto',
+    email:      'bongolto@codesmiles.com',
+    specialty:  'Pediatric Care',
+    categories: ['Pediatric Care'],
+    services: [
+      'Pediatric Check-up', 'Pediatric Cleaning', 'Fluoride for Kids',
+      'Dental Sealants', 'Baby Tooth Extraction', 'Space Maintainers',
+    ],
+  },
+  {
+    fullName:   'Dr. Derence Acojedo',
+    email:      'acojedo@codesmiles.com',
+    specialty:  'Cosmetic Arts',
+    categories: ['Cosmetic Arts'],
+    services: [
+      'Teeth Whitening', 'Dental Veneers', 'Dental Bonding',
+      'Smile Makeover', 'Tooth Contouring', 'Gum Contouring',
+    ],
+  },
+];
+
+/** Returns the DentistInfo for the currently logged-in dentist based on their email */
+export function getDentistInfo(email: string): DentistInfo | undefined {
+  return DENTIST_ROSTER.find(d => d.email === email);
+}

@@ -16,7 +16,7 @@
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
-.privacy-main { min-height: 100vh; padding: 22px 24px 24px; }
+.privacy-main { min-height: 100vh; padding: 22px 32px 28px 32px; }
 .privacy-shell { display: flex; flex-direction: column; gap: 14px; }
 
 .page-topbar, .feature-card, .policy-card, .question-card, .links-card, .help-banner {
@@ -102,3 +102,5 @@
   .last-updated { margin-left: 0; }
   .primary-action-btn { width: 100%; }
 }
+
+

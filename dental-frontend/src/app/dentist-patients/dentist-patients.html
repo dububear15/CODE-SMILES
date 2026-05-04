@@ -1,62 +1,301 @@
-<div class="dentist-shell">
+<div class="dentist-shell dp-shell">
   <app-dentist-sidebar></app-dentist-sidebar>
 
-  <main class="dentist-main">
-    <section class="dentist-page-hero">
+  <main class="dp-main">
+
+    <!-- ── Header ──────────────────────────────────────── -->
+    <header class="dp-header">
       <div>
-        <span class="dentist-eyebrow">Patients</span>
-        <h2>Your active patient list stays connected to treatment status.</h2>
-        <p>
-          Scan age, recent visits, current care, and next appointments, then jump directly
-          into the medical vault, treatment plan, or appointment history.
-        </p>
+        <h1 class="dp-title">My Patients</h1>
+        <p class="dp-subtitle">View assigned patients, dental records, treatment progress, and clinical notes.</p>
       </div>
-    </section>
+      <div class="dp-header-right">
+        <a class="dp-back-btn" routerLink="/dentist-dashboard">← Dashboard</a>
+      </div>
+    </header>
 
-    <section class="dentist-panel">
-      <div class="dentist-section-head">
-        <div>
-          <span class="dentist-eyebrow">Patient list</span>
-          <h3>Clinical follow-up at a glance</h3>
+    <!-- ── Body: left list + right detail ──────────────── -->
+    <div class="dp-body">
+
+      <!-- LEFT: Patient list -->
+      <aside class="dp-list-col">
+
+        <!-- Search & filter -->
+        <div class="dp-list-top">
+          <div class="dp-search-wrap">
+            <span>🔍</span>
+            <input class="dp-search" type="text" placeholder="Search patients…" [(ngModel)]="searchQuery" />
+          </div>
+          <select class="dp-select" [(ngModel)]="filterStatus">
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s === 'All' ? 'All Status' : s }}</option>
+          </select>
         </div>
-      </div>
 
-      <div class="dentist-card-grid dentist-patient-grid">
-        <article class="dentist-card" *ngFor="let patient of patients">
-          <div class="dentist-row-between">
-            <strong>{{ patient.name }}</strong>
-            <span class="dentist-pill">{{ patient.treatmentStatus }}</span>
-          </div>
-          <div class="dentist-detail-grid">
-            <div>
-              <span>Age</span>
-              <strong>{{ patient.age }}</strong>
+        <div class="dp-list-label">{{ filtered.length }} patients</div>
+
+        <!-- Patient cards -->
+        <div class="dp-patient-list">
+          <div class="dp-patient-item"
+               *ngFor="let p of filtered"
+               [class.active]="selectedPatient?.id === p.id"
+               (click)="selectPatient(p)">
+            <div class="dp-avatar">{{ p.initials }}</div>
+            <div class="dp-item-info">
+              <strong>{{ p.name }}</strong>
+              <span>{{ p.id }} · {{ p.age }} yrs · {{ p.gender }}</span>
+              <span class="dp-item-treatment">{{ p.currentTreatment }}</span>
             </div>
-            <div>
-              <span>Last visit</span>
-              <strong>{{ patient.lastVisit }}</strong>
+            <span class="dp-status-dot" [attr.data-status]="statusTone(p.status)"></span>
+          </div>
+
+          <div class="dp-list-empty" *ngIf="filtered.length === 0">
+            No patients found.
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- RIGHT: Patient detail -->
+      <section class="dp-detail-col">
+
+        <!-- Empty state -->
+        <div class="dp-empty-state" *ngIf="!selectedPatient">
+          <span>🦷</span>
+          <strong>Select a patient</strong>
+          <p>Choose a patient from the list to view their dental records, treatment history, and clinical notes.</p>
+        </div>
+
+        <!-- Patient detail -->
+        <div class="dp-detail" *ngIf="selectedPatient">
+
+          <!-- Patient banner -->
+          <div class="dp-patient-banner">
+            <div class="dp-banner-left">
+              <div class="dp-avatar dp-avatar-lg">{{ selectedPatient.initials }}</div>
+              <div class="dp-banner-info">
+                <h2>{{ selectedPatient.name }}</h2>
+                <span>{{ selectedPatient.id }} · {{ selectedPatient.age }} yrs · {{ selectedPatient.gender }}</span>
+                <div class="dp-banner-meta">
+                  <span>📞 {{ selectedPatient.phone }}</span>
+                  <span>✉ {{ selectedPatient.email }}</span>
+                  <span>📍 {{ selectedPatient.address }}</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <span>Current treatment</span>
-              <strong>{{ patient.currentTreatment }}</strong>
-            </div>
-            <div>
-              <span>Next visit</span>
-              <strong>{{ patient.nextVisit }}</strong>
+            <div class="dp-banner-right">
+              <span class="dp-status-pill" [attr.data-status]="statusTone(selectedPatient.status)">{{ selectedPatient.status }}</span>
+              <div class="dp-banner-tags">
+                <span class="dp-tag red">🩸 {{ selectedPatient.bloodType }}</span>
+                <span class="dp-tag amber" *ngIf="selectedPatient.allergies !== 'None reported'">⚠ {{ selectedPatient.allergies }}</span>
+                <span class="dp-tag green" *ngIf="selectedPatient.allergies === 'None reported'">✓ No allergies</span>
+              </div>
             </div>
           </div>
-          <div class="dentist-note">
-            <span>Treatment status</span>
-            <p>{{ patient.riskFlag }}</p>
+
+          <!-- Tabs -->
+          <div class="dp-tabs">
+            <button *ngFor="let tab of tabs" type="button"
+                    [class.active]="activeTab === tab.key"
+                    (click)="setTab(tab.key)">
+              {{ tab.label }}
+            </button>
           </div>
-          <div class="dentist-actions">
-            <a class="dentist-btn" routerLink="/dentist-medical-vault">Open Medical Vault</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-treatment-plans">View Treatment Plan</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-medical-vault">Add Progress Note</a>
-            <a class="dentist-btn-ghost" routerLink="/dentist-appointments">View Appointment History</a>
+
+          <!-- Tab content -->
+          <div class="dp-tab-content">
+
+            <!-- OVERVIEW -->
+            <div *ngIf="activeTab === 'overview'" class="dp-tab-pane">
+              <div class="dp-overview-grid">
+                <div class="dp-info-card">
+                  <span class="dp-info-label">Chief Complaint</span>
+                  <p>{{ selectedPatient.chiefComplaint }}</p>
+                </div>
+                <div class="dp-info-card">
+                  <span class="dp-info-label">Diagnosis</span>
+                  <p>{{ selectedPatient.diagnosis }}</p>
+                </div>
+                <div class="dp-info-card">
+                  <span class="dp-info-label">Current Treatment</span>
+                  <p>{{ selectedPatient.currentTreatment }}
+                    <span class="dp-category-badge">{{ selectedPatient.treatmentCategory }}</span>
+                  </p>
+                </div>
+                <div class="dp-info-card">
+                  <span class="dp-info-label">Next Appointment</span>
+                  <p>{{ selectedPatient.nextAppointment }}</p>
+                </div>
+              </div>
+
+              <!-- Treatment progress summary -->
+              <div class="dp-section-title">Treatment Progress</div>
+              <div class="dp-progress-list">
+                <div class="dp-progress-row" *ngFor="let s of selectedPatient.treatmentProgress; let last = last" [attr.data-status]="s.status">
+                  <div class="dp-progress-dot" [attr.data-status]="s.status"></div>
+                  <div class="dp-progress-line" *ngIf="!last"></div>
+                  <div class="dp-progress-info">
+                    <div class="dp-progress-header">
+                      <strong>Session {{ s.session }}: {{ s.title }}</strong>
+                      <span class="dp-progress-badge" [attr.data-status]="s.status">
+                        {{ s.status === 'done' ? '✓ Done' : s.status === 'pending' ? '⏳ Pending' : '📅 Upcoming' }}
+                      </span>
+                    </div>
+                    <span class="dp-progress-date">{{ s.date }}</span>
+                    <p>{{ s.note }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MEDICAL RECORD -->
+            <div *ngIf="activeTab === 'medical'" class="dp-tab-pane">
+              <div class="dp-medical-grid">
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Blood Type</span>
+                  <strong>{{ selectedPatient.bloodType }}</strong>
+                </div>
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Allergies</span>
+                  <strong>{{ selectedPatient.allergies }}</strong>
+                </div>
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Chief Complaint</span>
+                  <strong>{{ selectedPatient.chiefComplaint }}</strong>
+                </div>
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Diagnosis</span>
+                  <strong>{{ selectedPatient.diagnosis }}</strong>
+                </div>
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Last Visit</span>
+                  <strong>{{ selectedPatient.lastVisit }}</strong>
+                </div>
+                <div class="dp-medical-block">
+                  <span class="dp-info-label">Next Appointment</span>
+                  <strong>{{ selectedPatient.nextAppointment }}</strong>
+                </div>
+              </div>
+
+              <div class="dp-section-title">Prescriptions & Recommendations</div>
+              <div class="dp-rx-empty" *ngIf="selectedPatient.prescriptions.length === 0">No prescriptions on file.</div>
+              <div class="dp-rx-list">
+                <div class="dp-rx-card" *ngFor="let rx of selectedPatient.prescriptions">
+                  <div class="dp-rx-head">
+                    <strong>💊 {{ rx.medication }}</strong>
+                    <span class="dp-rx-date">{{ rx.date }}</span>
+                  </div>
+                  <div class="dp-rx-body">
+                    <span><b>Dosage:</b> {{ rx.dosage }}</span>
+                    <span><b>Frequency:</b> {{ rx.frequency }}</span>
+                    <span><b>Duration:</b> {{ rx.duration }}</span>
+                  </div>
+                  <p class="dp-rx-instructions">{{ rx.instructions }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- TREATMENT HISTORY -->
+            <div *ngIf="activeTab === 'history'" class="dp-tab-pane">
+              <div class="dp-history-empty" *ngIf="selectedPatient.treatmentHistory.length === 0">No treatment history recorded.</div>
+              <div class="dp-history-list">
+                <div class="dp-history-card" *ngFor="let h of selectedPatient.treatmentHistory">
+                  <div class="dp-history-head">
+                    <div>
+                      <strong>{{ h.procedure }}</strong>
+                      <span class="dp-history-tooth">Tooth: {{ h.tooth }}</span>
+                    </div>
+                    <span class="dp-history-date">{{ h.date }}</span>
+                  </div>
+                  <div class="dp-history-body">
+                    <span><b>Dentist:</b> {{ h.dentist }}</span>
+                    <span><b>Follow-up:</b> {{ h.followUp }}</span>
+                  </div>
+                  <p>{{ h.notes }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ODONTOGRAM -->
+            <div *ngIf="activeTab === 'odontogram'" class="dp-tab-pane">
+              <div class="dp-odonto-legend">
+                <span class="dp-legend-item" *ngFor="let l of [
+                  {color:'#e8f5e9',border:'#a5d6a7',label:'Healthy'},
+                  {color:'#ffcdd2',border:'#ef9a9a',label:'Cavity'},
+                  {color:'#bbdefb',border:'#90caf9',label:'Filled'},
+                  {color:'#eeeeee',border:'#bdbdbd',label:'Missing'},
+                  {color:'#fff9c4',border:'#fff176',label:'Crown'},
+                  {color:'#e1bee7',border:'#ce93d8',label:'Planned'}
+                ]">
+                  <span class="dp-legend-box" [style.background]="l.color" [style.border-color]="l.border"></span>
+                  {{ l.label }}
+                </span>
+              </div>
+
+              <div class="dp-odonto-chart">
+                <div class="dp-odonto-label">Upper Jaw</div>
+                <div class="dp-teeth-row">
+                  <div class="dp-tooth" *ngFor="let t of upperTeeth(selectedPatient)"
+                       [style.background]="toothColor(t.status)"
+                       [style.border-color]="toothBorder(t.status)"
+                       [title]="t.number + (t.note ? ': ' + t.note : '')">
+                    <span class="dp-tooth-num">{{ t.number }}</span>
+                  </div>
+                </div>
+                <div class="dp-odonto-divider"></div>
+                <div class="dp-teeth-row">
+                  <div class="dp-tooth" *ngFor="let t of lowerTeeth(selectedPatient)"
+                       [style.background]="toothColor(t.status)"
+                       [style.border-color]="toothBorder(t.status)"
+                       [title]="t.number + (t.note ? ': ' + t.note : '')">
+                    <span class="dp-tooth-num">{{ t.number }}</span>
+                  </div>
+                </div>
+                <div class="dp-odonto-label">Lower Jaw</div>
+              </div>
+
+              <div class="dp-odonto-notes">
+                <div class="dp-odonto-note-row" *ngFor="let t of selectedPatient.odontogram" [style.display]="t.note ? 'flex' : 'none'">
+                  <span class="dp-tooth-badge" [style.background]="toothColor(t.status)" [style.border-color]="toothBorder(t.status)">{{ t.number }}</span>
+                  <span>{{ t.note }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CLINICAL NOTES -->
+            <div *ngIf="activeTab === 'notes'" class="dp-tab-pane">
+              <div class="dp-notes-empty" *ngIf="selectedPatient.clinicalNotes.length === 0">No clinical notes recorded.</div>
+              <div class="dp-notes-list">
+                <div class="dp-note-card" *ngFor="let n of selectedPatient.clinicalNotes" [attr.data-type]="noteTypeColor(n.type)">
+                  <div class="dp-note-head">
+                    <span class="dp-note-type" [attr.data-type]="noteTypeColor(n.type)">{{ n.type }}</span>
+                    <span class="dp-note-date">{{ n.date }}</span>
+                  </div>
+                  <p>{{ n.note }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ATTACHMENTS -->
+            <div *ngIf="activeTab === 'attachments'" class="dp-tab-pane">
+              <div class="dp-attach-empty" *ngIf="selectedPatient.attachments.length === 0">No attachments on file.</div>
+              <div class="dp-attach-grid">
+                <div class="dp-attach-card" *ngFor="let a of selectedPatient.attachments">
+                  <div class="dp-attach-icon">{{ attachIcon(a.type) }}</div>
+                  <div class="dp-attach-info">
+                    <strong>{{ a.name }}</strong>
+                    <span>{{ a.type }} · {{ a.date }}</span>
+                    <span class="dp-attach-size">{{ a.size }}</span>
+                  </div>
+                  <button class="dp-attach-btn" type="button">↓</button>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </article>
-      </div>
-    </section>
+        </div>
+
+      </section>
+    </div>
+
   </main>
 </div>

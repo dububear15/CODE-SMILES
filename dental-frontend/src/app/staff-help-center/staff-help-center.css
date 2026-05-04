@@ -21,9 +21,9 @@
 
 .page-topbar,
 .search-card,
-.support-card,
 .faq-card,
 .contact-card,
+.legal-hub-card,
 .help-banner {
   border: 1px solid rgba(27, 55, 89, 0.1);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 251, 255, 0.96));
@@ -40,15 +40,18 @@
 }
 
 .page-copy h1,
-.support-card h2,
 .faq-card h2,
 .contact-card h2,
+.legal-hub-head h2,
+.legal-panel h3,
 .help-banner h2 { margin: 0; color: #213a59; }
 .page-copy h1 { font-size: 2rem; line-height: 1.05; }
 .page-copy p,
 .profile-copy span,
-.support-card p,
 .contact-card p,
+.legal-hub-head p,
+.legal-panel-head p,
+.legal-point p,
 .help-banner p { margin: 8px 0 0; color: #6f8096; line-height: 1.5; }
 
 .topbar-profile { display: flex; align-items: center; gap: 18px; }
@@ -64,7 +67,8 @@
 }
 .alert-btn svg,
 .search-bar svg,
-.support-icon svg {
+.legal-icon svg,
+.legal-point-icon svg {
   width: 18px;
   height: 18px;
   fill: none;
@@ -131,28 +135,7 @@
   text-decoration: none;
 }
 
-.cards-grid,
 .content-grid { display: grid; gap: 14px; }
-.cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-.support-card {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 14px;
-  align-items: start;
-  padding: 18px;
-  border-radius: 20px;
-}
-.support-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  color: #4d8fe1;
-  background: #edf4ff;
-}
-.support-card a,
 .section-head a,
 .contact-list a { color: #4a88e1; text-decoration: none; font-weight: 700; }
 
@@ -168,23 +151,161 @@
   margin-bottom: 14px;
 }
 .faq-list,
-.contact-list { display: flex; flex-direction: column; gap: 12px; }
+.contact-list { display: flex; flex-direction: column; gap: 0; }
 .faq-row,
+.contact-list article {
+  border-top: 1px solid rgba(27, 55, 89, 0.08);
+}
 .contact-list article {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 14px 0;
-  border-top: 1px solid rgba(27, 55, 89, 0.08);
 }
 .faq-row:first-child,
 .contact-list article:first-child {
-  padding-top: 0;
   border-top: none;
 }
-.faq-row span,
+.faq-question {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  color: #213a59;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.faq-question strong {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #245da8;
+  background: #eef4ff;
+  flex-shrink: 0;
+}
+.faq-answer {
+  margin: 0;
+  padding: 0 34px 16px 0;
+  color: #6f8096;
+  line-height: 1.5;
+}
+.faq-question span,
 .contact-list span { color: #213a59; font-weight: 600; }
+
+.legal-hub-card {
+  padding: 20px;
+  border-radius: 20px;
+  scroll-margin-top: 18px;
+}
+
+.legal-hub-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.legal-jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legal-jump-links button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #bdd4fb;
+  border-radius: 999px;
+  color: #245da8;
+  background: #f8fbff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.legal-jump-links button.active {
+  color: #fff;
+  border-color: #2b79ef;
+  background: linear-gradient(180deg, #2b79ef, #1f6ce7);
+}
+
+.legal-grid {
+  margin-top: 18px;
+}
+
+.legal-panel {
+  padding: 16px;
+  border: 1px solid rgba(27, 55, 89, 0.1);
+  border-radius: 18px;
+  background: #fff;
+  scroll-margin-top: 18px;
+}
+
+.legal-panel-head {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.legal-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+}
+
+.legal-icon.shield {
+  color: #2c8b70;
+  background: #e7f7ef;
+}
+
+.legal-icon.document {
+  color: #4d78d8;
+  background: #edf4ff;
+}
+
+.legal-point-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.legal-point {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.legal-point-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.legal-point-icon.blue { color: #4d8fe1; background: #edf4ff; }
+.legal-point-icon.mint { color: #37b499; background: #e5faf5; }
+.legal-point-icon.violet { color: #7f73e6; background: #f0edff; }
+.legal-point-icon.amber { color: #f39a33; background: #fff1df; }
+.legal-point strong { display: block; color: #213a59; }
+.legal-point p { font-size: 0.9rem; }
 
 .help-banner {
   display: flex;
@@ -195,20 +316,23 @@
 }
 
 @media (max-width: 1280px) {
-  .cards-grid,
-  .content-grid { grid-template-columns: 1fr; }
+  .content-grid,
+  .legal-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1080px) {
   .staff-help-page { margin-left: 0; }
   .help-main { padding: 18px; }
   .page-topbar,
+  .legal-hub-head,
   .help-banner { flex-direction: column; align-items: flex-start; }
   .topbar-profile { width: 100%; justify-content: space-between; }
 }
 
 @media (max-width: 760px) {
   .search-bar { grid-template-columns: 1fr; }
+  .legal-panel-head,
+  .legal-point { grid-template-columns: 1fr; }
   .section-head,
   .faq-row,
   .contact-list article { flex-direction: column; align-items: flex-start; }

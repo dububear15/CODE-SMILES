@@ -1,33 +1,39 @@
 import { Injectable } from '@angular/core';
 import { PatientProfile, NotificationKey } from './patient-profile.models';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class PatientProfileStore {
-  private profile: PatientProfile = {
-    fullName: 'Laura Martinez',
-    patientId: 'CS-48291',
-    memberSince: 'June 15, 2024',
-    status: 'Active Patient',
-    dateOfBirth: 'Mar 22, 1990',
-    gender: 'Female',
-    bloodType: 'O+',
-    preferredLanguage: 'English',
-    phoneNumber: '(555) 123-4567',
-    email: 'laura.martinez@email.com',
-    homeAddress: '123 Smile Street, San Francisco, CA 94105',
-    preferredContactMethod: 'Email & SMS',
-    primaryDentist: 'Dr. Patel',
-    emergencyContact: {
-      name: 'Robert Martinez',
-      relationship: 'Spouse',
-      phoneNumber: '(555) 987-6543',
-    },
-    notifications: {
-      email: true,
-      sms: false,
-      announcements: true,
-    },
-  };
+  private profile: PatientProfile;
+
+  constructor(private auth: AuthService) {
+    const user = this.auth.getUser();
+    this.profile = {
+      fullName:               user ? `${user.first_name} ${user.last_name}` : 'Patient',
+      patientId:              user ? `CS-${user.id.toString().padStart(5, '0')}` : 'CS-00000',
+      memberSince:            'Member',
+      status:                 'Active Patient',
+      dateOfBirth:            '—',
+      gender:                 '—',
+      bloodType:              '—',
+      preferredLanguage:      'English',
+      phoneNumber:            '—',
+      email:                  user?.email ?? '—',
+      homeAddress:            '—',
+      preferredContactMethod: 'Email',
+      primaryDentist:         '—',
+      emergencyContact: {
+        name:        '—',
+        relationship:'—',
+        phoneNumber: '—',
+      },
+      notifications: {
+        email:         true,
+        sms:           false,
+        announcements: true,
+      },
+    };
+  }
 
   getProfile(): PatientProfile {
     return this.cloneProfile(this.profile);
@@ -45,7 +51,6 @@ export class PatientProfileStore {
         [key]: !this.profile.notifications[key],
       },
     };
-
     return this.getProfile();
   }
 
@@ -53,7 +58,7 @@ export class PatientProfileStore {
     return {
       ...profile,
       emergencyContact: { ...profile.emergencyContact },
-      notifications: { ...profile.notifications },
+      notifications:    { ...profile.notifications },
     };
   }
 }

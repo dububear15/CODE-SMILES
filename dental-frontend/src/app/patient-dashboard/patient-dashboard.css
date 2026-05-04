@@ -37,7 +37,7 @@
 
 .dashboard-main {
   min-height: 100dvh;
-  padding: 22px 30px 26px;
+  padding: 22px 32px 28px 32px;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: 18px;

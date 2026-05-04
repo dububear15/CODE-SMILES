@@ -22,7 +22,7 @@ export class PublicHomeComponent {
   constructor(private router: Router) {}
 
   handleBook(): void {
-    const isLoggedIn = localStorage.getItem('user');
+    const isLoggedIn = localStorage.getItem('auth_token');
 
     if (isLoggedIn) {
       this.router.navigate(['/patient-booking']);

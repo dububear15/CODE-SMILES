@@ -30,9 +30,21 @@ import { PublicFooterComponent } from './public-footer/public-footer';
       min-height: 80vh;
     }
 
-    .no-scroll {
-      min-height: 100vh;
+    main.no-scroll {
+      height: 100vh;
+      max-height: 100vh;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main.no-scroll .route-shell {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .route-shell {
@@ -73,6 +85,7 @@ export class AppComponent {
           url.startsWith('/patient-privacy-policy') ||
           url.startsWith('/patient-terms') ||
           url.startsWith('/patient-treatment-progress') ||
+          url.startsWith('/patient-treatment-plan') ||
           url.startsWith('/patient-booking');
 
         const privateStaffRoutes =
@@ -83,7 +96,8 @@ export class AppComponent {
           url.startsWith('/staff-requests') ||
           url.startsWith('/staff-notifications') ||
           url.startsWith('/staff-profile') ||
-          url.startsWith('/staff-help-center');
+          url.startsWith('/staff-help-center') ||
+          url.startsWith('/staff-billing');
 
         const privateDentistRoutes =
           url.startsWith('/dentist-dashboard') ||
@@ -95,7 +109,8 @@ export class AppComponent {
           url.startsWith('/dentist-prescriptions') ||
           url.startsWith('/dentist-notifications') ||
           url.startsWith('/dentist-profile') ||
-          url.startsWith('/dentist-settings');
+          url.startsWith('/dentist-settings') ||
+          url.startsWith('/dentist-help-center');
 
         const hideFooterOnly = url === '/patient-booking';
 

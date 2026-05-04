@@ -34,7 +34,7 @@
 
 .profile-main {
   min-height: 100dvh;
-  padding: 18px 20px 24px;
+  padding: 22px 32px 28px 32px;
 }
 
 .profile-shell {
@@ -686,3 +686,39 @@
     width: 100%;
   }
 }
+
+
+
+/* ── Avatar Upload ─────────────────────────────────── */
+.profile-avatar-large-wrap {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.profile-avatar-img {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background: #1a56db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #fff;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.avatar-upload-btn:hover { background: #1e40af; }

@@ -1,12 +1,39 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
-import {
-  AppointmentTab,
-  PatientAppointment,
-  PatientAppointmentStore,
-} from './patient-appointment-store';
+import { PatientAppointmentStore } from './patient-appointment-store';
+import { ApiService } from '../services/api.service';
+import { AuthService } from '../services/auth.service';
+
+export type AppointmentTab = 'upcoming' | 'pending' | 'past';
+
+export interface PatientAppointment {
+  id: string;
+  dbId: number;
+  service: string;
+  category: string;
+  dentist: string;
+  location: string;
+  dateMonth: string;
+  dateDay: string;
+  weekday: string;
+  accent: 'blue' | 'amber' | 'violet' | 'teal';
+  time: string;
+  status: 'Approved' | 'Pending Approval' | 'Completed' | 'Cancelled' | 'Rescheduled';
+  tab: AppointmentTab;
+  description: string;
+  patientName: string;
+  patientEmail: string;
+  patientPhone: string;
+  patientAge: string;
+  notes: string;
+  bookedOn: string;
+  durationLabel: string;
+  servicesSummary: string[];
+  history: { label: string; value: string }[];
+}
 
 interface AppointmentTip {
   title: string;
@@ -25,19 +52,27 @@ interface AppointmentTabOption {
 @Component({
   selector: 'app-my-appointments',
   standalone: true,
-  imports: [CommonModule, RouterLink, PatientSidebarComponent],
+  imports: [CommonModule, RouterLink, FormsModule, PatientSidebarComponent],
   templateUrl: './patient-appointments.html',
   styleUrls: ['./patient-appointments.css'],
 })
-export class MyAppointments {
+export class MyAppointments implements OnInit {
   private readonly router = inject(Router);
+  private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  // Keep store so booking page can still write to it (reschedule flow)
   private readonly appointmentStore = inject(PatientAppointmentStore);
 
   protected selectedTab: AppointmentTab = 'upcoming';
+  protected isLoading = true;
+  protected loadError = '';
 
-  protected readonly patientProfile = {
-    name: 'Laura Martinez',
-    id: 'CS-48291',
+  protected appointments: PatientAppointment[] = [];
+
+  protected patientProfile = {
+    name: 'Patient',
+    id: '—',
   };
 
   protected readonly clinicPhone = '(555) 123-4567';
@@ -98,40 +133,143 @@ export class MyAppointments {
     },
   ];
 
+  ngOnInit(): void {
+    const user = this.auth.getUser();
+    if (user) {
+      this.patientProfile = {
+        name: `${user.first_name} ${user.last_name}`,
+        id: `CS-${String(user.id).padStart(5, '0')}`,
+      };
+      this.loadAppointments(user.id);
+    } else {
+      this.isLoading = false;
+    }
+  }
+
+  private loadAppointments(patientId: number): void {
+    this.isLoading = true;
+    this.api.getMyAppointments(patientId).subscribe({
+      next: (data) => {
+        this.appointments = data.map(a => this.mapDbAppointment(a));
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadError = 'Could not load appointments. Please make sure the server is running.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private mapDbAppointment(a: any): PatientAppointment {
+    const dateObj = new Date(`${a.appointment_date}T00:00:00`);
+    const status = this.mapStatus(a.status);
+    const tab = this.mapTab(a.status, a.appointment_date);
+    const accent = this.mapAccent(a.status);
+
+    // Format time from "HH:MM:SS" → "H:MM AM/PM"
+    const timeFormatted = this.formatTime(a.appointment_time);
+
+    const services: string[] = Array.isArray(a.services) ? a.services : [];
+
+    return {
+      id: `APT-${a.id}`,
+      dbId: a.id,
+      service: services[0] || a.treatment || 'Appointment',
+      category: a.treatment || '—',
+      dentist: a.dentist_name || 'Dentist assignment pending',
+      location: 'Code Smiles Dental Clinic',
+      dateMonth: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(dateObj).toUpperCase(),
+      dateDay: new Intl.DateTimeFormat('en-US', { day: '2-digit' }).format(dateObj),
+      weekday: new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(dateObj).toUpperCase(),
+      accent,
+      time: timeFormatted,
+      status,
+      tab,
+      description: services.length > 1
+        ? `${services.join(', ')}`
+        : (a.notes || a.treatment || 'Appointment'),
+      patientName: a.patient_name || '—',
+      patientEmail: a.email || '—',
+      patientPhone: a.phone || '—',
+      patientAge: '—',
+      notes: a.notes || '',
+      bookedOn: a.created_at
+        ? new Date(a.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+        : '—',
+      durationLabel: a.duration_minutes ? `${a.duration_minutes} minutes` : '60 minutes',
+      servicesSummary: services,
+      history: [
+        { label: 'Request submitted', value: a.created_at ? new Date(a.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' },
+        ...(a.status === 'Approved' ? [{ label: 'Approved by clinic', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status === 'Completed' ? [{ label: 'Completed', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status === 'Cancelled' ? [{ label: 'Cancelled', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status === 'Rescheduled' ? [{ label: 'Rescheduled', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+      ],
+    };
+  }
+
+  private mapStatus(dbStatus: string): PatientAppointment['status'] {
+    const map: Record<string, PatientAppointment['status']> = {
+      'Pending':     'Pending Approval',
+      'Approved':    'Approved',
+      'Completed':   'Completed',
+      'Cancelled':   'Cancelled',
+      'Rescheduled': 'Rescheduled',
+    };
+    return map[dbStatus] ?? 'Pending Approval';
+  }
+
+  private mapTab(dbStatus: string, dateStr: string): AppointmentTab {
+    if (dbStatus === 'Pending') return 'pending';
+    if (dbStatus === 'Completed' || dbStatus === 'Cancelled') return 'past';
+    if (dbStatus === 'Rescheduled') return 'pending';
+    // Approved — check if date is in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const apptDate = new Date(`${dateStr}T00:00:00`);
+    return apptDate >= today ? 'upcoming' : 'past';
+  }
+
+  private mapAccent(dbStatus: string): PatientAppointment['accent'] {
+    const map: Record<string, PatientAppointment['accent']> = {
+      'Approved':    'blue',
+      'Pending':     'amber',
+      'Completed':   'teal',
+      'Cancelled':   'violet',
+      'Rescheduled': 'amber',
+    };
+    return map[dbStatus] ?? 'blue';
+  }
+
+  private formatTime(timeStr: string): string {
+    if (!timeStr) return '—';
+    const [h, m] = timeStr.split(':').map(Number);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, '0')} ${suffix}`;
+  }
+
   protected setTab(tab: AppointmentTab): void {
     this.selectedTab = tab;
   }
 
   protected get filteredAppointments(): PatientAppointment[] {
-    return this.appointments.filter((appointment) => appointment.tab === this.selectedTab);
-  }
-
-  protected get appointments(): PatientAppointment[] {
-    return this.appointmentStore.getAppointments();
+    return this.appointments.filter(a => a.tab === this.selectedTab);
   }
 
   protected get panelTitle(): string {
-    if (this.selectedTab === 'pending') {
-      return 'Pending Approval';
-    }
-
-    if (this.selectedTab === 'past') {
-      return 'Past Appointments';
-    }
-
+    if (this.selectedTab === 'pending') return 'Pending Approval';
+    if (this.selectedTab === 'past') return 'Past Appointments';
     return 'Upcoming Appointments';
   }
 
   protected get panelSubtitle(): string {
-    if (this.selectedTab === 'pending') {
-      return 'Requests currently waiting for clinic confirmation.';
-    }
-
-    if (this.selectedTab === 'past') {
-      return 'Review finished or cancelled bookings.';
-    }
-
-    return `You have ${this.appointments.filter((appointment) => appointment.tab === 'upcoming').length} upcoming appointments.`;
+    if (this.selectedTab === 'pending') return 'Requests currently waiting for clinic confirmation.';
+    if (this.selectedTab === 'past') return 'Review finished or cancelled bookings.';
+    const count = this.appointments.filter(a => a.tab === 'upcoming').length;
+    return `You have ${count} upcoming appointment${count !== 1 ? 's' : ''}.`;
   }
 
   protected get shouldConstrainAppointmentsList(): boolean {
@@ -148,17 +286,59 @@ export class MyAppointments {
 
   protected requestReschedule(appointmentId: string): void {
     this.router.navigate(['/patient-booking'], {
-      queryParams: {
-        reschedule: appointmentId,
-      },
+      queryParams: { reschedule: appointmentId },
     });
   }
 
   protected cancelAppointment(appointmentId: string): void {
-    this.appointmentStore.cancelAppointment(appointmentId);
+    this.cancelTargetId = appointmentId;
+    this.cancelReason = '';
+    this.showCancelModal = true;
+  }
 
-    if (this.filteredAppointments.length === 0 && this.selectedTab !== 'upcoming') {
-      this.selectedTab = 'upcoming';
-    }
+  protected confirmCancel(): void {
+    if (!this.cancelTargetId || !this.cancelReason.trim()) return;
+
+    const appt = this.appointments.find(a => a.id === this.cancelTargetId);
+    if (!appt) return;
+
+    this.api.cancelMyAppointment(appt.dbId, this.cancelReason).subscribe({
+      next: () => {
+        appt.status = 'Cancelled';
+        appt.tab = 'past';
+        this.showCancelModal = false;
+        this.cancelTargetId = null;
+        this.cancelReason = '';
+        // Switch to past tab if nothing left in current tab
+        if (this.filteredAppointments.length === 0 && this.selectedTab !== 'upcoming') {
+          this.selectedTab = 'upcoming';
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Still update UI optimistically so the user isn't stuck
+        appt.status = 'Cancelled';
+        appt.tab = 'past';
+        this.showCancelModal = false;
+        this.cancelTargetId = null;
+        this.cancelReason = '';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  protected dismissCancel(): void {
+    this.showCancelModal = false;
+    this.cancelTargetId = null;
+    this.cancelReason = '';
+  }
+
+  protected cancelTargetId: string | null = null;
+  protected cancelReason = '';
+  protected showCancelModal = false;
+
+  protected get cancelTarget(): PatientAppointment | null {
+    if (!this.cancelTargetId) return null;
+    return this.appointments.find(a => a.id === this.cancelTargetId) ?? null;
   }
 }

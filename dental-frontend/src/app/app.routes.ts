@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 
 // Public
 import { PublicHomeComponent } from './public-home/public-home';
@@ -36,12 +38,17 @@ import { PatientTreatmentProgress } from './patient-treatment-progress/patient-t
 // Staff
 import { StaffDashboard } from './staff-dashboard/staff-dashboard';
 import { StaffAppointmentsComponent } from './staff-appointments/staff-appointments';
+import { StaffAppointmentDetailComponent } from './staff-appointments/staff-appointment-detail';
+import { StaffRescheduleComponent } from './staff-appointments/staff-reschedule';
 import { StaffPatientsComponent } from './staff-patients/staff-patients';
 import { StaffCalendar } from './staff-calendar/staff-calendar';
+import { StaffCalendarEditComponent } from './staff-calendar/staff-calendar-edit';
+import { StaffCalendarViewComponent } from './staff-calendar/staff-calendar-view';
 import { StaffRequestsComponent } from './staff-requests/staff-requests';
 import { StaffNotificationsComponent } from './staff-notifications/staff-notifications';
 import { StaffProfile } from './staff-profile/staff-profile';
 import { StaffHelpCenter } from './staff-help-center/staff-help-center';
+import { StaffBilling } from './staff-billing/staff-billing';
 
 // Dentist
 import { DentistDashboard } from './dentist-dashboard/dentist-dashboard';
@@ -53,68 +60,85 @@ import { DentistPrescriptionsComponent } from './dentist-prescriptions/dentist-p
 import { DentistNotificationsComponent } from './dentist-notifications/dentist-notifications';
 import { DentistProfile } from './dentist-profile/dentist-profile';
 import { DentistSettingsComponent } from './dentist-settings/dentist-settings';
+import { DentistHelpCenter } from './dentist-help-center/dentist-help-center';
 
 export const routes: Routes = [
-  // Public
+  // ── Public ──────────────────────────────────────────────────────────────
   { path: '', component: PublicHomeComponent },
   { path: 'about', component: PublicAboutComponent },
   { path: 'contact', component: PublicContactComponent },
   { path: 'services', component: PublicServicesComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
 
-  // Auth / General
+  // ── Auth ─────────────────────────────────────────────────────────────────
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'privacy-policy', component: PrivacyPolicyComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'booking', component: PatientBookingComponent },
-  { path: 'my-appointments', redirectTo: 'patient-appointments', pathMatch: 'full' },
-  { path: 'profile', redirectTo: 'patient-profile', pathMatch: 'full' },
-  { path: 'notifications', redirectTo: 'patient-notifications', pathMatch: 'full' },
 
-  // Patient Portal
-  { path: 'patient-booking', component: PatientBookingComponent },
-  { path: 'patient-dashboard', component: PatientDashboardComponent },
-  { path: 'patient-appointments', component: MyAppointments },
-  { path: 'patient-appointments/:id', component: PatientAppointmentDetailsComponent },
-  { path: 'patient-medical-vault', component: PatientMedicalVault },
-  { path: 'patient-notifications', component: PatientNotificationsComponent },
-  { path: 'patient-messages', component: PatientMessagesComponent },
-  { path: 'patient-profile', component: PatientProfileComponent },
-  { path: 'patient-profile/edit', component: PatientProfileEditComponent },
-  { path: 'patient-profile/change-password', component: PatientChangePasswordComponent },
-  { path: 'patient-profile/forgot-password', component: PatientForgotPasswordComponent },
-  { path: 'patient-about', component: PatientAbout },
-  { path: 'patient-contact', component: PatientContact },
-  { path: 'patient-services', component: PatientServicesComponent },
-  { path: 'patient-help-center', component: PatientHelpCenter },
-  { path: 'help-center', redirectTo: 'patient-help-center', pathMatch: 'full' },
-  { path: 'patient-privacy-policy', component: PatientPrivacyPolicy },
-  { path: 'patient-terms', component: PatientTerms },
-  { path: 'patient-treatment-progress', component: PatientTreatmentProgress },
+  // ── Admin (dentist role) ─────────────────────────────────────────────────
+  { path: 'admin', component: AdminComponent, canActivate: [roleGuard('Admin')] },
 
-  // Staff Portal
-  { path: 'staff-dashboard', component: StaffDashboard },
-  { path: 'staff-appointments', component: StaffAppointmentsComponent },
-  { path: 'staff-patients', component: StaffPatientsComponent },
-  { path: 'staff-calendar', component: StaffCalendar },
-  { path: 'staff-requests', component: StaffRequestsComponent },
-  { path: 'staff-notifications', component: StaffNotificationsComponent },
-  { path: 'staff-profile', component: StaffProfile },
-  { path: 'staff-help-center', component: StaffHelpCenter },
+  // ── Redirects ────────────────────────────────────────────────────────────
+  { path: 'booking',        redirectTo: 'patient-booking',        pathMatch: 'full' },
+  { path: 'my-appointments',redirectTo: 'patient-appointments',   pathMatch: 'full' },
+  { path: 'profile',        redirectTo: 'patient-profile',        pathMatch: 'full' },
+  { path: 'notifications',  redirectTo: 'patient-notifications',  pathMatch: 'full' },
+  { path: 'help-center',    redirectTo: 'patient-help-center',    pathMatch: 'full' },
 
-  // Dentist Portal
-  { path: 'dentist-dashboard', component: DentistDashboard },
-  { path: 'dentist-appointments', component: DentistAppointmentsComponent },
-  { path: 'dentist-schedule', component: DentistAppointmentsComponent },
-  { path: 'dentist-patients', component: DentistPatientsComponent },
-  { path: 'dentist-medical-vault', component: DentistMedicalVault },
-  { path: 'dentist-treatment-plans', component: DentistTreatmentPlansComponent },
-  { path: 'dentist-prescriptions', component: DentistPrescriptionsComponent },
-  { path: 'dentist-notifications', component: DentistNotificationsComponent },
-  { path: 'dentist-profile', component: DentistProfile },
-  { path: 'dentist-settings', component: DentistSettingsComponent },
+  // ── Patient Portal ───────────────────────────────────────────────────────
+  { path: 'patient-booking',           component: PatientBookingComponent,           canActivate: [roleGuard('Patient')] },
+  { path: 'patient-dashboard',         component: PatientDashboardComponent,         canActivate: [roleGuard('Patient')] },
+  { path: 'patient-appointments',      component: MyAppointments,                    canActivate: [roleGuard('Patient')] },
+  { path: 'patient-appointments/:id',  component: PatientAppointmentDetailsComponent,canActivate: [roleGuard('Patient')] },
+  { path: 'patient-medical-vault',     component: PatientMedicalVault,               canActivate: [roleGuard('Patient')] },
+  { path: 'patient-notifications',     component: PatientNotificationsComponent,     canActivate: [roleGuard('Patient')] },
+  { path: 'patient-messages',          component: PatientMessagesComponent,          canActivate: [roleGuard('Patient')] },
+  { path: 'patient-profile',           component: PatientProfileComponent,           canActivate: [roleGuard('Patient')] },
+  { path: 'patient-profile/edit',      component: PatientProfileEditComponent,       canActivate: [roleGuard('Patient')] },
+  { path: 'patient-profile/change-password', component: PatientChangePasswordComponent, canActivate: [roleGuard('Patient')] },
+  { path: 'patient-profile/forgot-password', component: PatientForgotPasswordComponent, canActivate: [roleGuard('Patient')] },
+  { path: 'patient-about',             component: PatientAbout,                      canActivate: [roleGuard('Patient')] },
+  { path: 'patient-contact',           component: PatientContact,                    canActivate: [roleGuard('Patient')] },
+  { path: 'patient-services',          component: PatientServicesComponent,          canActivate: [roleGuard('Patient')] },
+  { path: 'patient-help-center',       component: PatientHelpCenter,                 canActivate: [roleGuard('Patient')] },
+  { path: 'patient-privacy-policy',    component: PatientPrivacyPolicy,              canActivate: [roleGuard('Patient')] },
+  { path: 'patient-terms',             component: PatientTerms,                      canActivate: [roleGuard('Patient')] },
+  { path: 'patient-treatment-progress',component: PatientTreatmentProgress,          canActivate: [roleGuard('Patient')] },
+  {
+    path: 'patient-treatment-plan/:id',
+    canActivate: [roleGuard('Patient')],
+    loadComponent: () =>
+      import('./patient-treatment-plan/patient-treatment-plan').then((m) => m.PatientTreatmentPlan),
+  },
 
-  // Fallback
-  { path: '**', redirectTo: '' }
+  // ── Staff Portal ─────────────────────────────────────────────────────────
+  { path: 'staff-dashboard',              component: StaffDashboard,                canActivate: [roleGuard('Staff')] },
+  { path: 'staff-appointments',           component: StaffAppointmentsComponent,    canActivate: [roleGuard('Staff')] },
+  { path: 'staff-appointments/:id',       component: StaffAppointmentDetailComponent, canActivate: [roleGuard('Staff')] },
+  { path: 'staff-appointments/:id/reschedule', component: StaffRescheduleComponent, canActivate: [roleGuard('Staff')] },
+  { path: 'staff-patients',               component: StaffPatientsComponent,        canActivate: [roleGuard('Staff')] },
+  { path: 'staff-calendar',               component: StaffCalendar,                 canActivate: [roleGuard('Staff')] },
+  { path: 'staff-calendar/edit/:id',      component: StaffCalendarEditComponent,    canActivate: [roleGuard('Staff')] },
+  { path: 'staff-calendar/view/:id',      component: StaffCalendarViewComponent,    canActivate: [roleGuard('Staff')] },
+  { path: 'staff-requests',               component: StaffRequestsComponent,        canActivate: [roleGuard('Staff')] },
+  { path: 'staff-notifications',          component: StaffNotificationsComponent,   canActivate: [roleGuard('Staff')] },
+  { path: 'staff-profile',                component: StaffProfile,                  canActivate: [roleGuard('Staff')] },
+  { path: 'staff-help-center',            component: StaffHelpCenter,               canActivate: [roleGuard('Staff')] },
+  { path: 'staff-billing',                component: StaffBilling,                  canActivate: [roleGuard('Staff')] },
+
+  // ── Dentist Portal ───────────────────────────────────────────────────────
+  { path: 'dentist-dashboard',        component: DentistDashboard,              canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-appointments',     component: DentistAppointmentsComponent,  canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-schedule',         component: DentistAppointmentsComponent,  canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-patients',         component: DentistPatientsComponent,      canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-medical-vault',    component: DentistMedicalVault,           canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-treatment-plans',  component: DentistTreatmentPlansComponent,canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-prescriptions',    component: DentistPrescriptionsComponent, canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-notifications',    component: DentistNotificationsComponent, canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-profile',          component: DentistProfile,                canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-settings',         component: DentistSettingsComponent,      canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-help-center',      component: DentistHelpCenter,             canActivate: [roleGuard('Admin')] },
+
+  // ── Fallback ─────────────────────────────────────────────────────────────
+  { path: '**', redirectTo: '' },
 ];

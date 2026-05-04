@@ -16,10 +16,10 @@
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
-.help-center-main { min-height: 100vh; padding: 22px 24px 24px; }
+.help-center-main { min-height: 100vh; padding: 22px 32px 28px 32px; }
 .help-center-shell { display: flex; flex-direction: column; gap: 14px; }
 
-.page-topbar, .search-banner, .category-card, .faq-card, .support-card, .help-banner {
+.page-topbar, .search-banner, .faq-card, .support-card, .legal-hub-card, .help-banner {
   border: 1px solid rgba(27,55,89,0.1);
   background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,251,255,0.96));
   box-shadow: 0 22px 40px rgba(16,40,66,0.08);
@@ -28,16 +28,16 @@
 .page-topbar {
   display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 26px; border-radius: 24px;
 }
-.page-copy h1, .category-card h3, .section-head h2, .support-head h2, .help-banner-copy h2 { margin: 0; color: #213a59; }
+.page-copy h1, .section-head h2, .support-head h2, .legal-hub-head h2, .legal-panel h3, .help-banner-copy h2 { margin: 0; color: #213a59; }
 .page-copy h1 { font-size: 2rem; line-height: 1.05; }
-.page-copy p, .category-card p, .support-head p, .help-banner-copy p { margin: 8px 0 0; color: #6f8096; line-height: 1.5; }
+.page-copy p, .support-head p, .legal-hub-head p, .legal-panel-head p, .legal-point p, .help-banner-copy p { margin: 8px 0 0; color: #6f8096; line-height: 1.5; }
 
 .topbar-profile { display: flex; align-items: center; gap: 18px; }
 .alert-btn {
   position: relative; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(77,143,225,0.12);
   background: rgba(246,249,255,0.96); color: #224a79;
 }
-.alert-btn svg, .category-icon svg, .support-icon svg, .help-banner-icon svg {
+.alert-btn svg, .support-icon svg, .legal-icon svg, .legal-point-icon svg, .help-banner-icon svg {
   width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
 }
 .alert-dot { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #5b94ea; box-shadow: 0 0 0 3px #f7fbff; }
@@ -53,26 +53,74 @@
 .popular-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; color: #4f6785; }
 .popular-row a { color: #3d80e3; text-decoration: none; font-weight: 700; }
 
-.categories-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.category-card { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: start; padding: 20px; border-radius: 20px; }
-.category-icon, .support-icon, .help-banner-icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; }
-.category-icon.blue { color: #4d8fe1; background: #edf4ff; }
-.category-icon.mint { color: #37b499; background: #e5faf5; }
-.category-icon.violet { color: #7f73e6; background: #f0edff; }
-.category-icon.amber { color: #f39a33; background: #fff1df; }
+.support-icon, .legal-icon, .help-banner-icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; }
 .section-link { color: #4a88e1; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 12px; }
 
 .content-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr); gap: 16px; align-items: start; }
 .faq-card, .support-card { border-radius: 20px; padding: 18px; }
 .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .faq-list { display: flex; flex-direction: column; }
-.faq-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 10px; border-top: 1px solid rgba(27,55,89,0.08); }
+.faq-row { padding: 0 10px; border-top: 1px solid rgba(27,55,89,0.08); }
 .faq-row:first-child { border-top: none; }
+.faq-question {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  color: #213a59;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.faq-question span {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #245da8;
+  background: #eef4ff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.faq-answer {
+  margin: 0;
+  padding: 0 34px 16px 0;
+  color: #6f8096;
+  line-height: 1.5;
+}
 
 .support-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
 .support-tile { padding: 16px; border-radius: 14px; background: #eef4ff; }
 .support-tile strong { display: block; margin: 12px 0 6px; color: #213a59; }
 .support-tile span, .support-tile small { display: block; color: #6f8096; line-height: 1.5; }
+
+.legal-hub-card { padding: 20px; border-radius: 20px; scroll-margin-top: 18px; }
+.legal-hub-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.legal-jump-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.legal-jump-links button {
+  display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid #bdd4fb; color: #245da8; background: #f8fbff; font: inherit; font-weight: 700; cursor: pointer;
+}
+.legal-jump-links button.active { color: #fff; border-color: #2b79ef; background: linear-gradient(180deg, #2b79ef, #1f6ce7); }
+.legal-grid { margin-top: 18px; }
+.legal-panel { padding: 16px; border: 1px solid rgba(27,55,89,0.1); border-radius: 18px; background: #fff; scroll-margin-top: 18px; }
+.legal-panel-head { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: start; }
+.legal-icon.shield { color: #2c8b70; background: #e7f7ef; }
+.legal-icon.document { color: #4d78d8; background: #edf4ff; }
+.legal-point-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.legal-point { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 12px; border-radius: 14px; background: #f8fbff; }
+.legal-point-icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; }
+.legal-point-icon.blue { color: #4d8fe1; background: #edf4ff; }
+.legal-point-icon.mint { color: #37b499; background: #e5faf5; }
+.legal-point-icon.violet { color: #7f73e6; background: #f0edff; }
+.legal-point-icon.amber { color: #f39a33; background: #fff1df; }
+.legal-point strong { display: block; color: #213a59; }
+.legal-point p { font-size: 0.9rem; }
 
 .help-banner {
   display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 20px; border-radius: 18px;
@@ -85,15 +133,17 @@
   border: 1px solid transparent; color: #fff; background: linear-gradient(180deg,#274f84,#1d3f6d); text-decoration: none; font-weight: 700;
 }
 
-@media (max-width: 1240px) { .categories-grid, .content-grid, .support-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1240px) { .content-grid, .support-grid, .legal-grid { grid-template-columns: 1fr; } }
 @media (max-width: 1080px) {
   .help-center-page-shell { margin-left: 0; }
   .help-center-main { padding: 18px; }
-  .page-topbar, .search-box, .help-banner { flex-direction: column; align-items: flex-start; }
+  .page-topbar, .search-box, .legal-hub-head, .help-banner { flex-direction: column; align-items: flex-start; }
   .topbar-profile { width: 100%; justify-content: space-between; }
 }
 @media (max-width: 760px) {
-  .category-card { grid-template-columns: 1fr; }
+  .legal-panel-head, .legal-point { grid-template-columns: 1fr; }
   .section-head { flex-direction: column; align-items: flex-start; }
   .primary-action-btn { width: 100%; }
 }
+
+

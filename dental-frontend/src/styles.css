@@ -49,6 +49,7 @@ body.dentist-theme {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable; /* prevents layout shift when scrollbar appears/disappears */
 }
 
 body {
@@ -1351,8 +1352,7 @@ app-contact {
   --dentist-line: rgba(20, 61, 88, 0.1);
 
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  display: block;
   background:
     radial-gradient(circle at 8% 6%, rgba(94, 201, 244, 0.16), transparent 18%),
     radial-gradient(circle at 88% 12%, rgba(255, 196, 131, 0.14), transparent 22%),
@@ -1360,7 +1360,10 @@ app-contact {
 }
 
 .dentist-main {
-  padding: 30px;
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  box-sizing: border-box;
+  padding: 24px;
 }
 
 .dentist-page-hero {
@@ -1695,6 +1698,11 @@ app-contact {
   .dentist-grid.two-col {
     grid-template-columns: 1fr;
   }
+
+  .dentist-main {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1716,8 +1724,7 @@ app-contact {
   }
 }
 
-.staff-shell,
-.dentist-shell {
+.staff-shell {
   grid-template-columns: 238px minmax(0, 1fr);
 }
 
@@ -1727,8 +1734,7 @@ app-contact {
 }
 
 @media (max-width: 1080px) {
-  .staff-shell,
-  .dentist-shell {
+  .staff-shell {
     grid-template-columns: 1fr;
   }
 }
@@ -1881,10 +1887,12 @@ body.staff-theme .staff-nav-link.active {
 }
 
 body.dentist-theme .dentist-nav-link.active {
-  background: linear-gradient(180deg, var(--role-primary), var(--role-primary-hover));
+  background: linear-gradient(90deg, rgba(122, 197, 248, 0.36), rgba(122, 197, 248, 0.12));
+  border-color: rgba(122, 197, 248, 0.26);
   box-shadow:
-    0 0 12px var(--role-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 20px rgba(14, 28, 44, 0.12);
+  color: rgba(243, 248, 255, 0.94);
 }
 
 body.patient-theme .patient-sidebar-shell .nav-item.active .nav-icon,
@@ -1993,4 +2001,68 @@ body.staff-theme .staff-nav-link.active .staff-nav-icon,
 body.dentist-theme .dentist-nav-link.active,
 body.dentist-theme .dentist-nav-link.active .dentist-nav-icon {
   color: var(--role-active-text);
+}
+
+body.dentist-theme .dentist-nav-link.active,
+body.dentist-theme .dentist-nav-link.active .dentist-nav-icon {
+  color: rgba(243, 248, 255, 0.94);
+}
+
+/* ── Shared Patient Portal Header Styles ─────────────────────────── */
+.header-icon-btn {
+  position: relative;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(13,59,102,0.12);
+  background: rgba(255,255,255,0.9);
+  color: #1f3554;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+.header-icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(13,59,102,0.1);
+  background: #fff;
+}
+.header-icon-btn svg {
+  width: 20px; height: 20px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.header-icon-dot {
+  position: absolute;
+  top: 9px; right: 9px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #fff;
+}
+.header-user {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: inherit;
+  border-radius: 999px;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+.header-user:hover { transform: translateY(-1px); }
+.header-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #1a56db, #1e40af);
+  color: #fff;
+  font-weight: 800; font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.header-user-copy strong {
+  display: block;
+  font-size: 0.95rem; font-weight: 800;
+  color: #1f3554;
+}
+.header-user-copy span {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.8rem; color: #6b7c93;
 }

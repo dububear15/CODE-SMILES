@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-patient-sidebar',
@@ -18,12 +15,18 @@ import { filter } from 'rxjs';
 export class PatientSidebarComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(AuthService);
 
+  protected fullName: string;
+  protected initial: string;
   protected clinicExpanded = false;
 
   constructor() {
-    this.syncClinicSectionState();
+    const user = this.auth.getUser();
+    this.fullName = user ? `${user.first_name} ${user.last_name}` : 'Patient';
+    this.initial  = (user?.first_name?.charAt(0) ?? 'P').toUpperCase();
 
+    this.syncClinicSectionState();
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -41,7 +44,11 @@ export class PatientSidebarComponent {
   }
 
   protected isTreatmentProgressActive(): boolean {
-    return this.getCurrentUrl() === '/patient-treatment-progress';
+    const currentUrl = this.getCurrentUrl();
+    return (
+      currentUrl === '/patient-treatment-progress' ||
+      currentUrl.startsWith('/patient-treatment-plan')
+    );
   }
 
   protected isClinicSectionActive(): boolean {
@@ -54,7 +61,7 @@ export class PatientSidebarComponent {
   }
 
   protected logout(): void {
-    this.router.navigate(['/']);
+    this.auth.logout();
   }
 
   private syncClinicSectionState(): void {

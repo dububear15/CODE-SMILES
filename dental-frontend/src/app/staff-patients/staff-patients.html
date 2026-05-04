@@ -2,174 +2,276 @@
   <app-staff-sidebar></app-staff-sidebar>
 
   <main class="patients-main">
+    
+    <!-- SUCCESS ALERT -->
+    <div class="success-alert" *ngIf="showSuccessAlert" [@slideIn]>
+      <div class="alert-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="alert-content">
+        <strong>Success!</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="alert-close" (click)="dismissAlert()" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
     <section class="patients-shell">
-      <header class="page-topbar">
-        <div class="page-copy">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
           <h1>Patients</h1>
-          <p>Review contact details, recent visits, and upcoming appointments at a glance.</p>
+          <p>Manage patient profiles and records.</p>
         </div>
+        <button class="btn-add-patient" (click)="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Patient
+        </button>
+      </div>
 
-        <div class="topbar-profile">
-          <button type="button" class="alert-btn" aria-label="Notifications">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 4a4 4 0 0 0-4 4v2.8l-1.7 3.1h11.4L16 10.8V8a4 4 0 0 0-4-4Z" />
-              <path d="M10 18a2 2 0 0 0 4 0" />
-            </svg>
-            <span class="alert-dot"></span>
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-label">Total Patients</span>
+          <strong class="stat-value">{{ patients.length }}</strong>
+        </div>
+        <div class="stat-card stat-active">
+          <span class="stat-label">Active</span>
+          <strong class="stat-value">{{ activePatientsCount }}</strong>
+        </div>
+        <div class="stat-card stat-inactive">
+          <span class="stat-label">Inactive</span>
+          <strong class="stat-value">{{ inactivePatientsCount }}</strong>
+        </div>
+        <div class="stat-card stat-new">
+          <span class="stat-label">New This Month</span>
+          <strong class="stat-value">{{ newThisMonth }}</strong>
+        </div>
+      </div>
+
+      <!-- SEARCH & FILTER BAR -->
+      <div class="filter-bar">
+        <div class="search-wrap" [class.has-value]="searchTerm">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search by name, contact, or email…"
+            autocomplete="off"
+          />
+          <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm=''" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
+        </div>
 
-          <div class="profile-chip">
-            <div class="profile-avatar" aria-hidden="true">M</div>
-            <div class="profile-copy">
-              <strong>Maria Santos</strong>
-              <span>Front Desk Staff</span>
+        <select [(ngModel)]="genderFilter" class="filter-select">
+          <option value="">All Genders</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <select [(ngModel)]="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+
+        <button class="btn-reset" (click)="resetFilters()" *ngIf="searchTerm || genderFilter || statusFilter">
+          Reset
+        </button>
+      </div>
+
+      <!-- PATIENT TABLE -->
+      <div class="patients-card">
+        <div class="table-head-row">
+          <h2>Patient Directory</h2>
+          <span class="result-count">{{ filteredPatients.length }} patient{{ filteredPatients.length !== 1 ? 's' : '' }}</span>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="filteredPatients.length === 0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <strong>No patients found</strong>
+          <p *ngIf="searchTerm || genderFilter || statusFilter">Try adjusting your search or filters.</p>
+          <p *ngIf="!searchTerm && !genderFilter && !statusFilter">No patients registered yet. Click <strong>Add Patient</strong> to get started.</p>
+        </div>
+
+        <!-- Table -->
+        <div class="patients-table" *ngIf="filteredPatients.length > 0">
+          <div class="table-header">
+            <span>Patient</span>
+            <span>Age / Gender</span>
+            <span>Contact</span>
+            <span>Address</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+
+          <div class="table-row" *ngFor="let p of filteredPatients">
+            <div class="col-patient">
+              <div class="patient-avatar">{{ p.name.charAt(0) }}</div>
+              <div>
+                <strong>{{ p.name }}</strong>
+                <span>{{ p.email }}</span>
+              </div>
+            </div>
+
+            <div class="col-meta">
+              <span>{{ p.age }} yrs</span>
+              <span class="gender-tag">{{ p.gender }}</span>
+            </div>
+
+            <div class="col-contact">{{ p.contact }}</div>
+
+            <div class="col-address">{{ p.address || '—' }}</div>
+
+            <div class="col-status">
+              <span class="status-badge" [ngClass]="'status-' + p.status.toLowerCase()">{{ p.status }}</span>
+            </div>
+
+            <div class="col-actions">
+              <button class="btn-view" (click)="viewProfile(p)">View Profile</button>
+              <button class="btn-edit" (click)="openEditModal(p)">Edit</button>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <section class="stats-grid">
-        <article class="stat-card tone-blue">
-          <div class="stat-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
-              <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
-            </svg>
-          </div>
-          <div class="stat-copy">
-            <span>Total Patients</span>
-            <strong>{{ patients.length }}</strong>
-          </div>
-        </article>
-
-        <article class="stat-card tone-mint">
-          <div class="stat-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          </div>
-          <div class="stat-copy">
-            <span>Active</span>
-            <strong>{{ activePatientsCount }}</strong>
-          </div>
-        </article>
-
-        <article class="stat-card tone-gold">
-          <div class="stat-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <rect x="4" y="5.5" width="16" height="14.5" rx="2.2" />
-              <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
-            </svg>
-          </div>
-          <div class="stat-copy">
-            <span>Upcoming Visits</span>
-            <strong>{{ patientsWithAppointments }}</strong>
-          </div>
-        </article>
-
-        <article class="stat-card tone-rose">
-          <div class="stat-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M7 7l10 10M17 7 7 17" />
-            </svg>
-          </div>
-          <div class="stat-copy">
-            <span>Inactive</span>
-            <strong>{{ inactivePatientsCount }}</strong>
-          </div>
-        </article>
-      </section>
-
-      <section class="content-grid">
-        <section class="patients-card main-card">
-          <div class="card-head">
-            <div class="head-title">
-              <div class="head-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z" />
-                  <path d="M5.5 19.5a6.8 6.8 0 0 1 13 0" />
-                </svg>
-              </div>
-              <h2>Patient Directory</h2>
-            </div>
-
-            <a routerLink="/staff-appointments" class="section-link">Open Appointments</a>
-          </div>
-
-          <div class="patients-list">
-            <article class="patient-row" *ngFor="let patient of patients">
-              <div class="patient-identity">
-                <div class="patient-avatar" aria-hidden="true">{{ patient.name.charAt(0) }}</div>
-                <div>
-                  <strong>{{ patient.name }}</strong>
-                  <span>{{ patient.email }}</span>
-                </div>
-              </div>
-
-              <div class="patient-meta">
-                <span>{{ patient.contact }}</span>
-                <span>Last Visit: {{ patient.lastVisit }}</span>
-                <span>Next: {{ patient.nextAppointment }}</span>
-              </div>
-
-              <div class="patient-status">
-                <span class="status-badge" [ngClass]="getStatusClass(patient.status)">{{ patient.status }}</span>
-              </div>
-
-              <div class="patient-actions">
-                <button type="button" class="primary-mini-btn">View Patient</button>
-                <button type="button" class="ghost-mini-btn">Appointments</button>
-                <button type="button" class="ghost-mini-btn">Medical Vault</button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <aside class="patients-card side-card">
-          <section class="info-panel">
-            <div class="card-head compact">
-              <div class="head-title">
-                <div class="head-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 3.5 5.5 7v5c0 4.2 2.7 7.5 6.5 8.5 3.8-1 6.5-4.3 6.5-8.5V7L12 3.5Z" />
-                    <path d="M9.5 11.5h5" />
-                  </svg>
-                </div>
-                <h2>Staff Notes</h2>
-              </div>
-            </div>
-
-            <div class="notes-list">
-              <article class="note-row">
-                <strong>Directory access is read-first.</strong>
-                <p>Staff can confirm records and next visits, then route deeper care questions to the dentist.</p>
-              </article>
-              <article class="note-row">
-                <strong>Use patient status to prioritize follow-up.</strong>
-                <p>Inactive profiles are useful for outreach and rebooking opportunities.</p>
-              </article>
-              <article class="note-row">
-                <strong>Appointment visibility stays connected.</strong>
-                <p>Open the appointments page when a patient needs a quick schedule check or change.</p>
-              </article>
-            </div>
-          </section>
-
-          <section class="help-card">
-            <div class="help-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3c-2.7 0-4.9 1.8-5.5 4.2-.4 1.6-.1 3.2.8 4.5l4 6.3a.8.8 0 0 0 1.4 0l4-6.3c.9-1.3 1.2-2.9.8-4.5C16.9 4.8 14.7 3 12 3Z" />
-                <path d="M10 8.8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2Z" />
-              </svg>
-            </div>
-            <div>
-              <h3>Need patient support guidance?</h3>
-              <p>Open the staff help center for workflow reminders and communication tips.</p>
-            </div>
-            <a routerLink="/staff-help-center" class="primary-action-btn">Staff Help Center</a>
-          </section>
-        </aside>
-      </section>
     </section>
   </main>
+
+  <!-- ── ADD / EDIT PATIENT MODAL ──────────────────────────────────────── -->
+  <div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2>{{ editingPatient ? 'Edit Patient' : 'Register New Patient' }}</h2>
+        <button class="modal-close" (click)="closeModal()" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form (ngSubmit)="savePatient()" #patientForm="ngForm">
+        <div class="modal-grid">
+
+          <div class="form-group full">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.name" name="name" required placeholder="e.g. Juan Dela Cruz" />
+          </div>
+
+          <div class="form-group">
+            <label>Age <span class="req">*</span></label>
+            <input type="number" [(ngModel)]="form.age" name="age" required min="1" max="120" placeholder="e.g. 28" />
+          </div>
+
+          <div class="form-group">
+            <label>Gender <span class="req">*</span></label>
+            <select [(ngModel)]="form.gender" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Contact Number <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.contact" name="contact" required placeholder="e.g. 0917 555 0182" />
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" [(ngModel)]="form.email" name="email" placeholder="e.g. juan@email.com" />
+          </div>
+
+          <div class="form-group full">
+            <label>Home Address</label>
+            <input type="text" [(ngModel)]="form.address" name="address" placeholder="e.g. 123 Rizal St, Quezon City" />
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select [(ngModel)]="form.status" name="status">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel-modal" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn-save-modal" [disabled]="!patientForm.valid">
+            {{ editingPatient ? 'Save Changes' : 'Register Patient' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── VIEW PROFILE MODAL ─────────────────────────────────────────────── -->
+  <div class="modal-backdrop" *ngIf="viewingPatient" (click)="closeProfile()">
+    <div class="modal-card profile-modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2>Patient Profile</h2>
+        <button class="modal-close" (click)="closeProfile()" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="profile-hero">
+        <div class="profile-avatar-lg">{{ viewingPatient.name.charAt(0) }}</div>
+        <div>
+          <strong class="profile-name">{{ viewingPatient.name }}</strong>
+          <span class="status-badge" [ngClass]="'status-' + viewingPatient.status.toLowerCase()">{{ viewingPatient.status }}</span>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span>Age</span>
+          <strong>{{ viewingPatient.age }} years old</strong>
+        </div>
+        <div class="profile-item">
+          <span>Gender</span>
+          <strong>{{ viewingPatient.gender }}</strong>
+        </div>
+        <div class="profile-item">
+          <span>Contact</span>
+          <strong>{{ viewingPatient.contact }}</strong>
+        </div>
+        <div class="profile-item">
+          <span>Email</span>
+          <strong>{{ viewingPatient.email || '—' }}</strong>
+        </div>
+        <div class="profile-item full">
+          <span>Address</span>
+          <strong>{{ viewingPatient.address || '—' }}</strong>
+        </div>
+        <div class="profile-item">
+          <span>Last Visit</span>
+          <strong>{{ viewingPatient.lastVisit }}</strong>
+        </div>
+        <div class="profile-item">
+          <span>Next Appointment</span>
+          <strong>{{ viewingPatient.nextAppointment }}</strong>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-edit" (click)="closeProfile(); openEditModal(viewingPatient)">Edit Info</button>
+      </div>
+
+    </div>
+  </div>
+
 </div>

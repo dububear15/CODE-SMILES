@@ -1,679 +1,1097 @@
 :host {
   display: block;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+/* ── Shell ──────────────────────────────────────────────── */
 .dentist-dashboard-shell {
-  --dentist-shell-offset: 270px;
-  min-height: 100vh;
-  display: block;
-  grid-template-columns: none;
+  height: 100vh;
+  overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(116, 173, 239, 0.12), transparent 24%),
-    linear-gradient(180deg, #eff5fd 0%, #f7fbff 52%, #edf4fb 100%);
+    radial-gradient(circle at top left, rgba(31, 96, 143, 0.12), transparent 22%),
+    radial-gradient(circle at 90% 90%, rgba(26, 77, 122, 0.08), transparent 20%),
+    linear-gradient(180deg, #eaf3f8 0%, #f4f9fc 52%, #edf4f8 100%);
 }
 
-.dentist-dashboard-main {
-  min-height: 100vh;
-  width: calc(100% - var(--dentist-shell-offset));
-  margin-left: var(--dentist-shell-offset);
-  padding: 0 0 24px;
+/* ── Main ───────────────────────────────────────────────── */
+.dd-main {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  height: 100vh;
+  padding: 22px 30px 22px 30px;
   box-sizing: border-box;
-  color: #22384d;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #0f2d45;
+  overflow: hidden;
 }
 
-.dentist-topbar,
-.dentist-stat-card,
-.dentist-panel,
-.dentist-quick-panel {
-  border: 1px solid rgba(26, 66, 110, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(249, 252, 255, 0.98));
-  box-shadow: 0 18px 36px rgba(17, 40, 68, 0.07);
-}
-
-.dentist-topbar {
-  min-height: 78px;
-  padding: 0 24px;
+/* ── Topbar ─────────────────────────────────────────────── */
+.dd-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 20px;
+  flex-shrink: 0;
+  padding: 18px 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(240,249,253,0.96));
+  border: 1px solid rgba(20, 74, 110, 0.12);
+  box-shadow: 0 18px 36px rgba(12, 40, 66, 0.08);
 }
 
-.dentist-topbar-left,
-.dentist-topbar-actions,
-.dentist-profile-chip,
-.dentist-searchbar,
-.dentist-inline-search,
-.dentist-panel-title,
-.dentist-side-controls,
-.dentist-focus-patient,
-.dentist-focus-meta-row,
-.dentist-quick-chip {
+.dd-greeting {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+  color: #5a7d96;
+}
+
+.dd-name {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0d2d45;
+  line-height: 1.05;
+}
+
+.dd-spec {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: #1a6080;
+  font-weight: 600;
+  background: #d8eff8;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.dd-topbar-right {
   display: flex;
   align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
-.dentist-topbar-left {
-  flex: 1 1 auto;
-  gap: 18px;
+.dd-date-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: rgba(240, 249, 253, 0.96);
+  border: 1px solid rgba(20, 96, 143, 0.14);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a4d6e;
+  white-space: nowrap;
+  box-shadow: 0 8px 16px rgba(12, 40, 66, 0.05);
 }
 
-.dentist-menu-btn,
-.dentist-bell-btn,
-.dentist-chevron-btn,
-.dentist-side-controls button,
-.dentist-more-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
+.dd-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.dentist-menu-btn {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  display: grid;
-  align-content: center;
-  gap: 4px;
-}
-
-.dentist-menu-btn span {
-  display: block;
-  width: 18px;
-  height: 2px;
-  margin: 0 auto;
-  border-radius: 999px;
-  background: #70879c;
-}
-
-.dentist-searchbar,
-.dentist-inline-search {
-  min-height: 44px;
-  border-radius: 14px;
-  gap: 10px;
-  padding: 0 14px;
-  background: #f3f7fc;
-  border: 1px solid rgba(26, 66, 110, 0.05);
-}
-
-.dentist-searchbar {
-  flex: 1 1 auto;
-  max-width: 470px;
-}
-
-.dentist-inline-search {
-  min-width: 250px;
-}
-
-.dentist-searchbar input,
-.dentist-inline-search input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #7b8ea1;
-  font: inherit;
-}
-
-.dentist-search-icon {
-  width: 22px;
-  height: 22px;
+.dd-profile-avatar {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
+  background: linear-gradient(180deg, #4db8d4, #1a7fa0);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #5d7892;
-  background: rgba(124, 153, 185, 0.12);
 }
 
-.dentist-topbar-actions {
-  gap: 18px;
+.dd-profile-copy strong,
+.dd-profile-copy span { display: block; }
+
+.dd-profile-copy strong {
+  font-size: 0.95rem;
+  color: #0d2d45;
+  font-weight: 700;
 }
 
-.dentist-bell-btn,
-.dentist-chevron-btn {
+.dd-profile-copy span {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: #5a7d96;
+}
+
+/* ── Stats ──────────────────────────────────────────────── */
+.dd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.dd-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 90px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(240,249,253,0.96));
+  border: 1px solid rgba(20, 74, 110, 0.12);
+  box-shadow: 0 18px 36px rgba(12, 40, 66, 0.07);
   position: relative;
-  width: 40px;
-  height: 40px;
+  overflow: hidden;
+}
+
+.dd-stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.dd-stat[data-tone="blue"]   .dd-stat-icon { background: #ceeaf5; color: #1a7fa0; }
+.dd-stat[data-tone="green"]  .dd-stat-icon { background: #d0f0e6; color: #1a8a6a; }
+.dd-stat[data-tone="violet"] .dd-stat-icon { background: #ddd8f8; color: #5a4ec4; }
+.dd-stat[data-tone="amber"]  .dd-stat-icon { background: #fde8c8; color: #b86a1a; }
+
+.dd-stat-copy span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5a7d96;
+}
+
+.dd-stat-copy strong {
+  display: block;
+  margin: 4px 0;
+  font-size: 2rem;
+  line-height: 1;
+  color: #0d2d45;
+}
+
+.dd-stat-copy small {
+  color: #4a6d86;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.dd-stat-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.dd-stat[data-tone="blue"]   .dd-stat-bar { background: linear-gradient(90deg, #4db8d4, #1a7fa0); }
+.dd-stat[data-tone="green"]  .dd-stat-bar { background: linear-gradient(90deg, #34c9a0, #1a8a6a); }
+.dd-stat[data-tone="violet"] .dd-stat-bar { background: linear-gradient(90deg, #8a7ef5, #5a4ec4); }
+.dd-stat[data-tone="amber"]  .dd-stat-bar { background: linear-gradient(90deg, #f5a942, #b86a1a); }
+
+/* ── Grid ───────────────────────────────────────────────── */
+.dd-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.92fr);
+  gap: 14px;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.dd-col-left,
+.dd-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+/* ── Card base ──────────────────────────────────────────── */
+.dd-card {
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(240,249,253,0.96));
+  border: 1px solid rgba(20, 74, 110, 0.12);
+  box-shadow: 0 18px 36px rgba(12, 40, 66, 0.07);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dd-card-appointments { flex: 1 1 0; }
+.dd-card-actions      { flex-shrink: 0; }
+.dd-card-plans        { flex: 1 1 0; }
+.dd-card-notifs       { flex: 1 1 0; }
+
+.dd-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.dd-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dd-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dd-card-dot.blue   { background: #1a9fc0; }
+.dd-card-dot.green  { background: #1aaa80; }
+.dd-card-dot.amber  { background: #d4882a; }
+.dd-card-dot.red    { background: #d45a3a; }
+
+.dd-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0d2d45;
+}
+
+.dd-link {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a7fa0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dd-link:hover { text-decoration: underline; }
+
+/* ── Avatar ─────────────────────────────────────────────── */
+.dd-avatar {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #6e8398;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #4db8d4, #1a7fa0);
+  flex-shrink: 0;
 }
 
-.dentist-bell-btn::after {
-  content: "";
-  position: absolute;
-  right: -9px;
-  top: 8px;
-  width: 1px;
-  height: 24px;
-  background: rgba(73, 97, 123, 0.18);
+.dd-avatar[data-priority="high"] {
+  background: linear-gradient(135deg, #e07a4d, #b85a2a);
 }
 
-.dentist-bell-icon,
-.dentist-panel-icon,
-.dentist-quick-icon {
+/* ── Appointments ───────────────────────────────────────── */
+.dd-appt-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-appt-row {
+  display: grid;
+  grid-template-columns: 80px 38px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(20, 74, 110, 0.08);
+  flex: 1 1 0;
+}
+
+.dd-appt-row:last-child { border-bottom: none; }
+
+.dd-appt-time {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a5a7a;
+  white-space: nowrap;
+}
+
+.dd-appt-copy strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0d2d45;
+}
+
+.dd-appt-copy span {
+  display: block;
+  font-size: 0.82rem;
+  color: #5a7d96;
+  margin-top: 3px;
+}
+
+/* ── Status pill ────────────────────────────────────────── */
+.dd-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dd-pill[data-status="confirmed"] { color: #1a7a5a; background: #c8f0e0; }
+.dd-pill[data-status="progress"]  { color: #1a5a9a; background: #c8dff5; }
+.dd-pill[data-status="pending"]   { color: #8a5a1a; background: #f5e0c0; }
+.dd-pill[data-status="cancelled"] { color: #8a2a2a; background: #f5c8c8; }
+
+/* ── Quick Actions ──────────────────────────────────────── */
+.dd-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dd-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #0d2d45;
+  background: linear-gradient(135deg, #f0f8fc, #e8f4f8);
+  border: 1px solid rgba(20, 74, 110, 0.10);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.dd-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(12, 40, 66, 0.12);
+}
+
+.dd-action-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.dd-action-icon-wrap[data-tone="blue"]   { background: linear-gradient(135deg, #b8e8f5, #9ad8ee); }
+.dd-action-icon-wrap[data-tone="green"]  { background: linear-gradient(135deg, #b8f0e0, #9ae8d0); }
+.dd-action-icon-wrap[data-tone="violet"] { background: linear-gradient(135deg, #d8d0f8, #c8c0f0); }
+.dd-action-icon-wrap[data-tone="amber"]  { background: linear-gradient(135deg, #f8dca8, #f0cc88); }
+
+.dd-action-icon {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dd-action-icon-wrap[data-tone="blue"]   .dd-action-icon { color: #1a6a8a; }
+.dd-action-icon-wrap[data-tone="green"]  .dd-action-icon { color: #1a7a5a; }
+.dd-action-icon-wrap[data-tone="violet"] .dd-action-icon { color: #4a3aaa; }
+.dd-action-icon-wrap[data-tone="amber"]  .dd-action-icon { color: #8a5a1a; }
+
+.dd-action-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0d2d45;
+  flex: 1 1 auto;
+}
+
+.dd-action-arrow {
+  font-size: 0.9rem;
+  color: #7a9db6;
+  transition: transform 0.16s ease, color 0.16s ease;
+}
+
+.dd-action-btn:hover .dd-action-arrow {
+  transform: translateX(3px);
+  color: #1a7fa0;
+}
+
+/* ── Treatment Plans ────────────────────────────────────── */
+.dd-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-plan-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f0f8fc, #e8f4f8);
+  border: 1px solid rgba(20, 74, 110, 0.08);
+  flex: 1 1 0;
+}
+
+.dd-plan-copy strong {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0d2d45;
+}
+
+.dd-plan-copy span {
+  display: block;
+  font-size: 0.8rem;
+  color: #1a6080;
+  margin-top: 3px;
+}
+
+.dd-followup-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a5a7a;
+  background: #c8e8f5;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* ── Notifications ──────────────────────────────────────── */
+.dd-notif-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-notif-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(20, 74, 110, 0.08);
+  flex: 1 1 0;
+}
+
+.dd-notif-row:last-child { border-bottom: none; }
+
+.dd-notif-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
   font-size: 0.72rem;
   font-weight: 800;
-}
-
-.dentist-bell-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  font-size: 0.64rem;
-  font-weight: 700;
-  color: #ffffff;
-  background: #5da7ef;
-}
-
-.dentist-profile-chip {
-  gap: 12px;
-}
-
-.dentist-avatar,
-.dentist-patient-avatar,
-.dentist-focus-avatar {
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(180deg, #63b6ee, #4798df);
-}
-
-.dentist-avatar {
-  width: 42px;
-  height: 42px;
-}
-
-.dentist-profile-chip strong,
-.dentist-profile-chip span {
-  display: block;
-}
-
-.dentist-profile-chip strong {
-  font-size: 0.96rem;
-  color: #22384d;
-}
-
-.dentist-profile-chip span {
-  margin-top: 3px;
-  font-size: 0.8rem;
-  color: #7e90a4;
-}
-
-.dentist-chevron-btn {
-  font-size: 1rem;
-}
-
-.dentist-page-intro,
-.dentist-stat-grid,
-.dentist-dashboard-grid,
-.dentist-quick-panel {
-  margin: 16px 24px 0;
-}
-
-.dentist-page-intro {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  padding-top: 2px;
-}
-
-.dentist-page-intro h1 {
-  margin: 0;
-  font-size: 2rem;
-  line-height: 1.02;
-  color: #22384d;
-}
-
-.dentist-page-intro p {
-  margin: 8px 0 0;
-  color: #7f92a7;
-}
-
-.dentist-date-lockup {
-  text-align: right;
-}
-
-.dentist-date-lockup strong,
-.dentist-date-lockup span {
-  display: block;
-}
-
-.dentist-date-lockup strong {
-  color: #377fe1;
-  font-size: 1rem;
-}
-
-.dentist-date-lockup span {
-  margin-top: 6px;
-  color: #6f8499;
-}
-
-.dentist-tab-group,
-.dentist-stat-metric,
-.dentist-appointment-status {
-  display: flex;
-  align-items: center;
-}
-
-.dentist-tab-group,
-.dentist-quick-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.dentist-primary-btn,
-.dentist-ghost-btn,
-.dentist-outline-btn {
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: 12px;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.dentist-primary-btn {
-  border: 1px solid transparent;
-  color: #ffffff;
-  background: linear-gradient(180deg, #4da6f0, #3388df);
-  box-shadow: 0 12px 20px rgba(47, 121, 202, 0.2);
-}
-
-.dentist-ghost-btn,
-.dentist-outline-btn {
-  border: 1px solid rgba(58, 130, 214, 0.22);
-  color: #347fd6;
-  background: #ffffff;
-}
-
-.dentist-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.dentist-stat-card {
-  padding: 16px 18px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.dentist-stat-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.dentist-stat-card[data-tone="blue"] .dentist-stat-icon {
-  color: #3a8de3;
-  background: #e8f2ff;
-}
+.dd-notif-row[data-type="cancel"]     .dd-notif-icon { background: #f5c8c8; color: #8a2a2a; }
+.dd-notif-row[data-type="reschedule"] .dd-notif-icon { background: #c8dff5; color: #1a4a8a; }
+.dd-notif-row[data-type="urgent"]     .dd-notif-icon { background: #f5e0c0; color: #8a5a1a; }
+.dd-notif-row[data-type="followup"]   .dd-notif-icon { background: #c8f0e0; color: #1a6a4a; }
 
-.dentist-stat-card[data-tone="green"] .dentist-stat-icon {
-  color: #31a37f;
-  background: #e8faf4;
-}
-
-.dentist-stat-card[data-tone="violet"] .dentist-stat-icon {
-  color: #8a6de0;
-  background: #f1edff;
-}
-
-.dentist-stat-card[data-tone="amber"] .dentist-stat-icon {
-  color: #d19a2a;
-  background: #fff6e6;
-}
-
-.dentist-stat-copy {
-  min-width: 0;
-}
-
-.dentist-stat-copy > span {
+.dd-notif-copy span {
   display: block;
-  color: #8194a8;
   font-size: 0.9rem;
+  color: #0d2d45;
+  line-height: 1.4;
 }
 
-.dentist-stat-metric {
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.dentist-stat-metric strong {
-  font-size: 2.1rem;
-  line-height: 1;
-  color: #22384d;
-}
-
-.dentist-stat-metric small {
-  font-size: 0.95rem;
-  color: #6f8499;
-}
-
-.dentist-dashboard-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.95fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.dentist-panel {
-  padding: 16px;
-  border-radius: 20px;
-}
-
-.dentist-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.dentist-panel-title {
-  gap: 10px;
-}
-
-.dentist-panel-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  color: #3b8ce2;
-  background: #eaf3ff;
-}
-
-.dentist-panel-icon.tone-blue {
-  color: #377fe1;
-  background: #edf4ff;
-}
-
-.dentist-panel-head h2 {
-  margin: 0;
-  font-size: 1.06rem;
-  color: #22384d;
-}
-
-.dentist-panel-head a,
-.dentist-view-link {
-  color: #3b85dc;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.dentist-appointment-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.dentist-appointment-row {
-  display: grid;
-  grid-template-columns: 62px 52px minmax(0, 1fr) auto auto 26px;
-  gap: 14px;
-  align-items: center;
-  padding: 16px 0;
-  border-top: 1px solid rgba(26, 66, 110, 0.08);
-}
-
-.dentist-time-block strong,
-.dentist-time-block span,
-.dentist-appointment-copy strong,
-.dentist-appointment-copy span,
-.dentist-appointment-copy small {
+.dd-notif-copy small {
   display: block;
-}
-
-.dentist-time-block strong,
-.dentist-time-block span {
-  color: #2f86dc;
-  font-weight: 800;
-}
-
-.dentist-time-block span {
-  margin-top: 2px;
-}
-
-.dentist-patient-avatar,
-.dentist-focus-avatar {
-  width: 48px;
-  height: 48px;
-  font-size: 0.92rem;
-}
-
-.dentist-appointment-copy strong {
-  font-size: 1rem;
-  color: #22384d;
-}
-
-.dentist-appointment-copy span {
-  margin-top: 3px;
-  font-size: 0.84rem;
-  color: #8b9cad;
-}
-
-.dentist-appointment-copy small {
-  margin-top: 4px;
-  font-size: 0.94rem;
-  color: #445b73;
-}
-
-.dentist-status-pill {
-  min-width: 92px;
-  min-height: 30px;
-  padding: 0 12px;
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
   font-size: 0.78rem;
-  font-weight: 700;
+  color: #6a8da6;
+  margin-top: 3px;
 }
 
-.dentist-status-pill[data-status="confirmed"] {
-  color: #2aa26e;
-  background: #e6f7ef;
-}
-
-.dentist-status-pill[data-status="progress"] {
-  color: #4d8fe1;
-  background: #e8f1ff;
-}
-
-.dentist-status-pill[data-status="pending"] {
-  color: #cf9a29;
-  background: #fff4de;
-}
-
-.dentist-appointment-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.dentist-visit-btn {
-  min-height: 38px;
-  padding: 0 16px;
-}
-
-.dentist-more-btn {
-  font-size: 1rem;
-  color: #8ca1b7;
-}
-
-.dentist-schedule-side .dentist-panel-head {
-  margin-bottom: 10px;
-}
-
-.dentist-side-stack {
-  display: grid;
-  gap: 14px;
-}
-
-.dentist-queue-card {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px;
-  border-radius: 16px;
-  background: #f7fbff;
-  border: 1px solid rgba(26, 66, 110, 0.08);
-}
-
-.dentist-queue-copy strong,
-.dentist-queue-copy span,
-.dentist-queue-meta small {
-  display: block;
-}
-
-.dentist-queue-copy strong {
-  color: #22384d;
-}
-
-.dentist-queue-copy span,
-.dentist-queue-meta small {
-  margin-top: 4px;
-  color: #7d92a7;
-}
-
-.dentist-queue-meta {
-  min-width: 104px;
-  text-align: right;
-}
-
-.dentist-queue-meta .dentist-status-pill {
-  margin-top: 8px;
-}
-
-.dentist-quick-panel {
-  margin-bottom: 24px;
-  padding: 16px;
-  border-radius: 20px;
-}
-
-.dentist-quick-grid-panel {
-  margin-top: 14px;
-}
-
-.dentist-quick-chip {
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 12px;
-  gap: 10px;
-  text-decoration: none;
-  color: #5c738a;
-  background: #ffffff;
-  border: 1px solid rgba(26, 66, 110, 0.08);
-}
-
-.dentist-quick-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  color: #3b8ce2;
-  background: #edf4ff;
-}
-
-@media (max-width: 1280px) {
-  .dentist-dashboard-grid,
-  .dentist-stat-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dentist-page-intro {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1240px) {
+  .dd-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1080px) {
-  .dentist-dashboard-main {
-    width: 100%;
+  .dentist-dashboard-shell { height: auto; overflow: auto; }
+
+  .dd-main {
     margin-left: 0;
-  }
-}
-
-@media (max-width: 920px) {
-  .dentist-appointment-row {
-    grid-template-columns: 62px 52px minmax(0, 1fr);
-  }
-
-  .dentist-appointment-status,
-  .dentist-appointment-actions,
-  .dentist-more-btn {
-    grid-column: 3;
-  }
-
-  .dentist-appointment-actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 720px) {
-  .dentist-topbar,
-  .dentist-page-intro,
-  .dentist-stat-grid,
-  .dentist-dashboard-grid,
-  .dentist-quick-panel {
-    margin-left: 18px;
-    margin-right: 18px;
-  }
-
-  .dentist-topbar {
-    padding: 16px 18px;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .dentist-topbar-left,
-  .dentist-topbar-actions {
     width: 100%;
+    height: auto;
+    overflow: auto;
+    padding: 18px;
   }
 
-  .dentist-topbar-actions {
-    justify-content: space-between;
+  .dd-card-appointments,
+  .dd-card-plans,
+  .dd-card-notifs { flex: none; }
+
+  .dd-appt-list,
+  .dd-plan-list,
+  .dd-notif-list { justify-content: flex-start; gap: 0; }
+
+  .dd-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .dd-stats { grid-template-columns: 1fr; }
+  .dd-actions-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Shell ──────────────────────────────────────────────── */
+.dentist-dashboard-shell {
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(116, 173, 239, 0.12), transparent 20%),
+    linear-gradient(180deg, #f3f7fd 0%, #f7fbff 52%, #eff5fd 100%);
+}
+
+/* ── Main ───────────────────────────────────────────────── */
+.dd-main {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  height: 100vh;
+  padding: 22px 30px 22px 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #1d3551;
+  overflow: hidden;
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.dd-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-shrink: 0;
+  padding: 18px 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,251,255,0.96));
+  border: 1px solid rgba(27, 55, 89, 0.10);
+  box-shadow: 0 22px 40px rgba(16, 40, 66, 0.08);
+}
+
+.dd-greeting {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+  color: #6f8096;
+}
+
+.dd-name {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #213a59;
+  line-height: 1.05;
+}
+
+.dd-spec {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: #4a7bb5;
+  font-weight: 600;
+  background: #eef4ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.dd-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.dd-date-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: rgba(246, 249, 255, 0.96);
+  border: 1px solid rgba(77, 143, 225, 0.12);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #224a79;
+  white-space: nowrap;
+  box-shadow: 0 10px 18px rgba(16, 40, 66, 0.05);
+}
+
+.dd-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dd-profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #9fc2fb, #6b9ee8);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.dd-profile-copy strong,
+.dd-profile-copy span { display: block; }
+
+.dd-profile-copy strong {
+  font-size: 0.95rem;
+  color: #213a59;
+  font-weight: 700;
+}
+
+.dd-profile-copy span {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: #6f8096;
+}
+
+/* ── Stats ──────────────────────────────────────────────── */
+.dd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.dd-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 90px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,251,255,0.96));
+  border: 1px solid rgba(27, 55, 89, 0.10);
+  box-shadow: 0 22px 40px rgba(16, 40, 66, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.dd-stat[data-tone="blue"]   .dd-stat-icon { background: #e9f1ff; color: #4d8fe1; }
+.dd-stat[data-tone="green"]  .dd-stat-icon { background: #e2f7f0; color: #2aa483; }
+.dd-stat[data-tone="violet"] .dd-stat-icon { background: #efe9ff; color: #7f73e6; }
+.dd-stat[data-tone="amber"]  .dd-stat-icon { background: #fff1dd; color: #e29b3f; }
+
+.dd-stat-copy span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7a8fa7;
+}
+
+.dd-stat-copy strong {
+  display: block;
+  margin: 4px 0;
+  font-size: 2rem;
+  line-height: 1;
+  color: #213a59;
+}
+
+.dd-stat-copy small {
+  color: #5d728d;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.dd-stat-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.dd-stat[data-tone="blue"]   .dd-stat-bar { background: linear-gradient(90deg, #4d98f4, #2f6fd8); }
+.dd-stat[data-tone="green"]  .dd-stat-bar { background: linear-gradient(90deg, #34c98a, #1f8a5e); }
+.dd-stat[data-tone="violet"] .dd-stat-bar { background: linear-gradient(90deg, #a07ef5, #7f5adf); }
+.dd-stat[data-tone="amber"]  .dd-stat-bar { background: linear-gradient(90deg, #f5b942, #cc8f22); }
+
+/* ── Grid ───────────────────────────────────────────────── */
+.dd-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.92fr);
+  gap: 14px;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.dd-col-left,
+.dd-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+/* ── Card base ──────────────────────────────────────────── */
+.dd-card {
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,251,255,0.96));
+  border: 1px solid rgba(27, 55, 89, 0.10);
+  box-shadow: 0 22px 40px rgba(16, 40, 66, 0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dd-card-appointments { flex: 1 1 0; }
+.dd-card-actions      { flex-shrink: 0; }
+.dd-card-plans        { flex: 1 1 0; }
+.dd-card-notifs       { flex: 1 1 0; }
+
+.dd-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.dd-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dd-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dd-card-dot.blue   { background: #4d98f4; }
+.dd-card-dot.green  { background: #34c98a; }
+.dd-card-dot.amber  { background: #f5b942; }
+.dd-card-dot.red    { background: #f47c4d; }
+
+.dd-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #213a59;
+}
+
+.dd-link {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #4a88e1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dd-link:hover { text-decoration: underline; }
+
+/* ── Avatar ─────────────────────────────────────────────── */
+.dd-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #4d98f4, #2f6fd8);
+  flex-shrink: 0;
+}
+
+.dd-avatar[data-priority="high"] {
+  background: linear-gradient(135deg, #f47c4d, #d85a2f);
+}
+
+/* ── Appointments ───────────────────────────────────────── */
+.dd-appt-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-appt-row {
+  display: grid;
+  grid-template-columns: 80px 38px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(27, 55, 89, 0.07);
+  flex: 1 1 0;
+}
+
+.dd-appt-row:last-child { border-bottom: none; }
+
+.dd-appt-time {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #224a79;
+  white-space: nowrap;
+}
+
+.dd-appt-copy strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #213a59;
+}
+
+.dd-appt-copy span {
+  display: block;
+  font-size: 0.82rem;
+  color: #6f8096;
+  margin-top: 3px;
+}
+
+/* ── Status pill ────────────────────────────────────────── */
+.dd-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dd-pill[data-status="confirmed"] { color: #2f8f62; background: #ddf4e9; }
+.dd-pill[data-status="progress"]  { color: #4d7de1; background: #dce8ff; }
+.dd-pill[data-status="pending"]   { color: #b6782a; background: #fff0df; }
+.dd-pill[data-status="cancelled"] { color: #d36a6a; background: #ffe7e7; }
+
+/* ── Quick Actions ──────────────────────────────────────── */
+.dd-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dd-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #213a59;
+  background: #f7f9ff;
+  border: 1px solid rgba(27, 55, 89, 0.07);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(16, 40, 66, 0.10);
+}
+
+.dd-action-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.dd-action-icon-wrap[data-tone="blue"]   { background: linear-gradient(135deg, #deeeff, #c8e0ff); }
+.dd-action-icon-wrap[data-tone="green"]  { background: linear-gradient(135deg, #d4f5e7, #bfedd8); }
+.dd-action-icon-wrap[data-tone="violet"] { background: linear-gradient(135deg, #ede8ff, #dfd8ff); }
+.dd-action-icon-wrap[data-tone="amber"]  { background: linear-gradient(135deg, #fff0cc, #ffe8aa); }
+
+.dd-action-icon {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dd-action-icon-wrap[data-tone="blue"]   .dd-action-icon { color: #2f6ed4; }
+.dd-action-icon-wrap[data-tone="green"]  .dd-action-icon { color: #1f8a5e; }
+.dd-action-icon-wrap[data-tone="violet"] .dd-action-icon { color: #7f5adf; }
+.dd-action-icon-wrap[data-tone="amber"]  .dd-action-icon { color: #cc8f22; }
+
+.dd-action-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #213a59;
+  flex: 1 1 auto;
+}
+
+.dd-action-arrow {
+  font-size: 0.9rem;
+  color: #a0b4c8;
+  transition: transform 0.16s ease, color 0.16s ease;
+}
+
+.dd-action-btn:hover .dd-action-arrow {
+  transform: translateX(3px);
+  color: #4a88e1;
+}
+
+/* ── Treatment Plans ────────────────────────────────────── */
+.dd-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-plan-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f7f9ff;
+  border: 1px solid rgba(27, 55, 89, 0.06);
+  flex: 1 1 0;
+}
+
+.dd-plan-copy strong {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #213a59;
+}
+
+.dd-plan-copy span {
+  display: block;
+  font-size: 0.8rem;
+  color: #4a7bb5;
+  margin-top: 3px;
+}
+
+.dd-followup-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #7a8fa7;
+  background: #dfe9ff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* ── Notifications ──────────────────────────────────────── */
+.dd-notif-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dd-notif-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(27, 55, 89, 0.07);
+  flex: 1 1 0;
+}
+
+.dd-notif-row:last-child { border-bottom: none; }
+
+.dd-notif-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.dd-notif-row[data-type="cancel"]     .dd-notif-icon { background: #ffe7e7; color: #d36a6a; }
+.dd-notif-row[data-type="reschedule"] .dd-notif-icon { background: #dce8ff; color: #4d7de1; }
+.dd-notif-row[data-type="urgent"]     .dd-notif-icon { background: #fff0df; color: #b6782a; }
+.dd-notif-row[data-type="followup"]   .dd-notif-icon { background: #ddf4e9; color: #2f8f62; }
+
+.dd-notif-copy span {
+  display: block;
+  font-size: 0.9rem;
+  color: #213a59;
+  line-height: 1.4;
+}
+
+.dd-notif-copy small {
+  display: block;
+  font-size: 0.78rem;
+  color: #7a8fa7;
+  margin-top: 3px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1240px) {
+  .dd-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1080px) {
+  .dentist-dashboard-shell { height: auto; overflow: auto; }
+
+  .dd-main {
+    margin-left: 0;
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    padding: 18px;
   }
 
-  .dentist-page-intro {
-    align-items: flex-start;
-  }
+  .dd-card-appointments,
+  .dd-card-plans,
+  .dd-card-notifs { flex: none; }
 
-  .dentist-date-lockup {
-    text-align: left;
-  }
+  .dd-appt-list,
+  .dd-plan-list,
+  .dd-notif-list { justify-content: flex-start; gap: 0; }
 
-  .dentist-appointment-row {
-    grid-template-columns: 1fr;
-  }
+  .dd-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
-  .dentist-time-block,
-  .dentist-patient-avatar,
-  .dentist-appointment-copy,
-  .dentist-appointment-status,
-  .dentist-appointment-actions,
-  .dentist-more-btn {
-    grid-column: auto;
-  }
-
-  .dentist-quick-panel {
-    align-items: flex-start;
-  }
+@media (max-width: 600px) {
+  .dd-stats { grid-template-columns: 1fr; }
+  .dd-actions-grid { grid-template-columns: 1fr; }
 }

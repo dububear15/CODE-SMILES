@@ -41,6 +41,11 @@
             </label>
 
             <label>
+              <span>Date of Birth</span>
+              <input type="date" [(ngModel)]="form.dateOfBirth" />
+            </label>
+
+            <label>
               <span>Preferred Language</span>
               <select [(ngModel)]="form.preferredLanguage">
                 <option>English</option>
@@ -52,8 +57,10 @@
             <label>
               <span>Gender</span>
               <select [(ngModel)]="form.gender">
+                <option value="">— Select —</option>
                 <option>Female</option>
                 <option>Male</option>
+                <option>Non-binary</option>
                 <option>Prefer not to say</option>
               </select>
             </label>
@@ -61,14 +68,15 @@
             <label>
               <span>Blood Type</span>
               <select [(ngModel)]="form.bloodType">
-                <option>O+</option>
-                <option>O-</option>
+                <option value="">— Select —</option>
                 <option>A+</option>
                 <option>A-</option>
                 <option>B+</option>
                 <option>B-</option>
                 <option>AB+</option>
                 <option>AB-</option>
+                <option>O+</option>
+                <option>O-</option>
               </select>
             </label>
           </div>
@@ -107,7 +115,13 @@
 
             <label>
               <span>Primary Dentist</span>
-              <input type="text" [(ngModel)]="form.primaryDentist" />
+              <select [(ngModel)]="form.primaryDentist">
+                <option value="">— Select Dentist —</option>
+                <option>Dr. Raphoncel Eduria</option>
+                <option>Dr. Christine Faith Metillo</option>
+                <option>Dr. Nico Bongolto</option>
+                <option>Dr. Derence Acojedo</option>
+              </select>
             </label>
           </div>
         </article>
