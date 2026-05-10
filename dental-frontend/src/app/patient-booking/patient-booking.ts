@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,6 +30,7 @@ export class PatientBookingComponent implements OnInit {
   private readonly appointmentStore = inject(PatientAppointmentStore);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   isSubmitting = false;
   submitError = '';
@@ -422,15 +423,10 @@ export class PatientBookingComponent implements OnInit {
     this.isSubmitting = true;
     this.submitError = '';
 
-    // Use native fetch — bypasses Angular HTTP pipe issues entirely
-    fetch('http://localhost:3000/add-appointment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bookingData),
-    })
-      .then(res => res.json())
-      .then(res => {
-        const appointment = this.appointmentStore.createAppointment({
+    this.api.bookAppointment(bookingData).subscribe({
+      next: (res) => {
+        // Store in local appointment store for reschedule flow
+        this.appointmentStore.createAppointment({
           service:         this.selectedCategory,
           category:        this.selectedCategory,
           time:            this.selectedTime,
@@ -445,7 +441,7 @@ export class PatientBookingComponent implements OnInit {
         });
 
         this.confirmedBooking = {
-          appointmentId: res.id?.toString() ?? appointment.id,
+          appointmentId: res.id?.toString() ?? '',
           fullName,
           date:     this.selectedDate,
           time:     this.selectedTime,
@@ -458,13 +454,18 @@ export class PatientBookingComponent implements OnInit {
         this.rescheduleAppointmentId = null;
         this.resetSelection();
         this.resetPatientDetails();
+
+        // Show the success modal — cdr.detectChanges() ensures it renders immediately
         this.showSuccessModal = true;
-      })
-      .catch(err => {
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
         this.isSubmitting = false;
-        this.submitError = 'Booking failed. Please make sure the server is running and try again.';
-        console.error('Booking error:', err);
-      });
+        this.submitError = err?.error?.message
+          || 'Booking failed. Please make sure the server is running and try again.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   convertTo24Hour(time12h: string): string {

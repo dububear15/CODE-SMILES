@@ -620,3 +620,70 @@
   .modal-grid { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Reliability Score Column ────────────────────────────────── */
+.col-reliability {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.reliability-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.reliability-badge[data-tone='mint'] {
+  color: #238260;
+  background: #e5f7ef;
+}
+
+.reliability-badge[data-tone='blue'] {
+  color: #276aa6;
+  background: #e7f0f9;
+}
+
+.reliability-badge[data-tone='amber'] {
+  color: #bd7d22;
+  background: #fff1dc;
+}
+
+.reliability-badge[data-tone='orange'] {
+  color: #c05c1a;
+  background: #fff0e6;
+}
+
+.reliability-badge[data-tone='rose'] {
+  color: #d45f6d;
+  background: #ffe6eb;
+}
+
+.reliability-score {
+  font-size: 0.7rem;
+  color: #8fa3bc;
+  font-weight: 600;
+}
+
+.reliability-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Update table grid to include reliability column */
+.table-header,
+.table-row {
+  grid-template-columns: 2fr 1fr 1.2fr 1fr 0.8fr 1fr;
+}
+
+@media (max-width: 1200px) {
+  .table-header,
+  .table-row { grid-template-columns: 2fr 1fr 1.2fr 1fr 0.8fr 1fr; }
+}

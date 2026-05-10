@@ -17,7 +17,7 @@ import { PublicFooterComponent } from './public-footer/public-footer';
   template: `
     <app-public-header *ngIf="headerMode === 'public'"></app-public-header>
   
-    <main [class.no-scroll]="hideScrollLayout">
+    <main [class.no-scroll]="hideScrollLayout" [class.auth-page-wrap]="isAuthPage">
       <div class="route-shell">
         <router-outlet></router-outlet>
       </div>
@@ -30,6 +30,19 @@ import { PublicFooterComponent } from './public-footer/public-footer';
       min-height: 80vh;
     }
 
+    /* Auth pages (login/register/forgot) — hard lock to viewport */
+    main.auth-page-wrap {
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    main.auth-page-wrap .route-shell {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Private portal pages — let the component manage its own scroll */
     main.no-scroll {
       height: 100vh;
       max-height: 100vh;
@@ -59,6 +72,7 @@ export class AppComponent {
   showFooter = true;
   headerMode: 'none' | 'public' | 'patient' = 'public';
   hideScrollLayout = false;
+  isAuthPage = false;
   private readonly roleThemeClasses = ['staff-theme', 'dentist-theme', 'patient-theme'];
 
   constructor(private router: Router) {
@@ -68,9 +82,13 @@ export class AppComponent {
         const url = event.urlAfterRedirects;
 
         const hideAllLayout =
-          url === '/login' ||
-          url === '/register' ||
-          url === '/forgot-password';
+          url.startsWith('/login') ||
+          url.startsWith('/register') ||
+          url.startsWith('/forgot-password') ||
+          url.startsWith('/reset-password') ||
+          url.startsWith('/check-email') ||
+          url.startsWith('/verify-email-result') ||
+          url.startsWith('/verify-email');
 
         const privatePatientRoutes =
           url.startsWith('/patient-dashboard') ||
@@ -80,6 +98,7 @@ export class AppComponent {
           url.startsWith('/patient-about') ||
           url.startsWith('/patient-contact') ||
           url.startsWith('/patient-notifications') ||
+          url.startsWith('/patient-messages') ||
           url.startsWith('/patient-profile') ||
           url.startsWith('/patient-help-center') ||
           url.startsWith('/patient-privacy-policy') ||
@@ -97,7 +116,7 @@ export class AppComponent {
           url.startsWith('/staff-notifications') ||
           url.startsWith('/staff-profile') ||
           url.startsWith('/staff-help-center') ||
-          url.startsWith('/staff-billing');
+          url.startsWith('/staff-booking');
 
         const privateDentistRoutes =
           url.startsWith('/dentist-dashboard') ||
@@ -127,6 +146,7 @@ export class AppComponent {
 
         this.showFooter = !(hideAllLayout || hideFooterOnly || isPrivatePortal);
         this.hideScrollLayout = isPrivatePortal;
+        this.isAuthPage = hideAllLayout;
         this.applyRoleThemeClass(
           privateStaffRoutes ? 'staff-theme' :
           privateDentistRoutes ? 'dentist-theme' :

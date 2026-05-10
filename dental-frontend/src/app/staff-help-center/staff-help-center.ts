@@ -1,132 +1,107 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StaffSidebar } from '../staff-sidebar/staff-sidebar';
+import { ApiService } from '../services/api.service';
+import { AuthService } from '../services/auth.service';
+
+export type HelpTab = 'faqs' | 'contact' | 'privacy' | 'terms';
+interface Faq { id: number; question: string; answer: string; category: string; }
 
 @Component({
   selector: 'app-staff-help-center',
   standalone: true,
-  imports: [CommonModule, RouterLink, StaffSidebar],
+  imports: [CommonModule, FormsModule, StaffSidebar],
   templateUrl: './staff-help-center.html',
   styleUrls: ['./staff-help-center.css'],
 })
 export class StaffHelpCenter implements OnInit {
-  protected activeFaqIndex: number | null = null;
-  protected activeLegalSection: 'privacy-policy' | 'terms-of-use' = 'privacy-policy';
+
+  activeTab: HelpTab = 'faqs';
+
+  faqs: Faq[] = [];
+  isLoadingFaqs = true;
+  faqError = '';
+  searchQuery = '';
+  activeCategory = 'All';
+  openFaqId: number | null = null;
+
+  contactSubject = '';
+  contactMessage = '';
+  isSubmitting = false;
+  submitSuccess = false;
+  submitError = '';
 
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
+    private api: ApiService,
+    private auth: AuthService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.route.fragment.subscribe((fragment) => {
-      if (fragment === 'terms-of-use' || fragment === 'privacy-policy') {
-        this.activeLegalSection = fragment;
-      }
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'privacy' || fragment === 'privacy-policy') this.activeTab = 'privacy';
+      else if (fragment === 'terms' || fragment === 'terms-of-use') this.activeTab = 'terms';
+      else if (fragment === 'contact') this.activeTab = 'contact';
+      else this.activeTab = 'faqs';
+    });
+    this.loadFaqs();
+  }
+
+  setTab(tab: HelpTab): void {
+    this.activeTab = tab;
+    this.router.navigate([], { fragment: tab, replaceUrl: true });
+    if (tab === 'faqs') { this.searchQuery = ''; this.activeCategory = 'All'; this.openFaqId = null; }
+    if (tab !== 'contact') { this.submitSuccess = false; this.submitError = ''; }
+  }
+
+  loadFaqs(): void {
+    this.isLoadingFaqs = true;
+    this.faqError = '';
+    this.api.getFaqs('Staff').subscribe({
+      next: (data) => { this.faqs = Array.isArray(data) ? data : []; this.isLoadingFaqs = false; this.cdr.detectChanges(); },
+      error: () => { this.faqError = 'Could not load FAQs. Make sure the backend is running and try again.'; this.isLoadingFaqs = false; this.cdr.detectChanges(); },
     });
   }
 
-  protected toggleFaq(index: number): void {
-    this.activeFaqIndex = this.activeFaqIndex === index ? null : index;
+  get filteredFaqs(): Faq[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    return this.faqs.filter(f => {
+      const matchCat = this.activeCategory === 'All' || f.category === this.activeCategory;
+      const matchQ   = !q || f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
   }
 
-  protected showLegalSection(section: 'privacy-policy' | 'terms-of-use'): void {
-    this.activeLegalSection = section;
-    this.router.navigate(['/staff-help-center'], { fragment: section });
+  get faqCategories(): string[] {
+    return ['All', ...new Set(this.faqs.map(f => f.category))];
   }
 
-  protected readonly faqs = [
-    {
-      question: 'How do I approve or reject a booking request?',
-      answer:
-        'Open Requests, review the validation details, then choose Approve, Reject, Reschedule, or View Details.',
-    },
-    {
-      question: 'When should I reschedule instead of rejecting?',
-      answer:
-        'Reschedule when the patient request is valid but the preferred time, provider, or chair availability needs adjustment.',
-    },
-    {
-      question: 'How do I block availability in the calendar?',
-      answer:
-        'Open Calendar and add a blocked slot for chair maintenance, provider breaks, clinic events, or unavailable time.',
-    },
-    {
-      question: "Where can I check a patient's next appointment?",
-      answer: 'Use Appointments or Patients to find the patient record and review upcoming visits.',
-    },
-    {
-      question: 'What should I do when a warning alert appears?',
-      answer:
-        'Review the warning, confirm the schedule or request details, and update the related appointment before notifying the patient.',
-    },
-  ];
+  toggleFaq(id: number): void { this.openFaqId = this.openFaqId === id ? null : id; }
+  setCategory(cat: string): void { this.activeCategory = cat; this.openFaqId = null; }
 
-  protected readonly privacyPoints = [
-    {
-      title: 'Staff Access to Patient Data',
-      description:
-        'Use patient records only for appointment coordination, clinic operations, and authorized care support.',
-      tone: 'blue',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M12 4 19 7.5v4.8c0 4.1-2.7 7.6-7 8.7-4.3-1.1-7-4.6-7-8.7V7.5Z',
-        'M9.5 12.5 11.2 14 14.8 10.5',
-      ],
-    },
-    {
-      title: 'Protect Portal Information',
-      description:
-        'Keep patient details, schedules, billing notes, and internal messages private and visible only to approved staff.',
-      tone: 'mint',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M8 11V8a4 4 0 1 1 8 0v3',
-        'M6.5 11.5h11A1.5 1.5 0 0 1 19 13v6A1.5 1.5 0 0 1 17.5 20.5h-11A1.5 1.5 0 0 1 5 19v-6A1.5 1.5 0 0 1 6.5 11.5Z',
-      ],
-    },
-    {
-      title: 'Report Privacy Concerns',
-      description:
-        'Contact clinic leadership if you notice incorrect access, exposed information, or suspicious account activity.',
-      tone: 'violet',
-      iconViewBox: '0 0 24 24',
-      iconPaths: ['M12 4 20 19H4L12 4Z', 'M12 9v4', 'M12 16h.01'],
-    },
-  ];
+  resetContact(): void {
+    this.contactSubject = ''; this.contactMessage = '';
+    this.submitSuccess = false; this.submitError = ''; this.isSubmitting = false;
+  }
 
-  protected readonly termsPoints = [
-    {
-      title: 'Account Responsibilities',
-      description:
-        'Keep your staff login secure, use your own account, and sign out when stepping away from shared devices.',
-      tone: 'blue',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z',
-        'M5.5 19.5a6.8 6.8 0 0 1 13 0',
-      ],
-    },
-    {
-      title: 'Appointment Decisions',
-      description:
-        'Approvals, rejections, and reschedules should follow clinic timing rules and be reflected accurately across views.',
-      tone: 'mint',
-      iconViewBox: '0 0 24 24',
-      iconPaths: ['M4 5.5h16v14H4z', 'M8 3.5v4M16 3.5v4M4 9.5h16'],
-    },
-    {
-      title: 'Appropriate Staff Use',
-      description:
-        'Use the staff portal for clinic work only, including scheduling, patient coordination, billing, and internal support.',
-      tone: 'amber',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3.5h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z',
-        'M15 3.5v4h4',
-        'M9 12h6',
-      ],
-    },
-  ];
+  submitContact(): void {
+    if (!this.contactSubject.trim() || !this.contactMessage.trim()) { this.submitError = 'Please fill in both subject and message.'; return; }
+    const user = this.auth.getUser();
+    this.isSubmitting = true; this.submitError = '';
+    this.api.submitSupportRequest({
+      user_id: user?.id ?? null,
+      user_name: user ? `${user.first_name} ${user.last_name}` : 'Staff',
+      user_email: user?.email ?? '',
+      user_role: 'Staff',
+      subject: this.contactSubject.trim(),
+      message: this.contactMessage.trim(),
+    }).subscribe({
+      next: () => { this.isSubmitting = false; this.submitSuccess = true; this.contactSubject = ''; this.contactMessage = ''; this.cdr.detectChanges(); },
+      error: (err) => { this.isSubmitting = false; this.submitError = err?.error?.message || 'Failed to send. Please try again.'; this.cdr.detectChanges(); },
+    });
+  }
 }

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { guestGuard } from './guards/guest.guard';
 
 // Public
 import { PublicHomeComponent } from './public-home/public-home';
@@ -14,6 +14,10 @@ import { LoginComponent } from './login/login';
 import { RegisterComponent } from './register/register';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
+import { CheckEmailComponent } from './check-email/check-email';
+import { VerifyEmailResultComponent } from './verify-email-result/verify-email-result';
+import { ResetPasswordComponent } from './reset-password/reset-password';
+import { VerifyEmailComponent } from './verify-email/verify-email';
 
 // Patient
 import { PatientBookingComponent } from './patient-booking/patient-booking';
@@ -48,7 +52,7 @@ import { StaffRequestsComponent } from './staff-requests/staff-requests';
 import { StaffNotificationsComponent } from './staff-notifications/staff-notifications';
 import { StaffProfile } from './staff-profile/staff-profile';
 import { StaffHelpCenter } from './staff-help-center/staff-help-center';
-import { StaffBilling } from './staff-billing/staff-billing';
+import { StaffBookingComponent } from './staff-booking/staff-booking';
 
 // Dentist
 import { DentistDashboard } from './dentist-dashboard/dentist-dashboard';
@@ -59,6 +63,8 @@ import { DentistTreatmentPlansComponent } from './dentist-treatment-plans/dentis
 import { DentistPrescriptionsComponent } from './dentist-prescriptions/dentist-prescriptions';
 import { DentistNotificationsComponent } from './dentist-notifications/dentist-notifications';
 import { DentistProfile } from './dentist-profile/dentist-profile';
+import { DentistProfileEditComponent } from './dentist-profile-edit/dentist-profile-edit';
+import { DentistChangePasswordComponent } from './dentist-change-password/dentist-change-password';
 import { DentistSettingsComponent } from './dentist-settings/dentist-settings';
 import { DentistHelpCenter } from './dentist-help-center/dentist-help-center';
 
@@ -71,9 +77,13 @@ export const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
 
   // ── Auth ─────────────────────────────────────────────────────────────────
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'login',               component: LoginComponent,           canActivate: [guestGuard] },
+  { path: 'register',            component: RegisterComponent,        canActivate: [guestGuard] },
+  { path: 'forgot-password',     component: ForgotPasswordComponent,  canActivate: [guestGuard] },
+  { path: 'reset-password',      component: ResetPasswordComponent },
+  { path: 'check-email',         component: CheckEmailComponent },
+  { path: 'verify-email',        component: VerifyEmailComponent },
+  { path: 'verify-email-result', component: VerifyEmailResultComponent },
 
   // ── Admin (dentist role) ─────────────────────────────────────────────────
   { path: 'admin', component: AdminComponent, canActivate: [roleGuard('Admin')] },
@@ -124,7 +134,7 @@ export const routes: Routes = [
   { path: 'staff-notifications',          component: StaffNotificationsComponent,   canActivate: [roleGuard('Staff')] },
   { path: 'staff-profile',                component: StaffProfile,                  canActivate: [roleGuard('Staff')] },
   { path: 'staff-help-center',            component: StaffHelpCenter,               canActivate: [roleGuard('Staff')] },
-  { path: 'staff-billing',                component: StaffBilling,                  canActivate: [roleGuard('Staff')] },
+  { path: 'staff-booking',               component: StaffBookingComponent,          canActivate: [roleGuard('Staff')] },
 
   // ── Dentist Portal ───────────────────────────────────────────────────────
   { path: 'dentist-dashboard',        component: DentistDashboard,              canActivate: [roleGuard('Admin')] },
@@ -136,6 +146,8 @@ export const routes: Routes = [
   { path: 'dentist-prescriptions',    component: DentistPrescriptionsComponent, canActivate: [roleGuard('Admin')] },
   { path: 'dentist-notifications',    component: DentistNotificationsComponent, canActivate: [roleGuard('Admin')] },
   { path: 'dentist-profile',          component: DentistProfile,                canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-profile/edit',     component: DentistProfileEditComponent,   canActivate: [roleGuard('Admin')] },
+  { path: 'dentist-profile/change-password', component: DentistChangePasswordComponent, canActivate: [roleGuard('Admin')] },
   { path: 'dentist-settings',         component: DentistSettingsComponent,      canActivate: [roleGuard('Admin')] },
   { path: 'dentist-help-center',      component: DentistHelpCenter,             canActivate: [roleGuard('Admin')] },
 

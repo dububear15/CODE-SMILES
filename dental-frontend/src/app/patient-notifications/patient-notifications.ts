@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
@@ -22,7 +22,9 @@ type NotificationActionKind =
   | 'view-details'
   | 'open-message'
   | 'view-document'
-  | 'view-update';
+  | 'view-update'
+  | 'confirm-attendance'
+  | 'request-reschedule-reminder';
 
 interface NotificationFilter {
   key: NotificationFilterKey;
@@ -32,11 +34,14 @@ interface NotificationFilter {
 interface NotificationAction {
   label: string;
   kind: NotificationActionKind;
-  style: 'primary' | 'secondary';
+  style: 'primary' | 'secondary' | 'confirm' | 'reschedule';
 }
 
 interface NotificationItem {
   id: string;
+  dbId?: number;
+  appointmentId?: number;
+  confirmationStatus?: string;
   section: 'needs-action' | 'recent';
   filter: Exclude<NotificationFilterKey, 'all'>;
   type: NotificationType;
@@ -48,7 +53,6 @@ interface NotificationItem {
   createdAt: Date;
   badge: string;
   tone: NotificationTone;
-  appointmentId?: string;
   calendarTitle?: string;
   calendarDescription?: string;
   calendarLocation?: string;
@@ -73,7 +77,7 @@ interface NotificationPreference {
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule, PatientSidebarComponent],
+  imports: [CommonModule, RouterModule, PatientSidebarComponent],
   templateUrl: './patient-notifications.html',
   styleUrl: './patient-notifications.css',
 })
@@ -91,124 +95,7 @@ export class PatientNotificationsComponent implements OnInit {
     { key: 'clinic-updates', label: 'Clinic Updates' },
   ];
 
-  protected notifications: NotificationItem[] = [
-    {
-      id: 'NTF-001',
-      section: 'needs-action',
-      filter: 'appointments',
-      type: 'appointment',
-      title: 'Appointment Confirmed',
-      subtitle: 'Apr 21, 2026 • 2:30 PM • Dr. Samantha Lee, DDS',
-      description: 'Your requested appointment has been confirmed and is ready in your visit schedule.',
-      status: 'approved',
-      isRead: false,
-      createdAt: new Date('2026-04-20T14:35:00'),
-      badge: 'Appointment Approved',
-      tone: 'green',
-      appointmentId: 'APT-1041',
-      calendarTitle: 'Code Smiles Appointment Confirmation',
-      calendarDescription:
-        'Patient appointment confirmed with Dr. Samantha Lee, DDS.',
-      calendarLocation: 'Code Smiles Dental Clinic',
-      calendarStart: '2026-04-21T14:30:00',
-      calendarEnd: '2026-04-21T15:30:00',
-      actions: [
-        { label: 'View Appointment', kind: 'view-appointment', style: 'primary' },
-        { label: 'Add to Calendar', kind: 'add-calendar', style: 'secondary' },
-      ],
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3v3M17 3v3M4 8h16',
-        'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z',
-        'M9 12.5l2 2 4-5',
-      ],
-    },
-    {
-      id: 'NTF-002',
-      section: 'needs-action',
-      filter: 'appointments',
-      type: 'appointment',
-      title: 'Appointment Request Received',
-      subtitle: 'Apr 29, 2026 • 10:00 AM',
-      description: 'We will notify you once the clinic reviews your request.',
-      status: 'pending',
-      isRead: false,
-      createdAt: new Date('2026-04-20T13:40:00'),
-      badge: 'Pending Approval',
-      tone: 'orange',
-      appointmentId: 'APT-1053',
-      actions: [{ label: 'View Details', kind: 'view-details', style: 'primary' }],
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z',
-        'M15 3.5v4h4',
-        'M9 11h6M9 15h6',
-      ],
-    },
-    {
-      id: 'NTF-003',
-      section: 'recent',
-      filter: 'messages',
-      type: 'message',
-      title: 'Braces Care Instructions',
-      subtitle: 'From: Dr. Lee',
-      description: 'Please check it when you have a moment.',
-      status: 'info',
-      isRead: false,
-      createdAt: new Date('2026-04-18T09:20:00'),
-      badge: 'Message',
-      tone: 'violet',
-      actions: [{ label: 'Open Message', kind: 'open-message', style: 'secondary' }],
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M5.5 6.5h13A1.5 1.5 0 0 1 20 8v7a1.5 1.5 0 0 1-1.5 1.5H11l-4.5 3v-3H5.5A1.5 1.5 0 0 1 4 15V8a1.5 1.5 0 0 1 1.5-1.5Z',
-        'M8 10.5h8M8 13.5h5',
-      ],
-    },
-    {
-      id: 'NTF-004',
-      section: 'recent',
-      filter: 'medical-vault',
-      type: 'document',
-      title: 'X-Ray Uploaded',
-      subtitle: 'Panoramic X-Ray - 2026',
-      description: 'Uploaded to your medical vault.',
-      status: 'info',
-      isRead: true,
-      createdAt: new Date('2026-04-17T11:10:00'),
-      badge: 'Medical Vault',
-      tone: 'blue',
-      documentTitle: 'Panoramic X-Ray - 2026',
-      actions: [{ label: 'View Document', kind: 'view-document', style: 'secondary' }],
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z',
-        'M15 3.5v4h4',
-        'M9 11h6M9 15h6',
-      ],
-    },
-    {
-      id: 'NTF-005',
-      section: 'recent',
-      filter: 'clinic-updates',
-      type: 'update',
-      title: 'Holiday Closure Notice',
-      subtitle: 'Code Smiles will be closed on Apr 25, 2026.',
-      description: 'Please plan your visits with the updated clinic schedule in mind.',
-      status: 'info',
-      isRead: true,
-      createdAt: new Date('2026-04-15T10:15:00'),
-      badge: 'Clinic Update',
-      tone: 'teal',
-      actions: [{ label: 'View Details', kind: 'view-update', style: 'secondary' }],
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M5 12.5V9.8a1 1 0 0 1 .7-1l10-3.3a1 1 0 0 1 1.3 1V16a1 1 0 0 1-1.3 1l-10-3.3a1 1 0 0 1-.7-1v-.2Z',
-        'M8.5 14.5v4',
-        'M18.5 9a4.5 4.5 0 0 1 0 6',
-      ],
-    },
-  ];
+  protected notifications: NotificationItem[] = [];
 
   protected preferences: NotificationPreference[] = [
     {
@@ -252,6 +139,22 @@ export class PatientNotificationsComponent implements OnInit {
 
   constructor(private readonly router: Router, private api: ApiService, private auth: AuthService) {}
 
+  protected get patientName(): string {
+    const user = this.auth.getUser();
+    return user ? `${user.first_name} ${user.last_name}` : 'Patient';
+  }
+
+  protected get patientId(): string {
+    const user = this.auth.getUser();
+    return user ? `CS-${String(user.id).padStart(5, '0')}` : 'CS-00000';
+  }
+
+  protected get patientInitials(): string {
+    const user = this.auth.getUser();
+    if (!user) return 'P';
+    return `${user.first_name?.charAt(0) ?? ''}${user.last_name?.charAt(0) ?? ''}`.toUpperCase();
+  }
+
   ngOnInit() {
     const user = this.auth.getUser();
     if (!user?.id) return;
@@ -259,28 +162,50 @@ export class PatientNotificationsComponent implements OnInit {
       next: (data) => {
         if (data && data.length > 0) {
           // Map real DB notifications into the NotificationItem shape
-          const dbNotifs: NotificationItem[] = data.map((n: any) => ({
-            id:          String(n.id),
-            section:     n.is_read ? 'recent' : 'needs-action',
-            filter:      'appointments' as const,
-            type:        'appointment' as const,
-            title:       n.title,
-            subtitle:    new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            description: n.detail,
-            status:      (n.level === 'Update' ? 'approved' : n.level === 'Warning' ? 'pending' : 'info') as NotificationStatus,
-            isRead:      n.is_read,
-            createdAt:   new Date(n.created_at),
-            badge:       n.title,
-            tone:        (n.level === 'Update' ? 'green' : n.level === 'Warning' ? 'orange' : 'blue') as NotificationTone,
-            actions:     [{ label: 'View Appointment', kind: 'view-appointment' as const, style: 'primary' as const }],
-            iconViewBox: '0 0 24 24',
-            iconPaths:   ['M7 3v3M17 3v3M4 8h16', 'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z'],
-          }));
-          // Prepend real notifications, keep static ones at the end
-          this.notifications = [...dbNotifs, ...this.notifications.filter(n => !n.id.startsWith('NTF-00'))];
+          const dbNotifs: NotificationItem[] = data.map((n: any) => {
+            const isReminder = n.title?.includes('Reminder') || n.title?.includes('3 Hours');
+            const isNoShow   = n.title?.includes('No-show') || n.title?.includes('Missed');
+            const alreadyConfirmed = n.confirmation_status === 'Confirmed';
+            const alreadyRescheduled = n.confirmation_status === 'Reschedule Requested';
+
+            // Build actions based on notification type
+            const actions: NotificationAction[] = [];
+            if (isReminder && n.appointment_id && !alreadyConfirmed && !alreadyRescheduled) {
+              actions.push({ label: '✓ Confirm Attendance', kind: 'confirm-attendance', style: 'confirm' });
+              actions.push({ label: 'Request Reschedule', kind: 'request-reschedule-reminder', style: 'reschedule' });
+            } else if (isReminder && alreadyConfirmed) {
+              actions.push({ label: 'View Appointment', kind: 'view-appointment', style: 'primary' });
+            } else {
+              actions.push({ label: 'View Appointment', kind: 'view-appointment', style: 'primary' });
+            }
+
+            return {
+              id:                String(n.id),
+              dbId:              n.id,
+              appointmentId:     n.appointment_id || undefined,
+              confirmationStatus: n.confirmation_status || 'Not Confirmed',
+              section:           n.is_read ? 'recent' : 'needs-action',
+              filter:            'appointments' as const,
+              type:              'appointment' as const,
+              title:             n.title,
+              subtitle:          new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              description:       n.detail,
+              status:            (n.level === 'Update' ? 'approved' : n.level === 'Warning' ? 'pending' : 'info') as NotificationStatus,
+              isRead:            n.is_read,
+              createdAt:         new Date(n.created_at),
+              badge:             isReminder ? 'Reminder' : isNoShow ? 'No-show' : n.title,
+              tone:              (isReminder ? 'blue' : n.level === 'Update' ? 'green' : n.level === 'Warning' ? 'orange' : 'blue') as NotificationTone,
+              actions,
+              iconViewBox:       '0 0 24 24',
+              iconPaths:         isReminder
+                ? ['M7 3v3M17 3v3M4 8h16', 'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z']
+                : ['M7 3v3M17 3v3M4 8h16', 'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z'],
+            };
+          });
+          this.notifications = dbNotifs;
         }
       },
-      error: () => {} // keep static fallback on error
+      error: () => {}
     });
   }
 
@@ -349,6 +274,53 @@ export class PatientNotificationsComponent implements OnInit {
       case 'view-update':
         this.toastMessage = 'Clinic update opened.';
         this.clearToastLater();
+        return;
+      case 'confirm-attendance':
+        if (notification.appointmentId) {
+          this.api.confirmAttendance(notification.appointmentId).subscribe({
+            next: () => {
+              // Update the notification's actions to show confirmed state
+              this.notifications = this.notifications.map(item =>
+                item.id === notification.id
+                  ? {
+                      ...item,
+                      confirmationStatus: 'Confirmed',
+                      actions: [{ label: 'View Appointment', kind: 'view-appointment' as const, style: 'primary' as const }],
+                    }
+                  : item
+              );
+              this.toastMessage = '✓ Attendance confirmed! See you at your appointment.';
+              this.clearToastLater();
+            },
+            error: () => {
+              this.toastMessage = 'Could not confirm attendance. Please try again.';
+              this.clearToastLater();
+            }
+          });
+        }
+        return;
+      case 'request-reschedule-reminder':
+        if (notification.appointmentId) {
+          this.api.confirmRescheduleFromReminder(notification.appointmentId).subscribe({
+            next: () => {
+              this.notifications = this.notifications.map(item =>
+                item.id === notification.id
+                  ? {
+                      ...item,
+                      confirmationStatus: 'Reschedule Requested',
+                      actions: [{ label: 'View Appointment', kind: 'view-appointment' as const, style: 'primary' as const }],
+                    }
+                  : item
+              );
+              this.toastMessage = 'Reschedule request submitted. The clinic will contact you.';
+              this.clearToastLater();
+            },
+            error: () => {
+              this.toastMessage = 'Could not submit reschedule request. Please try again.';
+              this.clearToastLater();
+            }
+          });
+        }
         return;
     }
   }

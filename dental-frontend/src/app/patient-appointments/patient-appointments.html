@@ -149,8 +149,32 @@
                     View Details
                   </button>
 
+                  <!-- Confirm Attendance — shown for Approved upcoming appointments not yet confirmed -->
                   <button
-                    *ngIf="appointment.status !== 'Completed' && appointment.status !== 'Cancelled'"
+                    *ngIf="appointment.status === 'Approved' && appointment.tab === 'upcoming' && appointment.confirmationStatus !== 'Confirmed'"
+                    type="button"
+                    class="confirm-action-btn"
+                    (click)="confirmAttendance(appointment.id)">
+                    <span class="action-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                    </span>
+                    Confirm Attendance
+                  </button>
+
+                  <!-- Confirmed badge — shown once patient confirmed -->
+                  <span
+                    *ngIf="appointment.status === 'Approved' && appointment.tab === 'upcoming' && appointment.confirmationStatus === 'Confirmed'"
+                    class="confirmed-badge">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    Attendance Confirmed
+                  </span>
+
+                  <button
+                    *ngIf="appointment.status !== 'Completed' && appointment.status !== 'Cancelled by You' && appointment.status !== 'Cancelled by Clinic' && appointment.status !== 'Cancelled by Dentist' && appointment.status !== 'No-show'"
                     type="button"
                     class="ghost-action-btn"
                     (click)="requestReschedule(appointment.id)">
@@ -165,7 +189,7 @@
                   </button>
 
                   <button
-                    *ngIf="appointment.status !== 'Completed' && appointment.status !== 'Cancelled'"
+                    *ngIf="appointment.status !== 'Completed' && appointment.status !== 'Cancelled by You' && appointment.status !== 'Cancelled by Clinic' && appointment.status !== 'Cancelled by Dentist' && appointment.status !== 'No-show'"
                     type="button"
                     class="ghost-action-btn"
                     (click)="cancelAppointment(appointment.id)">

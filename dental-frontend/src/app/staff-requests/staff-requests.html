@@ -17,7 +17,6 @@
         <div class="requests-section">
           <div class="section-header">
             <h2>Approval Queue <span class="badge">{{ filteredRequests.length }}</span></h2>
-            <p class="status-message" *ngIf="actionMessage">{{ actionMessage }}</p>
           </div>
 
           <!-- Search + Filter bar -->
@@ -147,7 +146,7 @@
     </section>
   </main>
 
-  <!-- Approve Modal -->
+  <!-- Approve Modal — with editable dentist assignment -->
   <div class="modal-overlay" *ngIf="selectedRequest && !showRescheduleForm && !showRejectForm" (click)="closeDetails()">
     <div class="modal-content details-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -182,7 +181,7 @@
           </div>
           <div class="detail-item">
             <span class="detail-label">Services</span>
-            <strong>{{ selectedRequest.services ? selectedRequest.services.join(', ') : '—' }}</strong>
+            <strong>{{ (selectedRequest.services && selectedRequest.services.length) ? selectedRequest.services.join(', ') : '—' }}</strong>
           </div>
           <div class="detail-item">
             <span class="detail-label">Date</span>
@@ -199,18 +198,46 @@
         </div>
       </div>
 
+      <!-- Dentist assignment — editable -->
       <div class="modal-section">
-        <h3>Assign Dentist</h3>
-        <select [(ngModel)]="selectedDentist" class="form-input">
-          <option value="">— Select Dentist —</option>
-          <option *ngFor="let d of dentistOptions" [value]="d">{{ d }}</option>
-        </select>
+        <h3>Assign Dentist <span class="required">*</span></h3>
+        <div class="dentist-assign-wrap">
+          <select [(ngModel)]="assignedDentist" class="dentist-select">
+            <option value="" disabled>Select a dentist…</option>
+            <option *ngFor="let d of dentistOptions" [value]="d">{{ d }}</option>
+          </select>
+          <span class="auto-hint" *ngIf="assignedDentist">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="13 4 6 11 3 8"/></svg>
+            Selected
+          </span>
+        </div>
+        <p class="assign-note">Auto-suggested based on treatment. You can change this before approving.</p>
       </div>
 
       <div class="modal-actions">
         <button class="btn-secondary" (click)="closeDetails()">Cancel</button>
-        <button class="btn-approve" (click)="approve(selectedRequest)" [disabled]="!selectedDentist">
+        <button class="btn-approve" (click)="requestApprove(selectedRequest)" [disabled]="!assignedDentist">
           Approve Appointment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Approve Dialog -->
+  <div class="modal-overlay confirm-overlay" *ngIf="showConfirmApprove && pendingApproveReq" (click)="dismissConfirmApprove()">
+    <div class="modal-content confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h3>Confirm Approval?</h3>
+      <p>Approve <strong>{{ pendingApproveReq.patient_name }}</strong>'s appointment and assign to <strong>{{ assignedDentist }}</strong>?</p>
+      <p class="confirm-note">The patient will be notified immediately.</p>
+      <div class="confirm-actions">
+        <button class="btn-secondary" (click)="dismissConfirmApprove()" [disabled]="isApproving">Cancel</button>
+        <button class="btn-approve" (click)="confirmApprove()" [disabled]="isApproving">
+          {{ isApproving ? 'Approving…' : 'Yes, Approve' }}
         </button>
       </div>
     </div>
@@ -249,8 +276,8 @@
       </div>
       <div class="modal-actions">
         <button class="btn-secondary" (click)="closeDetails()">Cancel</button>
-        <button class="btn-approve" (click)="submitReschedule()" [disabled]="!newDate || !newTime">
-          Confirm Reschedule
+        <button class="btn-approve" (click)="submitReschedule()" [disabled]="!newDate || !newTime || isRescheduling">
+          {{ isRescheduling ? 'Rescheduling…' : 'Confirm Reschedule' }}
         </button>
       </div>
     </div>
@@ -272,11 +299,24 @@
       </div>
       <div class="modal-actions">
         <button class="btn-secondary" (click)="closeDetails()">Cancel</button>
-        <button class="btn-reject" (click)="submitReject()" [disabled]="!rejectReason.trim()">
-          Confirm Rejection
+        <button class="btn-reject" (click)="submitReject()" [disabled]="!rejectReason.trim() || isRejecting">
+          {{ isRejecting ? 'Rejecting…' : 'Confirm Rejection' }}
         </button>
       </div>
     </div>
   </div>
 
+</div>
+
+<!-- Toast -->
+<div class="requests-toast" *ngIf="toastMessage" [attr.data-type]="toastType">
+  <svg viewBox="0 0 20 20" fill="none" *ngIf="toastType === 'success'">
+    <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M6.5 10l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <svg viewBox="0 0 20 20" fill="none" *ngIf="toastType === 'error'">
+    <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M10 6v5M10 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  {{ toastMessage }}
 </div>

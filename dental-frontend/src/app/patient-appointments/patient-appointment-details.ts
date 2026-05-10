@@ -73,6 +73,7 @@ export class PatientAppointmentDetailsComponent implements OnInit {
       accent,
       time: this.formatTime(a.appointment_time),
       status,
+      confirmationStatus: a.confirmation_status || 'Not Confirmed',
       tab,
       description: services.length > 1 ? services.join(', ') : (a.notes || a.treatment || 'Appointment'),
       patientName: a.patient_name || '—',
@@ -158,8 +159,8 @@ export class PatientAppointmentDetailsComponent implements OnInit {
   }
 
   protected get canManageAppointment(): boolean {
-    return !!this.appointment &&
-      this.appointment.status !== 'Completed' &&
-      this.appointment.status !== 'Cancelled';
+    if (!this.appointment) return false;
+    const unmanageable = ['Completed', 'Cancelled by Patient', 'Cancelled by Staff', 'Cancelled by Dentist', 'No-show'];
+    return !unmanageable.includes(this.appointment.status as string);
   }
 }

@@ -1,16 +1,29 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-public-services',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './public-services.html',
   styleUrls: ['./public-services.css']
 })
 export class PublicServicesComponent {
-  // All your new services organized into one clean list
+
+  constructor(private router: Router, private auth: AuthService) {}
+
+  handleBook(): void {
+    if (this.auth.isLoggedIn() && this.auth.getRole() === 'Patient') {
+      this.router.navigate(['/patient-booking']);
+    } else if (this.auth.isLoggedIn()) {
+      this.router.navigate([this.auth.getDashboardRoute()]);
+    } else {
+      this.router.navigate(['/login'], { queryParams: { redirect: 'booking' } });
+    }
+  }
+
   allServices = [
     {
       id: '01',

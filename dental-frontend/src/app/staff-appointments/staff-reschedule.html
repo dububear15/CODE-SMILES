@@ -4,13 +4,21 @@
   <main class="detail-main-wrap">
 
     <!-- NOT FOUND -->
-    <div class="detail-not-found" *ngIf="!appointment">
+    <div class="detail-not-found" *ngIf="!isLoading && (loadError || !appointment)">
       <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#b0bfcf" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>Appointment not found.</p>
+      <p>{{ loadError || 'Appointment not found.' }}</p>
       <button class="back-btn" (click)="goToAppointments()">&#8592; Back to Appointments</button>
     </div>
 
-    <ng-container *ngIf="appointment">
+    <!-- LOADING -->
+    <div class="detail-not-found" *ngIf="isLoading">
+      <svg class="spin-icon" viewBox="0 0 24 24" fill="none" stroke="#4d8fe1" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
+      <p>Loading appointment…</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading && !loadError && appointment">
 
       <!-- TOPBAR -->
       <div class="detail-topbar">
@@ -20,7 +28,7 @@
         </button>
         <div class="topbar-center">
           <h1 class="detail-title">Reschedule Appointment</h1>
-          <span class="detail-id">{{ appointment.id }} &middot; {{ appointment.patient }}</span>
+          <span class="detail-id">#{{ appointment.id }} &middot; {{ appointment.patient_name }}</span>
         </div>
         <span class="status-pill" [ngClass]="getStatusClass(appointment.status)">{{ appointment.status }}</span>
       </div>
@@ -32,12 +40,11 @@
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
         </div>
-        <h2>Reschedule Submitted</h2>
-        <p>The appointment for <strong>{{ appointment.patient }}</strong> has been rescheduled to <strong>{{ formattedDate }}</strong> at <strong>{{ selectedTime }}</strong>.</p>
+        <h2>Reschedule Saved</h2>
+        <p>The appointment for <strong>{{ appointment.patient_name }}</strong> has been rescheduled to <strong>{{ formattedDate }}</strong> at <strong>{{ selectedTime }}</strong>.</p>
         <div class="success-meta">
           <div class="success-meta-item"><span>Dentist</span><strong>{{ selectedDentist }}</strong></div>
-          <div class="success-meta-item"><span>Chair</span><strong>{{ selectedChair }}</strong></div>
-          <div class="success-meta-item"><span>Status</span><strong>Rescheduled</strong></div>
+          <div class="success-meta-item"><span>Status</span><strong>Rescheduled by Staff</strong></div>
         </div>
         <div class="success-actions">
           <button type="button" class="btn-secondary" (click)="goBack()">View Appointment</button>
@@ -48,14 +55,14 @@
       <!-- RESCHEDULE FORM -->
       <div class="detail-layout" *ngIf="!submitted">
 
-        <!-- LEFT: Patient Info Sidebar - FIXED -->
+        <!-- LEFT: Patient Info Sidebar -->
         <aside class="patient-sidebar">
           <div class="patient-profile-card">
             <div class="patient-avatar-wrap">
-              <div class="patient-avatar-xl">{{ appointment.initials }}</div>
-              <span class="patient-tag-pill">{{ appointment.patientTag }}</span>
+              <div class="patient-avatar-xl">{{ patientInitials }}</div>
+              <span class="patient-tag-pill">{{ appointment.status }}</span>
             </div>
-            <h2 class="patient-full-name">{{ appointment.patient }}</h2>
+            <h2 class="patient-full-name">{{ appointment.patient_name }}</h2>
           </div>
 
           <div class="patient-info-card">
@@ -65,32 +72,24 @@
             </div>
             <div class="pinfo-row">
               <span class="pinfo-label">Date</span>
-              <strong class="pinfo-value">{{ appointment.date }}</strong>
+              <strong class="pinfo-value">{{ currentFormattedDate }}</strong>
             </div>
             <div class="pinfo-row">
               <span class="pinfo-label">Time</span>
-              <strong class="pinfo-value">{{ appointment.startTime }} – {{ appointment.endTime }}</strong>
+              <strong class="pinfo-value">{{ currentFormattedTime }}</strong>
             </div>
             <div class="pinfo-row">
-              <span class="pinfo-label">Service</span>
-              <strong class="pinfo-value">{{ appointment.service }}</strong>
+              <span class="pinfo-label">Treatment</span>
+              <strong class="pinfo-value">{{ appointment.treatment }}</strong>
             </div>
             <div class="pinfo-row">
               <span class="pinfo-label">Dentist</span>
-              <strong class="pinfo-value">{{ appointment.dentist }}</strong>
+              <strong class="pinfo-value">{{ appointment.dentist_name || 'Not assigned' }}</strong>
             </div>
             <div class="pinfo-row">
-              <span class="pinfo-label">Chair</span>
-              <strong class="pinfo-value">{{ appointment.chair }}</strong>
+              <span class="pinfo-label">Duration</span>
+              <strong class="pinfo-value">{{ appointment.duration_minutes || 60 }} min</strong>
             </div>
-          </div>
-
-          <div class="patient-info-card" *ngIf="appointment.conflict">
-            <div class="pinfo-head conflict-head">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.74 3h14.92a2 2 0 0 0 1.74-3L13.74 3.9a2 2 0 0 0-3.48 0Z"/></svg>
-              <span>Conflict</span>
-            </div>
-            <p class="conflict-note">{{ appointment.conflict }}</p>
           </div>
         </aside>
 
@@ -113,11 +112,11 @@
               <span>{{ selectedTime || 'Not selected' }}</span>
             </div>
           </div>
-          <div class="progress-step-inline" [class.done]="!!selectedDentist && !!selectedChair">
+          <div class="progress-step-inline" [class.done]="!!selectedDentist">
             <div class="progress-step-dot">3</div>
             <div class="progress-step-content">
-              <strong>Assignment</strong>
-              <span>{{ selectedDentist ? selectedDentist + ' / ' + selectedChair : 'Not set' }}</span>
+              <strong>Dentist</strong>
+              <span>{{ selectedDentist || 'Not set' }}</span>
             </div>
           </div>
           <div class="progress-step-inline" [class.done]="!!reason.trim()">
@@ -132,16 +131,7 @@
         <!-- Form Steps Container (Scrollable) -->
         <div class="form-steps-container">
 
-        <!-- Conflict banner -->
-        <div class="conflict-banner" *ngIf="appointment.conflict">
-          <div class="conflict-banner-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.74 3h14.92a2 2 0 0 0 1.74-3L13.74 3.9a2 2 0 0 0-3.48 0Z"/></svg>
-          </div>
-          <div>
-            <strong>Scheduling Conflict Detected</strong>
-            <p>{{ appointment.conflict }}</p>
-          </div>
-        </div>
+        <!-- Conflict banner removed — no fake conflict data in real appointments -->
 
           <!-- STEP 1: New Date -->
           <div class="dcard">
@@ -207,34 +197,28 @@
                 [class.active]="selectedTime === slot.label"
                 [class.full]="!slot.available"
                 [disabled]="!slot.available"
-                (click)="selectedTime = slot.label">
+                (click)="selectTime(slot)">
                 <span class="slot-time">{{ slot.label }}</span>
                 <span class="slot-avail" [class.full-text]="!slot.available">
-                  {{ slot.available ? slot.slotsLeft + ' slot' + (slot.slotsLeft > 1 ? 's' : '') + ' left' : 'Fully Booked' }}
+                  {{ slot.available ? 'Available' : 'Booked' }}
                 </span>
               </button>
             </div>
           </div>
 
-          <!-- STEP 3: Assignment -->
+          <!-- STEP 3: Dentist Assignment -->
           <div class="dcard" *ngIf="selectedDate && selectedTime">
             <div class="dcard-head">
               <div class="dcard-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               </div>
-              <h3>Step 3 &mdash; Reassign Dentist &amp; Chair</h3>
+              <h3>Step 3 &mdash; Assign Dentist</h3>
             </div>
-            <div class="assign-grid">
+            <div class="assign-grid" style="grid-template-columns: 1fr;">
               <div class="assign-field">
                 <label>Dentist <span class="req">*</span></label>
                 <select [(ngModel)]="selectedDentist">
                   <option *ngFor="let d of dentists" [ngValue]="d">{{ d }}</option>
-                </select>
-              </div>
-              <div class="assign-field">
-                <label>Chair <span class="req">*</span></label>
-                <select [(ngModel)]="selectedChair">
-                  <option *ngFor="let c of chairs" [ngValue]="c">{{ c }}</option>
                 </select>
               </div>
             </div>
@@ -271,16 +255,16 @@
               <h3>Reschedule Summary</h3>
             </div>
             <div class="summary-grid">
-              <div class="summary-item"><span>Patient</span><strong>{{ appointment.patient }}</strong></div>
-              <div class="summary-item"><span>Service</span><strong>{{ appointment.service }}</strong></div>
+              <div class="summary-item"><span>Patient</span><strong>{{ appointment.patient_name }}</strong></div>
+              <div class="summary-item"><span>Treatment</span><strong>{{ appointment.treatment }}</strong></div>
               <div class="summary-item"><span>New Date</span><strong>{{ formattedDate }}</strong></div>
               <div class="summary-item"><span>New Time</span><strong>{{ selectedTime }}</strong></div>
               <div class="summary-item"><span>Dentist</span><strong>{{ selectedDentist }}</strong></div>
-              <div class="summary-item"><span>Chair</span><strong>{{ selectedChair }}</strong></div>
             </div>
           </div>
 
           <p class="form-error" *ngIf="formError">{{ formError }}</p>
+          <p class="form-error" *ngIf="submitError">{{ submitError }}</p>
 
         </div><!-- /form-steps-container -->
 
@@ -316,12 +300,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3h4v4"/><path d="M20 7a8 8 0 0 0-14.5-2"/><path d="M8 21H4v-4"/><path d="M4 17a8 8 0 0 0 14.5 2"/></svg>
     </div>
     <h3>Confirm Reschedule?</h3>
-    <p>You are rescheduling <strong>{{ appointment?.patient }}</strong> to:</p>
+    <p>You are rescheduling <strong>{{ appointment?.patient_name }}</strong> to:</p>
     <div class="confirm-details">
       <div class="confirm-row"><span>Date</span><strong>{{ formattedDate }}</strong></div>
       <div class="confirm-row"><span>Time</span><strong>{{ selectedTime }}</strong></div>
       <div class="confirm-row"><span>Dentist</span><strong>{{ selectedDentist }}</strong></div>
-      <div class="confirm-row"><span>Chair</span><strong>{{ selectedChair }}</strong></div>
     </div>
     <p class="confirm-notify" *ngIf="notifyPatient">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>

@@ -109,7 +109,7 @@
             <span>Patient</span>
             <span>Age / Gender</span>
             <span>Contact</span>
-            <span>Address</span>
+            <span>Reliability</span>
             <span>Status</span>
             <span>Actions</span>
           </div>
@@ -130,7 +130,15 @@
 
             <div class="col-contact">{{ p.contact }}</div>
 
-            <div class="col-address">{{ p.address || '—' }}</div>
+            <div class="col-reliability">
+              <span
+                class="reliability-badge"
+                [attr.data-tone]="getReliabilityTone(p.reliabilityScore)"
+                [title]="'Score: ' + p.reliabilityScore">
+                {{ getReliabilityLabel(p.reliabilityScore) }}
+              </span>
+              <small class="reliability-score">{{ p.reliabilityScore > 0 ? '+' : '' }}{{ p.reliabilityScore }}</small>
+            </div>
 
             <div class="col-status">
               <span class="status-badge" [ngClass]="'status-' + p.status.toLowerCase()">{{ p.status }}</span>
@@ -163,7 +171,7 @@
 
           <div class="form-group full">
             <label>Full Name <span class="req">*</span></label>
-            <input type="text" [(ngModel)]="form.name" name="name" required placeholder="e.g. Juan Dela Cruz" />
+            <input type="text" [(ngModel)]="form.name" name="name" required placeholder="e.g. Patient Name" />
           </div>
 
           <div class="form-group">
@@ -264,6 +272,17 @@
         <div class="profile-item">
           <span>Next Appointment</span>
           <strong>{{ viewingPatient.nextAppointment }}</strong>
+        </div>
+        <div class="profile-item">
+          <span>Reliability</span>
+          <div class="reliability-row">
+            <span
+              class="reliability-badge"
+              [attr.data-tone]="getReliabilityTone(viewingPatient.reliabilityScore)">
+              {{ getReliabilityLabel(viewingPatient.reliabilityScore) }}
+            </span>
+            <small class="reliability-score">Score: {{ viewingPatient.reliabilityScore > 0 ? '+' : '' }}{{ viewingPatient.reliabilityScore }}</small>
+          </div>
         </div>
       </div>
 

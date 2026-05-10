@@ -9,19 +9,19 @@ export class AvatarService {
 
   constructor(private api: ApiService, private auth: AuthService) {}
 
-  /** Get avatar from localStorage cache */
+  /** Get avatar from session cache */
   getAvatar(): string {
-    return localStorage.getItem(AVATAR_KEY) ?? '';
+    return sessionStorage.getItem(AVATAR_KEY) ?? '';
   }
 
-  /** Save avatar to localStorage cache */
+  /** Save avatar to session cache */
   setAvatar(url: string): void {
-    localStorage.setItem(AVATAR_KEY, url);
+    sessionStorage.setItem(AVATAR_KEY, url);
   }
 
   /** Clear avatar cache */
   clearAvatar(): void {
-    localStorage.removeItem(AVATAR_KEY);
+    sessionStorage.removeItem(AVATAR_KEY);
   }
 
   /**

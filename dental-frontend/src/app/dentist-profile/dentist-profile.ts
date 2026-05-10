@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
 import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
 import { AvatarService } from '../services/avatar.service';
 import { getDentistInfo } from '../dentist-portal-data';
 
@@ -42,18 +43,32 @@ export class DentistProfile {
   };
 
   constructor(
+    private router: Router,
     private auth: AuthService,
+    private api: ApiService,
     private avatarSvc: AvatarService,
     private cdr: ChangeDetectorRef,
   ) {
     const user = this.auth.getUser();
     if (user) {
-      this.personal.firstName = user.first_name;
-      this.personal.lastName  = user.last_name;
-      this.personal.email     = user.email;
-      this.avatarInitials     = (user.first_name[0] + user.last_name[0]).toUpperCase();
+      this.applyUserProfile(user);
+      this.loadCachedProfile(user.id);
       const info = getDentistInfo(user.email);
       if (info?.specialty) this.professional.specialization = info.specialty;
+      this.api.getUserProfile(user.id).subscribe({
+        next: (profile) => {
+          this.applyUserProfile({
+            first_name: profile.first_name,
+            last_name: profile.last_name,
+            email: profile.email,
+            phone: profile.phone,
+          });
+          this.loadCachedProfile(user.id);
+          this.saveCachedProfile(user.id);
+          this.cdr.detectChanges();
+        },
+        error: () => {},
+      });
     }
     this.avatarUrl = this.avatarSvc.getAvatar();
   }
@@ -78,6 +93,39 @@ export class DentistProfile {
   showToast(msg: string): void {
     this.toastMessage = msg;
     setTimeout(() => { this.toastMessage = ''; this.cdr.detectChanges(); }, 3000);
+  }
+
+  navigateToEdit(): void {
+    this.router.navigate(['/dentist-profile/edit']);
+  }
+
+  navigateToChangePassword(): void {
+    this.router.navigate(['/dentist-profile/change-password']);
+  }
+
+  private applyUserProfile(user: { first_name?: string; last_name?: string; email?: string; phone?: string }): void {
+    this.personal.firstName = user.first_name || this.personal.firstName || 'Dentist';
+    this.personal.lastName = user.last_name || this.personal.lastName || '';
+    this.personal.email = user.email || this.personal.email;
+    this.personal.phone = user.phone || this.personal.phone;
+    this.security.email = this.personal.email;
+    this.avatarInitials = `${this.personal.firstName.charAt(0)}${this.personal.lastName.charAt(0)}`.toUpperCase() || 'DR';
+  }
+
+  private cacheKey(userId: number): string {
+    return `dentist_profile_${userId}`;
+  }
+
+  private loadCachedProfile(userId: number): void {
+    const raw = localStorage.getItem(this.cacheKey(userId));
+    if (!raw) return;
+    try {
+      this.applyUserProfile(JSON.parse(raw));
+    } catch {}
+  }
+
+  private saveCachedProfile(userId: number): void {
+    localStorage.setItem(this.cacheKey(userId), JSON.stringify(this.personal));
   }
 
   // Professional info
@@ -112,12 +160,12 @@ export class DentistProfile {
 
   readonly allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  // Security
+  // Security — email loaded from auth service on init
   security = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
-    email: 'dr.maria.santos@codesmiles.com',
+    email: '',
     twoFactor: true,
   };
 

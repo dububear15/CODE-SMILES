@@ -979,3 +979,60 @@
   cursor: not-allowed;
   transform: none;
 }
+
+/* ── Confirm Attendance Button & Badge ─────────────────────────────────────── */
+.confirm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(180deg, #2ea172, #27916a);
+  box-shadow: 0 8px 20px rgba(46, 161, 114, 0.22);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  appearance: none;
+}
+
+.confirm-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(46, 161, 114, 0.3);
+}
+
+.confirm-action-btn .action-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+}
+
+.confirmed-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid rgba(46, 161, 114, 0.2);
+}
+
+.confirmed-badge svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

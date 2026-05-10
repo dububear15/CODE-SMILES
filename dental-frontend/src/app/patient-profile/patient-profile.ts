@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { NotificationKey, PatientProfile } from './patient-profile.models';
 import { PatientProfileStore } from './patient-profile.store';
@@ -31,15 +31,16 @@ interface NotificationItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, PatientSidebarComponent],
+  imports: [CommonModule, RouterModule, PatientSidebarComponent],
   templateUrl: './patient-profile.html',
   styleUrl: './patient-profile.css',
 })
-export class PatientProfileComponent {
+export class PatientProfileComponent implements OnInit {
   protected profile: PatientProfile;
   protected toastMessage = '';
   protected avatarUrl = '';
   protected isUploadingAvatar = false;
+  protected isLoading = true;
 
   constructor(
     private readonly router: Router,
@@ -49,6 +50,21 @@ export class PatientProfileComponent {
   ) {
     this.profile = this.profileStore.getProfile();
     this.avatarUrl = this.avatarSvc.getAvatar();
+  }
+
+  ngOnInit(): void {
+    this.profileStore.loadFromServer().subscribe({
+      next: () => {
+        this.profile = this.profileStore.getProfile();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.profile = this.profileStore.getProfile();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   protected onAvatarSelected(event: Event): void {
@@ -129,7 +145,7 @@ export class PatientProfileComponent {
   }
 
   protected openHelpCenter(): void {
-    this.router.navigate(['/help-center']);
+    this.router.navigate(['/patient-help-center']);
   }
 
   protected get initials(): string {
@@ -137,11 +153,15 @@ export class PatientProfileComponent {
     return `${names[0]?.charAt(0) ?? ''}${names[names.length - 1]?.charAt(0) ?? ''}`.toUpperCase();
   }
 
+  protected display(val: string): string {
+    return val?.trim() || '—';
+  }
+
   protected get heroMeta(): HeroMetaItem[] {
     return [
       {
         label: 'Date of Birth',
-        value: this.profile.dateOfBirth,
+        value: this.display(this.profile.dateOfBirth),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M7 3v3M17 3v3M4 8h16',
@@ -150,7 +170,7 @@ export class PatientProfileComponent {
       },
       {
         label: 'Gender',
-        value: this.profile.gender,
+        value: this.display(this.profile.gender),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z',
@@ -159,13 +179,13 @@ export class PatientProfileComponent {
       },
       {
         label: 'Blood Type',
-        value: this.profile.bloodType,
+        value: this.display(this.profile.bloodType),
         iconViewBox: '0 0 24 24',
         iconPaths: ['M12 4c-2.3 3.4-5 6-5 9a5 5 0 1 0 10 0c0-3-2.7-5.6-5-9Z'],
       },
       {
         label: 'Language',
-        value: this.profile.preferredLanguage,
+        value: this.display(this.profile.preferredLanguage),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M4 6.5h8v8H4z',
@@ -181,13 +201,13 @@ export class PatientProfileComponent {
     return [
       {
         label: 'Phone Number',
-        value: this.profile.phoneNumber,
+        value: this.display(this.profile.phoneNumber),
         iconViewBox: '0 0 24 24',
         iconPaths: ['M6.6 5.5h2.2l1.2 3.3-1.6 1.5a15.3 15.3 0 0 0 5.2 5.2l1.5-1.6 3.3 1.2v2.2a1.5 1.5 0 0 1-1.5 1.5A13.4 13.4 0 0 1 5.1 7a1.5 1.5 0 0 1 1.5-1.5Z'],
       },
       {
         label: 'Gender',
-        value: this.profile.gender,
+        value: this.display(this.profile.gender),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12Z',
@@ -196,7 +216,7 @@ export class PatientProfileComponent {
       },
       {
         label: 'Email Address',
-        value: this.profile.email,
+        value: this.display(this.profile.email),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M4.5 6.5h15A1.5 1.5 0 0 1 21 8v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 16V8a1.5 1.5 0 0 1 1.5-1.5Z',
@@ -205,13 +225,13 @@ export class PatientProfileComponent {
       },
       {
         label: 'Blood Type',
-        value: this.profile.bloodType,
+        value: this.display(this.profile.bloodType),
         iconViewBox: '0 0 24 24',
         iconPaths: ['M12 4c-2.3 3.4-5 6-5 9a5 5 0 1 0 10 0c0-3-2.7-5.6-5-9Z'],
       },
       {
         label: 'Preferred Language',
-        value: this.profile.preferredLanguage,
+        value: this.display(this.profile.preferredLanguage),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M4 6.5h8v8H4z',
@@ -222,7 +242,7 @@ export class PatientProfileComponent {
       },
       {
         label: 'Primary Dentist',
-        value: this.profile.primaryDentist,
+        value: this.display(this.profile.primaryDentist),
         iconViewBox: '0 0 24 24',
         iconPaths: [
           'M8.5 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z',

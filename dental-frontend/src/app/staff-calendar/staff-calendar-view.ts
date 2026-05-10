@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StaffCalendarService, Schedule } from './staff-calendar.service';
 import { StaffSidebar } from '../staff-sidebar/staff-sidebar';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-staff-calendar-view',
@@ -18,23 +19,14 @@ export class StaffCalendarViewComponent implements OnInit {
   notFound = false;
   scheduleId: string = '';
 
-  // Boilerplate for Calendar Grid
-  calendarDays = [
-    { label: 'Mon', date: '19', active: true },
-    { label: 'Tue', date: '20', active: false },
-    { label: 'Wed', date: '21', active: false },
-    { label: 'Thu', date: '22', active: false },
-    { label: 'Fri', date: '23', active: false },
-    { label: 'Sat', date: '24', active: false },
-    { label: 'Sun', date: '25', active: false },
-  ];
+  calendarDays = this.buildCalendarDays();
 
   boardTimeLabels = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
   boardEvents: any[] = [];
   unavailableBlocks: any[] = [];
   
   miniCalendarWeekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  miniCalendarDates = Array.from({length: 31}, (_, i) => i + 1);
+  miniCalendarDates = Array.from({ length: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() }, (_, i) => i + 1);
   
   legendItems = [
     { label: 'Confirmed', className: 'legend-confirmed' },
@@ -47,7 +39,8 @@ export class StaffCalendarViewComponent implements OnInit {
   constructor(
     private service: StaffCalendarService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +64,27 @@ export class StaffCalendarViewComponent implements OnInit {
   navigateToNotifications(): void {
     // Update path if needed
     this.router.navigate(['/notifications']);
+  }
+
+  get staffName(): string {
+    const user = this.auth.getUser();
+    return user ? `${user.first_name} ${user.last_name}` : 'Staff';
+  }
+
+  get staffInitial(): string {
+    return this.staffName.charAt(0).toUpperCase();
+  }
+
+  get currentMonthLabel(): string {
+    return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  get confirmedCount(): number {
+    return this.schedules.filter(schedule => schedule.status === 'Confirmed').length;
+  }
+
+  get pendingCount(): number {
+    return this.schedules.filter(schedule => schedule.status === 'Pending').length;
   }
 
   getBoardEventClass(status: string): string {
@@ -115,5 +129,23 @@ export class StaffCalendarViewComponent implements OnInit {
       Cancelled: '#df6f7d',
     };
     return colors[status] || '#7a8fa7';
+  }
+
+  private buildCalendarDays(): { label: string; date: string; active: boolean }[] {
+    const today = new Date();
+    const day = today.getDay();
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    return labels.map((label, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + mondayOffset + index);
+
+      return {
+        label,
+        date: String(date.getDate()),
+        active: date.toDateString() === today.toDateString(),
+      };
+    });
   }
 }

@@ -16,38 +16,7 @@ export interface Schedule {
   providedIn: 'root',
 })
 export class StaffCalendarService {
-  private schedules$ = new BehaviorSubject<Schedule[]>([
-    {
-      id: 'SCH-001',
-      patientName: 'Isabella Cruz',
-      staffName: 'Dr. Raphoncel Eduria',
-      date: '2026-05-19',
-      time: '09:00 AM',
-      type: 'Dental Cleaning',
-      status: 'Confirmed',
-      notes: 'Regular checkup',
-    },
-    {
-      id: 'SCH-002',
-      patientName: 'Miguel Reyes',
-      staffName: 'Dr. Raphoncel Eduria',
-      date: '2026-05-20',
-      time: '10:30 AM',
-      type: 'Simple Tooth Extraction',
-      status: 'Confirmed',
-      notes: 'Wisdom tooth extraction',
-    },
-    {
-      id: 'SCH-003',
-      patientName: 'Camille Navarro',
-      staffName: 'Dr. Christine Faith Metillo',
-      date: '2026-05-21',
-      time: '02:00 PM',
-      type: 'Traditional Braces',
-      status: 'Confirmed',
-      notes: 'Monthly adjustment',
-    },
-  ]);
+  private schedules$ = new BehaviorSubject<Schedule[]>([]);
 
   constructor() {}
 

@@ -8,7 +8,7 @@
       <div>
         <p class="sd-greeting">{{ greeting }}! Here's what's happening at Code Smiles today.</p>
         <h1 class="sd-name">{{ fullName }}</h1>
-        <span class="sd-role">Front Desk Staff</span>
+        <span class="sd-role">{{ role }}</span>
       </div>
       <div class="sd-topbar-right">
         <div class="sd-date-chip">
@@ -19,7 +19,7 @@
           <div class="sd-profile-avatar">{{ initial }}</div>
           <div class="sd-profile-copy">
             <strong>{{ fullName }}</strong>
-            <span>Front Desk Staff</span>
+            <span>{{ role }}</span>
           </div>
         </div>
       </div>
@@ -54,6 +54,16 @@
             <a class="sd-link" routerLink="/staff-calendar">View Calendar →</a>
           </div>
           <div class="sd-schedule-list">
+            <!-- Loading skeleton -->
+            <div class="sd-schedule-skeleton" *ngIf="isLoading">
+              <div class="sd-skeleton-row" *ngFor="let i of [1,2,3]"></div>
+            </div>
+            <!-- Empty state -->
+            <div class="sd-empty-state" *ngIf="!isLoading && todaySchedule.length === 0">
+              <span>📭</span>
+              <p>No appointments scheduled for today.</p>
+            </div>
+            <!-- Real data -->
             <div class="sd-schedule-row" *ngFor="let item of todaySchedule">
               <span class="sd-schedule-time">{{ item.time }}</span>
               <div class="sd-avatar">{{ item.initials }}</div>
@@ -102,6 +112,10 @@
             <a class="sd-link" routerLink="/staff-requests">View all →</a>
           </div>
           <div class="sd-queue-list">
+            <div class="sd-empty-state" *ngIf="!isLoading && requests.length === 0">
+              <span>✅</span>
+              <p>No pending requests right now.</p>
+            </div>
             <div class="sd-queue-row" *ngFor="let req of requests">
               <div class="sd-avatar">{{ req.initials }}</div>
               <div class="sd-queue-copy">

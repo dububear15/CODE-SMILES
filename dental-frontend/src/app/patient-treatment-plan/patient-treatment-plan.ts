@@ -10,6 +10,26 @@ import {
   TreatmentStep,
 } from '../patient-treatment-progress/patient-treatment-plan-data';
 
+const EMPTY_TREATMENT_PLAN: TreatmentPlan = {
+  id: 'empty',
+  title: 'No Treatment Plan Available',
+  shortTitle: 'No Plan',
+  subtitle: 'Awaiting clinic update',
+  status: 'No treatment plan',
+  statusClass: 'upcoming',
+  progress: 0,
+  stepsCompleted: 0,
+  totalSteps: 0,
+  icon: 'consultation',
+  cardDescription: 'No plan yet',
+  nextStepTitle: 'No next step',
+  nextStepDate: 'Not scheduled',
+  nextStepTime: 'TBD',
+  nextStepDoctor: 'Clinic Review Team',
+  nextStepDescription: 'A treatment plan will appear here once the clinic creates one.',
+  steps: [],
+};
+
 @Component({
   selector: 'app-patient-treatment-plan',
   standalone: true,
@@ -27,7 +47,7 @@ export class PatientTreatmentPlan implements OnInit {
   }
 
   protected readonly treatmentPlans = PATIENT_TREATMENT_PLANS;
-  protected treatmentPlan: TreatmentPlan = PATIENT_TREATMENT_PLANS[0];
+  protected treatmentPlan: TreatmentPlan = PATIENT_TREATMENT_PLANS[0] ?? EMPTY_TREATMENT_PLAN;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -39,14 +59,25 @@ export class PatientTreatmentPlan implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const requestedPlan = params.get('id');
       this.treatmentPlan =
-        this.treatmentPlans.find((plan) => plan.id === requestedPlan) ?? this.treatmentPlans[0];
+        this.treatmentPlans.find((plan) => plan.id === requestedPlan) ??
+        this.treatmentPlans[0] ??
+        EMPTY_TREATMENT_PLAN;
     });
   }
 
   protected get currentStep(): TreatmentStep {
     return (
       this.treatmentPlan.steps.find((step) => step.stage === 'current') ??
-      this.treatmentPlan.steps[this.treatmentPlan.steps.length - 1]
+      this.treatmentPlan.steps[this.treatmentPlan.steps.length - 1] ?? {
+        order: 0,
+        title: 'No treatment steps yet',
+        date: 'Not scheduled',
+        dentist: 'Clinic Review Team',
+        note: 'Treatment steps will appear after your dentist creates a plan.',
+        status: 'Pending',
+        statusClass: 'upcoming',
+        stage: 'next',
+      }
     );
   }
 

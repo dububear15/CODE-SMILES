@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
+import { DENTIST_ROSTER } from '../dentist-portal-data';
 
 type VaultFilterKey =
   | 'all'
@@ -59,6 +61,7 @@ interface VaultRecord {
   addedAtRank: number;
   previewKind?: 'image' | 'pdf' | 'document';
   previewUrl?: string;
+  storedPreviewUrl?: string;
   safePreviewUrl?: SafeResourceUrl;
 }
 
@@ -79,23 +82,20 @@ interface QuickAction {
 @Component({
   selector: 'app-patient-medical-vault',
   standalone: true,
-  imports: [CommonModule, FormsModule, PatientSidebarComponent],
+  imports: [CommonModule, FormsModule, RouterModule, PatientSidebarComponent],
   templateUrl: './patient-medical-vault.html',
   styleUrl: './patient-medical-vault.css',
 })
-export class PatientMedicalVault {
+export class PatientMedicalVault implements OnInit {
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly route: ActivatedRoute,
     private readonly auth: AuthService,
+    private readonly api: ApiService,
   ) {
     this.route.queryParamMap.subscribe((params) => {
-      const recordTitle = params.get('record');
-      if (!recordTitle) return;
-      const matchedRecord = this.records.find((record) =>
-        record.title.toLowerCase().includes(recordTitle.toLowerCase()),
-      );
-      if (matchedRecord) this.openRecord(matchedRecord);
+      this.pendingRecordTitle = params.get('record');
+      this.openPendingRecord();
     });
   }
 
@@ -109,6 +109,7 @@ export class PatientMedicalVault {
 
   searchTerm = '';
   selectedFilter: VaultFilterKey = 'all';
+  selectedFilterLabel: VaultFilterKey = 'all';
   toastMessage = '';
 
   activeModal: 'view' | 'upload' | 'share' | 'request' | null = null;
@@ -125,9 +126,11 @@ export class PatientMedicalVault {
 
   shareDraft = {
     recordId: '',
-    recipient: 'Dr. Derence Acojedo',
+    recipient: DENTIST_ROSTER[0].fullName,
     message: '',
   };
+
+  readonly dentistOptions = DENTIST_ROSTER;
 
   requestDraft = {
     documentName: '',
@@ -136,10 +139,12 @@ export class PatientMedicalVault {
 
   private nextRecordNumber = 1006;
   private nextAddedRank = 6;
+  private pendingRecordTitle: string | null = null;
   private pendingUploadPreview:
     | {
         previewKind: 'image' | 'pdf' | 'document';
         previewUrl?: string;
+        storedPreviewUrl?: string;
         safePreviewUrl?: SafeResourceUrl;
       }
     | null = null;
@@ -147,7 +152,7 @@ export class PatientMedicalVault {
   readonly summaryCards: SummaryCard[] = [
     {
       label: 'Documents Stored',
-      value: '12',
+      value: '0',
       detail: 'Across all uploaded and clinic-issued files',
       tone: 'blue',
       iconViewBox: '0 0 24 24',
@@ -159,7 +164,7 @@ export class PatientMedicalVault {
     },
     {
       label: 'X-Rays & Images',
-      value: '3',
+      value: '0',
       detail: 'Latest imaging ready for viewing and download',
       tone: 'violet',
       iconViewBox: '0 0 24 24',
@@ -171,7 +176,7 @@ export class PatientMedicalVault {
     },
     {
       label: 'Last Updated',
-      value: 'Aug 22, 2024',
+      value: 'No activity',
       detail: 'Most recent vault activity synced from the clinic',
       tone: 'amber',
       iconViewBox: '0 0 24 24',
@@ -193,31 +198,7 @@ export class PatientMedicalVault {
     },
   ];
 
-  readonly healthSummary: HealthStat[] = [
-    { label: 'Blood Type', value: 'A+', tone: 'red' },
-    { label: 'Allergies', value: 'Penicillin', tone: 'amber' },
-    { label: 'Conditions', value: 'None Reported', tone: 'blue' },
-    {
-      label: 'Last Dental Visit',
-      value: 'Jul 15, 2024',
-      tone: 'blue',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3v3M17 3v3M4 8h16',
-        'M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5V7A1.5 1.5 0 0 1 5.5 5.5Z',
-      ],
-    },
-    {
-      label: 'Primary Dentist',
-      value: 'Dr. Acojedo',
-      tone: 'green',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M12 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',
-        'M6.5 18.5a5.5 5.5 0 0 1 11 0',
-      ],
-    },
-  ];
+  readonly healthSummary: HealthStat[] = [];
 
   readonly reminderItems = [
     'Inform the clinic about any new allergies before sharing records.',
@@ -234,141 +215,32 @@ export class PatientMedicalVault {
     { key: 'insurance', label: 'Insurance' },
   ];
 
-  records: VaultRecord[] = [
-    {
-      id: 'REC-1001',
-      title: 'Panoramic X-Ray - 2024',
-      description: 'Full mouth panoramic review',
-      uploadedBy: 'Dr. Raphoncel Eduria',
-      uploadedOrg: 'Code Smiles Dental',
-      date: 'Aug 22, 2024',
-      type: 'X-Ray',
-      category: 'xray',
-      fileName: 'panoramic-xray-2024.png',
-      fileSize: '4.8 MB',
-      source: 'Clinic',
-      summary: 'Panoramic radiograph for restorative and alignment review.',
-      notes: [
-        'Image is ready for provider consultation.',
-        'Shared for treatment planning and long-term recordkeeping.',
-      ],
-      addedAtRank: 5,
-      previewKind: 'document',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M4.5 6.5A1.5 1.5 0 0 1 6 5h12a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 18 19H6a1.5 1.5 0 0 1-1.5-1.5v-11Z',
-        'M8 15l2.8-3 2.2 2.4 2.2-2.8L18 15',
-        'M9 9.5h.01',
-      ],
-    },
-    {
-      id: 'REC-1002',
-      title: 'Amoxicillin 500mg',
-      description: '1 capsule every 8 hours for 7 days',
-      uploadedBy: 'Dr. Derence Acojedo',
-      uploadedOrg: 'Code Smiles Dental',
-      date: 'Aug 18, 2024',
-      type: 'Prescription',
-      category: 'prescription',
-      fileName: 'amoxicillin-500mg.pdf',
-      fileSize: '184 KB',
-      source: 'Clinic',
-      summary: 'Post-procedure prescription for recovery support.',
-      notes: [
-        'Take as directed after meals.',
-        'Contact the clinic if you experience side effects.',
-      ],
-      addedAtRank: 4,
-      previewKind: 'document',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z',
-        'M15 3.5v4h4',
-        'M9 11h6M9 15h6',
-      ],
-    },
-    {
-      id: 'REC-1003',
-      title: 'Orthodontic Treatment Plan',
-      description: 'Braces and alignment roadmap',
-      uploadedBy: 'Dr. Christine Faith Metillo',
-      uploadedOrg: 'Code Smiles Dental',
-      date: 'Aug 10, 2024',
-      type: 'Treatment Plan',
-      category: 'treatment-plan',
-      fileName: 'orthodontic-treatment-plan.pdf',
-      fileSize: '612 KB',
-      source: 'Clinic',
-      summary: 'Care roadmap, expected visits, and planning notes.',
-      notes: [
-        'Covers estimated adjustments and follow-up intervals.',
-        'Prepared after initial exam and imaging review.',
-      ],
-      addedAtRank: 3,
-      previewKind: 'document',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M8 3.5h8l3 3V20a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20V5a1.5 1.5 0 0 1 1.5-1.5Z',
-        'M11 8h5',
-        'M8.5 12h7',
-        'M8.5 16h4.5',
-        'M7.5 8.5h.01',
-      ],
-    },
-    {
-      id: 'REC-1004',
-      title: 'Insurance Card',
-      description: 'PhilHealth / HMO',
-      uploadedBy: 'You Uploaded',
-      uploadedOrg: 'Patient Upload',
-      date: 'Jul 15, 2024',
-      type: 'Insurance',
-      category: 'insurance',
-      fileName: 'insurance-card.jpg',
-      fileSize: '1.1 MB',
-      source: 'Patient',
-      summary: 'Insurance copy uploaded for verification and claims support.',
-      notes: [
-        'Front and back images are on file.',
-        'Use this when confirming eligibility with the clinic.',
-      ],
-      addedAtRank: 2,
-      previewKind: 'document',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M4.5 7h15A1.5 1.5 0 0 1 21 8.5v7A1.5 1.5 0 0 1 19.5 17h-15A1.5 1.5 0 0 1 3 15.5v-7A1.5 1.5 0 0 1 4.5 7Z',
-        'M3 10.5h18',
-        'M7 14.5h3',
-        'M14 14.5h4',
-      ],
-    },
-    {
-      id: 'REC-1005',
-      title: 'Post-Op Instructions',
-      description: 'After tooth extraction care',
-      uploadedBy: 'Dr. Nico Bongolto',
-      uploadedOrg: 'Code Smiles Dental',
-      date: 'Jun 05, 2024',
-      type: 'Medical Form',
-      category: 'medical-form',
-      fileName: 'post-op-instructions.pdf',
-      fileSize: '220 KB',
-      source: 'Clinic',
-      summary: 'Recovery guidelines, medication reminders, and care precautions.',
-      notes: [
-        'Includes eating, rinsing, and discomfort guidance.',
-        'Keep this on hand during the first 72 hours after care.',
-      ],
-      addedAtRank: 1,
-      previewKind: 'document',
-      iconViewBox: '0 0 24 24',
-      iconPaths: [
-        'M7 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z',
-        'M15 3.5v4h4',
-        'M9 11h6M9 15h6',
-      ],
-    },
-  ];
+  records: VaultRecord[] = [];
+
+  ngOnInit(): void {
+    const user = this.auth.getUser();
+    if (!user?.id) return;
+
+    this.records = this.loadCachedRecords(user.id);
+
+    this.api.getPatientVaultRecords(user.id).subscribe({
+      next: (rows) => {
+        if (rows.length === 0 && this.records.length > 0) {
+          this.openPendingRecord();
+          return;
+        }
+        this.records = this.mergeRecords(rows.map((row) => this.mapVaultRecord(row)), this.records);
+        this.saveCachedRecords(user.id);
+        this.openPendingRecord();
+      },
+      error: () => {
+        if (this.records.length === 0) {
+          this.toastMessage = 'Could not load medical vault records.';
+          this.clearToastLater();
+        }
+      },
+    });
+  }
 
   readonly quickActions: QuickAction[] = [
     {
@@ -400,6 +272,13 @@ export class PatientMedicalVault {
 
   setFilter(filterKey: VaultFilterKey): void {
     this.selectedFilter = filterKey;
+    this.selectedFilterLabel = filterKey;
+  }
+
+  onFilterChange(event: Event): void {
+    const val = (event.target as HTMLSelectElement).value as VaultFilterKey;
+    this.selectedFilter = val;
+    this.selectedFilterLabel = val;
   }
 
   get filteredRecords(): VaultRecord[] {
@@ -466,7 +345,9 @@ export class PatientMedicalVault {
 
     this.selectedUploadFileLabel = file.name;
     this.uploadDraft.fileName = file.name;
-    this.pendingUploadPreview = this.buildPreviewFromFile(file);
+    Promise.resolve(this.buildPreviewFromFile(file)).then((preview) => {
+      this.pendingUploadPreview = preview;
+    });
   }
 
   submitUpload(): void {
@@ -478,47 +359,49 @@ export class PatientMedicalVault {
 
     const type = this.uploadDraft.type;
     const category = this.getCategoryFromType(type);
-    const icon = this.getIconForCategory(category);
     const preview =
       this.pendingUploadPreview || this.getPreviewDataFromFileName(this.uploadDraft.fileName.trim());
 
-    this.records = [
-      {
-        id: `REC-${this.nextRecordNumber++}`,
-        title: this.uploadDraft.title.trim(),
-        description: this.uploadDraft.description.trim() || 'Patient-uploaded document',
-        uploadedBy: 'You Uploaded',
-        uploadedOrg: 'Patient Upload',
-        date: this.summaryCards[2]?.value || 'Aug 22, 2024',
-        type,
-        category,
-        fileName: this.uploadDraft.fileName.trim(),
-        fileSize: 'Pending review',
-        source: 'Patient',
-        summary: 'This document was added by the patient and is waiting for clinic review.',
-        notes: [
-          'Upload received in the medical vault.',
-          'Clinic staff can review the file from the patient record workspace.',
-        ],
-        addedAtRank: this.nextAddedRank++,
-        previewKind: preview.previewKind,
-        previewUrl: preview.previewUrl,
-        safePreviewUrl: preview.safePreviewUrl,
-        iconViewBox: icon.iconViewBox,
-        iconPaths: icon.iconPaths,
+    this.api.createPatientVaultRecord({
+      title: this.uploadDraft.title.trim(),
+      description: this.uploadDraft.description.trim() || 'Patient-uploaded document',
+      record_type: type,
+      category,
+      file_name: this.uploadDraft.fileName.trim(),
+      file_size: 'Pending review',
+      preview_kind: preview.previewKind,
+    }).subscribe({
+      next: (row) => {
+        const user = this.auth.getUser();
+        const savedRecord = this.withPreviewData(this.mapVaultRecord(row), preview);
+        this.records = this.mergeRecords([savedRecord], this.records);
+        if (user?.id) this.saveCachedRecords(user.id);
+        this.toastMessage = `${savedRecord.title} was added to your upload queue.`;
+        this.closeModal();
+        this.clearToastLater();
       },
-      ...this.records,
-    ];
-
-    this.toastMessage = `${this.uploadDraft.title} was added to your upload queue.`;
-    this.closeModal();
-    this.clearToastLater();
+      error: (err) => {
+        const user = this.auth.getUser();
+        const savedRecord = this.buildLocalVaultRecord(type, category, preview);
+        this.records = this.mergeRecords([savedRecord], this.records);
+        if (user?.id) this.saveCachedRecords(user.id);
+        this.toastMessage = err?.error?.message || `${savedRecord.title} was saved locally.`;
+        this.closeModal();
+        this.clearToastLater();
+      },
+    });
   }
 
   openShareModal(record?: VaultRecord): void {
+    if (!record && this.records.length === 0) {
+      this.toastMessage = 'Upload a record before sharing with your dental team.';
+      this.clearToastLater();
+      return;
+    }
+
     this.shareDraft = {
       recordId: record?.id || this.filteredRecords[0]?.id || '',
-      recipient: 'Dr. Derence Acojedo',
+      recipient: this.dentistOptions[0].fullName,
       message: record ? `Sharing ${record.title} for review.` : '',
     };
     this.activeModal = 'share';
@@ -555,7 +438,7 @@ export class PatientMedicalVault {
         description: this.requestDraft.reason.trim() || 'Requested from the clinic',
         uploadedBy: 'Request Sent',
         uploadedOrg: 'Awaiting clinic upload',
-        date: this.summaryCards[2]?.value || 'Aug 22, 2024',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         type: 'Medical Form',
         category: 'medical-form',
         fileName: `${documentName.toLowerCase().replace(/\s+/g, '-')}-request.txt`,
@@ -598,6 +481,7 @@ export class PatientMedicalVault {
 
   viewAllDocuments(): void {
     this.selectedFilter = 'all';
+    this.selectedFilterLabel = 'all';
     this.searchTerm = '';
     this.toastMessage = 'Showing all medical vault documents.';
     this.clearToastLater();
@@ -689,23 +573,35 @@ export class PatientMedicalVault {
   private buildPreviewFromFile(file: File): {
     previewKind: 'image' | 'pdf' | 'document';
     previewUrl?: string;
+    storedPreviewUrl?: string;
     safePreviewUrl?: SafeResourceUrl;
-  } {
+  } | Promise<{
+    previewKind: 'image' | 'pdf' | 'document';
+    previewUrl?: string;
+    storedPreviewUrl?: string;
+    safePreviewUrl?: SafeResourceUrl;
+  }> {
     const objectUrl = URL.createObjectURL(file);
 
     if (file.type.startsWith('image/')) {
-      return {
-        previewKind: 'image',
-        previewUrl: objectUrl,
-      };
+      return this.readFileAsDataUrl(file).then((dataUrl) => ({
+        previewKind: 'image' as const,
+        previewUrl: dataUrl,
+        storedPreviewUrl: dataUrl,
+      }));
     }
 
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-      return {
-        previewKind: 'pdf',
+      return this.readFileAsDataUrl(file).then((dataUrl) => ({
+        previewKind: 'pdf' as const,
+        previewUrl: dataUrl,
+        storedPreviewUrl: dataUrl,
+        safePreviewUrl: this.sanitizer.bypassSecurityTrustResourceUrl(dataUrl),
+      })).catch(() => ({
+        previewKind: 'pdf' as const,
         previewUrl: objectUrl,
         safePreviewUrl: this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl),
-      };
+      }));
     }
 
     return {
@@ -716,6 +612,7 @@ export class PatientMedicalVault {
   private getPreviewDataFromFileName(fileName: string): {
     previewKind: 'image' | 'pdf' | 'document';
     previewUrl?: string;
+    storedPreviewUrl?: string;
     safePreviewUrl?: SafeResourceUrl;
   } {
     const normalized = fileName.toLowerCase();
@@ -734,6 +631,163 @@ export class PatientMedicalVault {
     }
 
     return { previewKind: 'document' };
+  }
+
+  private mapVaultRecord(row: any): VaultRecord {
+    const category = row.category as Exclude<VaultFilterKey, 'all'>;
+    const icon = this.getIconForCategory(category);
+    const previewKind = (row.preview_kind || 'document') as 'image' | 'pdf' | 'document';
+    return {
+      id: `REC-${row.id}`,
+      title: row.title,
+      description: row.description || 'Patient-uploaded document',
+      uploadedBy: 'You Uploaded',
+      uploadedOrg: 'Patient Upload',
+      date: row.display_date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      type: row.record_type as RecordType,
+      category,
+      fileName: row.file_name,
+      fileSize: row.file_size || 'Pending review',
+      source: row.source || 'Patient',
+      summary: 'This document was added by the patient and is waiting for clinic review.',
+      notes: [
+        'Upload received in the medical vault.',
+        'Clinic staff can review the file from the patient record workspace.',
+      ],
+      addedAtRank: Number(row.added_rank || this.nextAddedRank++),
+      previewKind,
+      iconViewBox: icon.iconViewBox,
+      iconPaths: icon.iconPaths,
+    };
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private buildLocalVaultRecord(
+    type: RecordType,
+    category: Exclude<VaultFilterKey, 'all'>,
+    preview: {
+      previewKind: 'image' | 'pdf' | 'document';
+      previewUrl?: string;
+      storedPreviewUrl?: string;
+      safePreviewUrl?: SafeResourceUrl;
+    },
+  ): VaultRecord {
+    const icon = this.getIconForCategory(category);
+    return {
+      id: `REC-${this.nextRecordNumber++}`,
+      title: this.uploadDraft.title.trim(),
+      description: this.uploadDraft.description.trim() || 'Patient-uploaded document',
+      uploadedBy: 'You Uploaded',
+      uploadedOrg: 'Patient Upload',
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      type,
+      category,
+      fileName: this.uploadDraft.fileName.trim(),
+      fileSize: 'Pending review',
+      source: 'Patient',
+      summary: 'This document was added by the patient and is waiting for clinic review.',
+      notes: [
+        'Upload received in the medical vault.',
+        'Clinic staff can review the file from the patient record workspace.',
+      ],
+      addedAtRank: this.nextAddedRank++,
+      previewKind: preview.previewKind,
+      previewUrl: preview.storedPreviewUrl || preview.previewUrl,
+      storedPreviewUrl: preview.storedPreviewUrl,
+      safePreviewUrl: preview.safePreviewUrl,
+      iconViewBox: icon.iconViewBox,
+      iconPaths: icon.iconPaths,
+    };
+  }
+
+  private withPreviewData(
+    record: VaultRecord,
+    preview: {
+      previewKind: 'image' | 'pdf' | 'document';
+      previewUrl?: string;
+      storedPreviewUrl?: string;
+      safePreviewUrl?: SafeResourceUrl;
+    },
+  ): VaultRecord {
+    return {
+      ...record,
+      previewKind: preview.previewKind,
+      previewUrl: preview.storedPreviewUrl || preview.previewUrl,
+      storedPreviewUrl: preview.storedPreviewUrl,
+      safePreviewUrl: preview.safePreviewUrl,
+    };
+  }
+
+  private mergeRecords(incoming: VaultRecord[], existing: VaultRecord[]): VaultRecord[] {
+    const merged: VaultRecord[] = [];
+
+    for (const record of [...incoming, ...existing]) {
+      const duplicateIndex = merged.findIndex((item) =>
+        item.id === record.id ||
+        (
+          item.title.trim().toLowerCase() === record.title.trim().toLowerCase() &&
+          item.fileName.trim().toLowerCase() === record.fileName.trim().toLowerCase() &&
+          item.type === record.type
+        ),
+      );
+
+      if (duplicateIndex === -1) {
+        merged.push(record);
+        continue;
+      }
+
+      const current = merged[duplicateIndex];
+      merged[duplicateIndex] = {
+        ...current,
+        ...record,
+        previewUrl: current.storedPreviewUrl || current.previewUrl || record.storedPreviewUrl || record.previewUrl,
+        storedPreviewUrl: current.storedPreviewUrl || record.storedPreviewUrl,
+        safePreviewUrl: current.safePreviewUrl || record.safePreviewUrl,
+      };
+    }
+
+    return merged.sort((first, second) => second.addedAtRank - first.addedAtRank);
+  }
+
+  private openPendingRecord(): void {
+    if (!this.pendingRecordTitle) return;
+    const matchedRecord = this.records.find((record) =>
+      record.title.toLowerCase().includes(this.pendingRecordTitle!.toLowerCase()),
+    );
+    if (matchedRecord) this.openRecord(matchedRecord);
+  }
+
+  private cacheKey(patientId: number): string {
+    return `patient_vault_records_${patientId}`;
+  }
+
+  private loadCachedRecords(patientId: number): VaultRecord[] {
+    const raw = localStorage.getItem(this.cacheKey(patientId));
+    if (!raw) return [];
+    try {
+      return (JSON.parse(raw) as VaultRecord[]).map((record) => ({
+        ...record,
+        previewUrl: record.storedPreviewUrl || record.previewUrl,
+        safePreviewUrl:
+          record.previewKind === 'pdf' && record.storedPreviewUrl
+            ? this.sanitizer.bypassSecurityTrustResourceUrl(record.storedPreviewUrl)
+            : record.safePreviewUrl,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  private saveCachedRecords(patientId: number): void {
+    localStorage.setItem(this.cacheKey(patientId), JSON.stringify(this.records));
   }
 
   private clearToastLater(): void {

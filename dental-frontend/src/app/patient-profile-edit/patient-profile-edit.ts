@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { PatientProfile } from '../patient-profile/patient-profile.models';
 import { PatientProfileStore } from '../patient-profile/patient-profile.store';
+import { AvatarService } from '../services/avatar.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-patient-profile-edit',
@@ -13,25 +15,70 @@ import { PatientProfileStore } from '../patient-profile/patient-profile.store';
   templateUrl: './patient-profile-edit.html',
   styleUrl: './patient-profile-edit.css',
 })
-export class PatientProfileEditComponent {
+export class PatientProfileEditComponent implements OnInit {
   protected form: PatientProfile;
-  protected toastMessage = '';
-  protected avatarPreview = '';
+  protected isLoading = true;
+  protected isSaving = false;
+  protected saveError = '';
+  protected showSuccessModal = false;
+  protected avatarUrl = '';
+  protected isUploadingAvatar = false;
+
+  readonly bloodTypes = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'N/A'];
 
   constructor(
     private readonly router: Router,
     private readonly profileStore: PatientProfileStore,
+    private readonly avatarSvc: AvatarService,
+    private readonly auth: AuthService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
     this.form = this.profileStore.getProfile();
+    this.avatarUrl = this.avatarSvc.getAvatar();
+  }
+
+  ngOnInit(): void {
+    // Always load fresh data from DB when opening edit page
+    this.profileStore.loadFromServer().subscribe({
+      next: () => {
+        this.form = this.profileStore.getProfile();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.form = this.profileStore.getProfile();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   protected saveProfile(): void {
-    this.profileStore.updateProfile(this.form);
-    this.toastMessage = 'Profile updated successfully.';
+    if (this.isSaving) return;
+    this.isSaving = true;
+    this.saveError = '';
 
-    window.setTimeout(() => {
-      this.router.navigate(['/patient-profile']);
-    }, 600);
+    this.profileStore.saveToServer(this.form).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.showSuccessModal = true;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.saveError = err?.error?.message || 'Failed to save. Please try again.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  protected closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/patient-profile']);
+  }
+
+  protected stayOnPage(): void {
+    this.showSuccessModal = false;
   }
 
   protected cancel(): void {
@@ -39,19 +86,17 @@ export class PatientProfileEditComponent {
   }
 
   protected onAvatarSelected(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    const file = input?.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    this.avatarPreview = URL.createObjectURL(file);
-    this.toastMessage = 'Profile photo updated for preview.';
-
-    window.setTimeout(() => {
-      this.toastMessage = '';
-    }, 2200);
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    if (!file) return;
+    this.isUploadingAvatar = true;
+    this.avatarSvc.uploadFromFile(file).then(url => {
+      this.avatarUrl = url;
+      this.isUploadingAvatar = false;
+      this.cdr.detectChanges();
+    }).catch(() => {
+      this.isUploadingAvatar = false;
+      this.cdr.detectChanges();
+    });
   }
 
   protected get initials(): string {

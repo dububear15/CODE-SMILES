@@ -206,17 +206,19 @@
       <a
         class="legal-link"
         routerLink="/patient-help-center"
-        fragment="privacy-policy"
+        [queryParams]="{}"
+        fragment="privacy"
         title="Privacy Policy">
-        Privacy Policy
+        privacy policy
       </a>
       <span class="legal-divider" aria-hidden="true">&middot;</span>
       <a
         class="legal-link"
         routerLink="/patient-help-center"
-        fragment="terms-of-use"
+        [queryParams]="{}"
+        fragment="terms"
         title="Terms">
-        Terms
+        terms
       </a>
     </footer>
   </div>

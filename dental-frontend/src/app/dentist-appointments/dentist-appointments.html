@@ -12,65 +12,21 @@
       <div class="da-topbar-right">
         <div class="da-date-chip">
           <span>📅</span>
-          <span>Wednesday, April 17, 2026</span>
+          <span>{{ displayDate }}</span>
         </div>
         <button class="da-notif-btn" type="button" routerLink="/dentist-notifications">
           🔔
           <span class="da-notif-badge">3</span>
         </button>
         <div class="da-profile-chip">
-          <div class="da-profile-avatar">DS</div>
+          <div class="da-profile-avatar">{{ dentistInitials }}</div>
           <div class="da-profile-copy">
-            <strong>Dr. Maria Santos</strong>
-            <span>General Dentist</span>
+            <strong>{{ dentistDisplayName }}</strong>
+            <span>{{ dentistSpecialty }}</span>
           </div>
         </div>
       </div>
     </header>
-
-    <!-- ── Stat cards ──────────────────────────────────── -->
-    <section class="da-stats">
-      <article class="da-stat-card" [class.active]="activeTab==='Today'" (click)="setTab('Today')">
-        <div class="da-stat-icon blue">📅</div>
-        <div class="da-stat-body">
-          <strong>{{ todayCount }}</strong>
-          <span>Today's Appointments</span>
-        </div>
-        <span class="da-stat-link">View today's schedule →</span>
-      </article>
-      <article class="da-stat-card" [class.active]="activeTab==='Upcoming'" (click)="setTab('Upcoming')">
-        <div class="da-stat-icon violet">🕐</div>
-        <div class="da-stat-body">
-          <strong>{{ upcomingCount }}</strong>
-          <span>Upcoming</span>
-        </div>
-        <span class="da-stat-link">Next 7 days →</span>
-      </article>
-      <article class="da-stat-card" [class.active]="activeTab==='Completed'" (click)="setTab('Completed')">
-        <div class="da-stat-icon green">✅</div>
-        <div class="da-stat-body">
-          <strong>{{ completedCount }}</strong>
-          <span>Completed</span>
-        </div>
-        <span class="da-stat-link">This month →</span>
-      </article>
-      <article class="da-stat-card" [class.active]="activeTab==='Rescheduled'" (click)="setTab('Rescheduled')">
-        <div class="da-stat-icon amber">🔄</div>
-        <div class="da-stat-body">
-          <strong>{{ rescheduledCount }}</strong>
-          <span>Rescheduled</span>
-        </div>
-        <span class="da-stat-link">View all →</span>
-      </article>
-      <article class="da-stat-card" [class.active]="activeTab==='Cancelled'" (click)="setTab('Cancelled')">
-        <div class="da-stat-icon red">✕</div>
-        <div class="da-stat-body">
-          <strong>{{ cancelledCount }}</strong>
-          <span>Cancelled</span>
-        </div>
-        <span class="da-stat-link">This month →</span>
-      </article>
-    </section>
 
     <!-- ── Table area ───────────────────────────────────── -->
     <div class="da-table-area">

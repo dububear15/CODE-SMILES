@@ -1580,3 +1580,12 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Phase 2 additions ──────────────────────────────────────── */
+.modal-save-error {
+  font-size: 0.8rem;
+  color: #c0334a;
+  font-weight: 600;
+  padding: 8px 22px 0;
+  text-align: center;
+}

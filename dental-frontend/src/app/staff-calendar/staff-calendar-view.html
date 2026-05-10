@@ -25,9 +25,9 @@
           <span class="alert-dot"></span>
         </button>
         <div class="profile-chip">
-          <div class="profile-avatar">M</div>
+          <div class="profile-avatar">{{ staffInitial }}</div>
           <div class="profile-copy">
-            <strong>Maria Santos</strong>
+            <strong>{{ staffName }}</strong>
             <span>Front Desk</span>
           </div>
         </div>
@@ -47,11 +47,11 @@
             </div>
             <div class="summary-card">
               <span class="summary-label">Confirmed</span>
-              <strong>2</strong>
+              <strong>{{ confirmedCount }}</strong>
             </div>
             <div class="summary-card">
               <span class="summary-label">Pending</span>
-              <strong>1</strong>
+              <strong>{{ pendingCount }}</strong>
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@
       <aside class="calendar-sidebar">
         <section class="sidebar-card">
           <div class="sidebar-head">
-            <strong>September 2024</strong>
+            <strong>{{ currentMonthLabel }}</strong>
             <div class="nav-buttons">
               <button type="button" class="nav-btn">←</button>
               <button type="button" class="nav-btn">→</button>

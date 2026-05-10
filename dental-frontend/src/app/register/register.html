@@ -238,7 +238,7 @@
     </div>
 
     <!-- Backend error message -->
-    <div class="error-banner" *ngIf="errorMessage">
+    <div class="error-banner" *ngIf="errorMessage" role="alert" aria-live="polite">
       {{ errorMessage }}
     </div>
 
@@ -254,8 +254,9 @@
       <button
         type="button"
         class="google-btn"
+        [disabled]="isGoogleLoading"
         (click)="signUpWithGoogle()"
-      >
+        *ngIf="!isGoogleLoading">
         <img
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           class="google-icon"
@@ -263,6 +264,15 @@
         />
         Sign up with Google
       </button>
+      <div class="google-btn-loading" *ngIf="isGoogleLoading">
+        <svg class="google-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        Signing up with Google…
+      </div>
+      <div class="error-banner" *ngIf="errorMessage && !isGoogleLoading" role="alert" aria-live="polite">
+        {{ errorMessage }}
+      </div>
     </div>
 
     <p class="signup-text">

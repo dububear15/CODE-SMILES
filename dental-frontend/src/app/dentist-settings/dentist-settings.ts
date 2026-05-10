@@ -24,12 +24,12 @@ export class DentistSettingsComponent {
     { key: 'privacy',       label: 'Privacy',         icon: '🛡',  desc: 'Visibility, data, access control'   },
   ];
 
-  // Account
+  // Account — loaded from auth service on init
   account = {
-    firstName: 'Maria', lastName: 'Santos',
-    username: 'dr.maria.santos',
-    email: 'dr.maria.santos@codesmiles.com',
-    phone: '+63 917 234 5678',
+    firstName: '', lastName: '',
+    username: '',
+    email: '',
+    phone: '',
   };
 
   // Security

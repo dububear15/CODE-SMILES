@@ -61,8 +61,8 @@
       You are updating an existing appointment. Choose a new schedule and submit for clinic approval.
     </div>
 
-    <!-- SUCCESS STATE -->
-    <div *ngIf="bookingConfirmed" class="booking-success-card fade-in">
+    <!-- SUCCESS STATE — only shown if user dismisses modal and lands here -->
+    <div *ngIf="bookingConfirmed && !showSuccessModal" class="booking-success-card fade-in">
       <div class="success-icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
@@ -295,64 +295,70 @@
 
   </main>
 
-  <!-- SUCCESS MODAL (fixed positioned) -->
+  <!-- SUCCESS MODAL (fixed positioned) — shown immediately after successful submission -->
   <div class="success-modal-overlay" *ngIf="showSuccessModal">
     <div class="success-modal-content">
+
+      <!-- Green header with checkmark -->
       <div class="modal-header">
         <div class="modal-success-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
             <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
         </div>
+        <h2 class="modal-title">
+          {{ wasRescheduleFlow ? 'Reschedule Request Submitted!' : 'Booking Request Submitted!' }}
+        </h2>
+        <p class="modal-subtitle">
+          Your appointment request has been received and is now pending clinic review.
+        </p>
       </div>
+
+      <!-- Booking summary -->
       <div class="modal-body">
-        <h2 class="modal-title">{{ wasRescheduleFlow ? 'Reschedule Request Submitted!' : 'Booking Request Submitted!' }}</h2>
-        <p class="modal-subtitle">Your appointment request has been successfully submitted.</p>
         <div class="booking-details">
           <div class="detail-item">
-            <span class="detail-label">Appointment ID</span>
-            <span class="detail-value">{{ confirmedBooking.appointmentId }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Patient Name</span>
+            <span class="detail-label">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Patient
+            </span>
             <span class="detail-value">{{ confirmedBooking.fullName }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Date & Time</span>
-            <span class="detail-value">{{ confirmedBooking.date }} at {{ confirmedBooking.time }}</span>
+            <span class="detail-label">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              Date &amp; Time
+            </span>
+            <span class="detail-value">{{ confirmedBooking.date | date:'MMMM d, y' }} at {{ confirmedBooking.time }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Services</span>
+            <span class="detail-label">
+              <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Services
+            </span>
             <span class="detail-value">{{ confirmedServiceNames }}</span>
           </div>
         </div>
+
         <div class="status-badge">
-          <span class="badge-icon">⏳</span>
-          <span class="badge-text">Pending Review</span>
+          <span class="badge-dot"></span>
+          Pending Clinic Review — we'll notify you once confirmed
         </div>
-        <p class="modal-message">Our staff will review your request and send you a confirmation. Thank you for booking with Code Smiles!</p>
       </div>
+
+      <!-- Two action buttons -->
       <div class="modal-footer">
         <button type="button" class="btn-modal primary" (click)="goToDashboardFromModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           Back to Dashboard
         </button>
         <button type="button" class="btn-modal secondary" (click)="startNewBooking()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 5v14M5 12h14"/>
-          </svg>
-          Book Another Appointment
-        </button>
-        <button type="button" class="btn-modal tertiary" (click)="goToAppointmentsFromModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2-3h2l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="3"/>
-          </svg>
-          View My Appointments
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Submit Another Appointment
         </button>
       </div>
+
     </div>
   </div>
 </div>

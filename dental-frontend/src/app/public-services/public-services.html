@@ -34,9 +34,9 @@
             <li *ngFor="let sub of svc.subServices">{{sub}}</li>
           </ul>
 
-          <a routerLink="/booking" class="action-btn booking-cta">
+          <button class="action-btn booking-cta" (click)="handleBook()">
             Book {{svc.title}} Visit
-          </a>
+          </button>
           
           <label class="service-x" for="svc-none">X</label>
         </div>

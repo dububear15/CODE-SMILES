@@ -564,3 +564,26 @@
   .sd-stats { grid-template-columns: 1fr; }
   .sd-actions-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Phase 3 additions ──────────────────────────────────────── */
+.sd-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px;
+  text-align: center;
+  color: #8fa3bc;
+}
+.sd-empty-state span { font-size: 1.6rem; }
+.sd-empty-state p { font-size: 0.82rem; font-weight: 600; margin: 0; }
+
+.sd-schedule-skeleton { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+.sd-skeleton-row {
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #e8eef6 25%, #f4f7fb 50%, #e8eef6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }

@@ -5,13 +5,14 @@ import {
   OnDestroy,
   ViewChild
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-public-about',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './public-about.html',
   styleUrls: ['./public-about.css']
 })
@@ -20,6 +21,18 @@ export class PublicAboutComponent implements AfterViewInit, OnDestroy {
 
   isMuted = true;
   private observer?: IntersectionObserver;
+
+  constructor(private router: Router, private auth: AuthService) {}
+
+  handleBook(): void {
+    if (this.auth.isLoggedIn() && this.auth.getRole() === 'Patient') {
+      this.router.navigate(['/patient-booking']);
+    } else if (this.auth.isLoggedIn()) {
+      this.router.navigate([this.auth.getDashboardRoute()]);
+    } else {
+      this.router.navigate(['/login'], { queryParams: { redirect: 'booking' } });
+    }
+  }
 
   ngAfterViewInit(): void {
     const video = this.aboutVideo?.nativeElement;

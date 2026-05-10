@@ -54,7 +54,7 @@ interface CreateAppointmentInput {
 }
 
 const STORAGE_KEY = 'patient-appointments-store';
-const DEMO_APPOINTMENT_IDS = new Set(['APT-1001', 'APT-1002', 'APT-1003']);
+const DEMO_APPOINTMENT_IDS = new Set<string>();
 
 @Injectable({
   providedIn: 'root',
@@ -260,87 +260,6 @@ export class PatientAppointmentStore {
   }
 
   private defaultAppointments(): PatientAppointment[] {
-    return [
-      {
-        id: 'APT-1001',
-        service: 'Cleaning & Checkup',
-        category: 'General Dentistry',
-        dentist: 'Dr. Derence Acojedo',
-        location: 'Code Smiles Dental Clinic',
-        dateMonth: 'SEP',
-        dateDay: '10',
-        weekday: 'TUE',
-        accent: 'blue',
-        time: '10:00 AM - 11:00 AM',
-        status: 'Approved',
-        tab: 'upcoming',
-        description: 'Routine cleaning, oral exam, and plaque assessment.',
-        patientName: 'Patient',
-        patientEmail: 'patient@codesmiles.com',
-        patientPhone: '—',
-        patientAge: '—',
-        notes: 'Please review gum sensitivity on the upper left side.',
-        bookedOn: 'Aug 28, 2026, 9:12 AM',
-        durationLabel: '60 minutes',
-        servicesSummary: ['Dental Cleaning', 'Oral Consultation'],
-        history: [
-          { label: 'Approved by clinic', value: 'Sep 1, 2026, 11:20 AM' },
-          { label: 'Request submitted', value: 'Aug 28, 2026, 9:12 AM' },
-        ],
-      },
-      {
-        id: 'APT-1002',
-        service: 'Composite Filling',
-        category: 'General Dentistry',
-        dentist: 'Dr. Raphoncel Eduria',
-        location: 'Code Smiles Dental Clinic',
-        dateMonth: 'OCT',
-        dateDay: '05',
-        weekday: 'SAT',
-        accent: 'amber',
-        time: '1:00 PM - 2:00 PM',
-        status: 'Pending Approval',
-        tab: 'pending',
-        description: 'Request for restoration of tooth #14 is waiting for confirmation.',
-        patientName: 'Patient',
-        patientEmail: 'patient@codesmiles.com',
-        patientPhone: '—',
-        patientAge: '—',
-        notes: 'Afternoon availability is preferred.',
-        bookedOn: 'Sep 17, 2026, 2:05 PM',
-        durationLabel: '60 minutes',
-        servicesSummary: ['Tooth Fillings'],
-        history: [
-          { label: 'Pending approval', value: 'Sep 17, 2026, 2:05 PM' },
-        ],
-      },
-      {
-        id: 'APT-1003',
-        service: 'Retainer Follow-up',
-        category: 'Orthodontics',
-        dentist: 'Dr. Christine Faith Metillo',
-        location: 'Code Smiles Dental Clinic',
-        dateMonth: 'AUG',
-        dateDay: '26',
-        weekday: 'MON',
-        accent: 'teal',
-        time: '11:00 AM - 11:30 AM',
-        status: 'Completed',
-        tab: 'past',
-        description: 'Visit completed successfully with updated retainer instructions.',
-        patientName: 'Patient',
-        patientEmail: 'patient@codesmiles.com',
-        patientPhone: '—',
-        patientAge: '—',
-        notes: 'No pain reported after the previous adjustment.',
-        bookedOn: 'Aug 10, 2026, 4:44 PM',
-        durationLabel: '30 minutes',
-        servicesSummary: ['Retainers'],
-        history: [
-          { label: 'Completed', value: 'Aug 26, 2026, 11:35 AM' },
-          { label: 'Approved by clinic', value: 'Aug 12, 2026, 8:10 AM' },
-        ],
-      },
-    ];
+    return [];
   }
 }

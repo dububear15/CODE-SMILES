@@ -8,7 +8,6 @@ import {
   LinkedRecord,
   PATIENT_TREATMENT_PLANS,
   TreatmentPlan,
-  TreatmentStep,
 } from './patient-treatment-plan-data';
 
 @Component({
@@ -29,61 +28,88 @@ export class PatientTreatmentProgress {
     };
   }
 
-  protected selectedTreatmentId = 'orthodontics';
-
   protected readonly treatmentPlans: TreatmentPlan[] = PATIENT_TREATMENT_PLANS;
 
-  protected readonly reminderItems = [
-    'Brush after every meal',
-    'Use fluoride toothpaste',
-    'Attend all scheduled appointments',
-  ];
+  // ── Search / filter ──────────────────────────────────────────
+  protected searchTerm = '';
+  protected statusFilter = 'all';
 
-  protected notesModalOpen = false;
-  protected activeStepForNotes: TreatmentStep | null = null;
-  protected noteDraft = '';
-  protected toastMessage = '';
-
-  protected selectTreatment(treatmentId: string): void {
-    this.selectedTreatmentId = treatmentId;
+  protected get filteredPlans(): TreatmentPlan[] {
+    const q = this.searchTerm.trim().toLowerCase();
+    return this.treatmentPlans.filter(p => {
+      const matchesSearch = !q ||
+        p.title.toLowerCase().includes(q) ||
+        p.subtitle.toLowerCase().includes(q);
+      const matchesStatus = this.statusFilter === 'all' ||
+        p.statusClass === this.statusFilter;
+      return matchesSearch && matchesStatus;
+    });
   }
 
+  protected get activePlans(): TreatmentPlan[] {
+    return this.filteredPlans.filter(p =>
+      p.statusClass === 'active' || p.statusClass === 'pending' || p.statusClass === 'upcoming'
+    );
+  }
+
+  protected get completedPlans(): TreatmentPlan[] {
+    return this.filteredPlans.filter(p => p.statusClass === 'completed');
+  }
+
+  protected get activeCount(): number {
+    return this.treatmentPlans.filter(p => p.statusClass === 'active' || p.statusClass === 'pending').length;
+  }
+
+  protected get completedCount(): number {
+    return this.treatmentPlans.filter(p => p.statusClass === 'completed').length;
+  }
+
+  // ── Accordion ────────────────────────────────────────────────
+  protected expandedId: string | null = null;
+
+  protected toggleExpand(id: string): void {
+    this.expandedId = this.expandedId === id ? null : id;
+  }
+
+  protected isExpanded(id: string): boolean {
+    return this.expandedId === id;
+  }
+
+  // ── Linked records ───────────────────────────────────────────
   protected viewLinkedRecord(record: LinkedRecord): void {
     this.router.navigate(['/patient-medical-vault'], {
       queryParams: { record: record.title },
     });
   }
 
-  protected openAddNotes(step: TreatmentStep): void {
-    this.activeStepForNotes = step;
-    this.noteDraft = '';
-    this.notesModalOpen = true;
+  /** Collect all unique linked records across all steps of a plan */
+  protected getLinkedRecords(plan: TreatmentPlan): LinkedRecord[] {
+    const seen = new Set<string>();
+    const result: LinkedRecord[] = [];
+    for (const step of plan.steps) {
+      for (const r of step.linkedRecords ?? []) {
+        if (!seen.has(r.title)) {
+          seen.add(r.title);
+          result.push(r);
+        }
+      }
+    }
+    return result;
   }
 
-  protected closeNotesModal(): void {
-    this.notesModalOpen = false;
-    this.activeStepForNotes = null;
-    this.noteDraft = '';
-  }
+  // ── Toast ────────────────────────────────────────────────────
+  protected toastMessage = '';
 
-  protected saveNote(): void {
-    const stepTitle = this.activeStepForNotes?.title || 'Current step';
-    const message = this.noteDraft.trim()
-      ? `Note added for ${stepTitle}.`
-      : `No note was entered for ${stepTitle}.`;
-
-    this.closeNotesModal();
-    this.toastMessage = message;
-    window.clearTimeout((this as { toastTimeout?: number }).toastTimeout);
-    (this as { toastTimeout?: number }).toastTimeout = window.setTimeout(() => {
+  protected showToast(msg: string): void {
+    this.toastMessage = msg;
+    window.clearTimeout((this as { _tt?: number })._tt);
+    (this as { _tt?: number })._tt = window.setTimeout(() => {
       this.toastMessage = '';
     }, 2400);
   }
 
-  protected get selectedTreatment(): TreatmentPlan {
-    return (
-      this.treatmentPlans.find((plan) => plan.id === this.selectedTreatmentId) ??
-      this.treatmentPlans[0]
-    );
+  // ── Step icon helper ─────────────────────────────────────────
+  protected stepIcon(stage: string): 'done' | 'current' | 'next' {
+    return stage as 'done' | 'current' | 'next';
   }
 }

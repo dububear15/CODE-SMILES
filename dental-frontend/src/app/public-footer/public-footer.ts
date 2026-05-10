@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-public-footer',
@@ -10,7 +11,17 @@ import { Router, RouterLink } from '@angular/router';
 })
 
 export class PublicFooterComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private auth: AuthService) {}
+
+  handleBook(): void {
+    if (this.auth.isLoggedIn() && this.auth.getRole() === 'Patient') {
+      this.router.navigate(['/patient-booking']);
+    } else if (this.auth.isLoggedIn()) {
+      this.router.navigate([this.auth.getDashboardRoute()]);
+    } else {
+      this.router.navigate(['/login'], { queryParams: { redirect: 'booking' } });
+    }
+  }
 
   // reusable scroll handler
   scrollToSection(sectionId: string) {

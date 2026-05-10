@@ -792,3 +792,188 @@
 }
 
 .filter-select:focus { border-color: #3b82f6; }
+
+/* ── AUTO-ASSIGNED DENTIST DISPLAY ──────────────────────────────── */
+.assigned-dentist-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #f0f7ff, #e8f2ff);
+  border: 1.5px solid #c3d9f7;
+  border-radius: 14px;
+}
+
+.dentist-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3a7fd4, #1e5bb5);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.dentist-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dentist-info strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1d3551;
+}
+
+.dentist-info span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.76rem;
+  color: #5a7a9a;
+}
+
+.dentist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #dcf5e8;
+  color: #1a7a45;
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dentist-badge svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Phase 3 additions ──────────────────────────────────────── */
+
+/* Dentist override select */
+.dentist-assign-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dentist-select {
+  flex: 1;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1.5px solid #d0daea;
+  background: #f8fbff;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a2e47;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.dentist-select:focus { border-color: #4d8fe1; background: #fff; }
+
+.auto-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #27a96c;
+  white-space: nowrap;
+}
+.auto-hint svg { width: 14px; height: 14px; }
+
+.assign-note {
+  font-size: 0.76rem;
+  color: #8fa3bc;
+  margin: 6px 0 0;
+}
+
+/* Confirm approve dialog */
+.confirm-overlay { z-index: 1100; }
+
+.confirm-dialog {
+  max-width: 400px !important;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 24px 24px !important;
+}
+
+.confirm-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #e6f8ef;
+  color: #27a96c;
+  display: grid;
+  place-items: center;
+}
+.confirm-icon svg { width: 24px; height: 24px; }
+
+.confirm-dialog h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a2e47;
+  margin: 0;
+}
+
+.confirm-dialog p {
+  font-size: 0.88rem;
+  color: #5d728d;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.confirm-note {
+  font-size: 0.78rem !important;
+  color: #8fa3bc !important;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.confirm-actions .btn-secondary,
+.confirm-actions .btn-approve {
+  flex: 1;
+}
+
+/* Toast */
+.requests-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 12px 28px rgba(15,23,42,.18);
+  animation: reqToastIn .22s ease both;
+}
+.requests-toast[data-type='success'] { background: #1a2e47; color: #fff; }
+.requests-toast[data-type='error']   { background: #c0334a; color: #fff; }
+.requests-toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+@keyframes reqToastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

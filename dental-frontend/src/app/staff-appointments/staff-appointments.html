@@ -109,7 +109,9 @@
 
             <article
               class="appointment-card"
-              *ngFor="let item of filteredAppointments">
+              *ngFor="let item of filteredAppointments"
+              (click)="viewDetail(item.id)"
+              style="cursor:pointer;">
 
               <div class="appointment-grid">
                 <section class="patient-panel">
@@ -118,6 +120,13 @@
                     <strong>{{ item.patient_name }}</strong>
                     <small>{{ item.email }}</small>
                     <small>{{ item.phone }}</small>
+                    <span
+                      *ngIf="item.patient_id"
+                      class="reliability-badge"
+                      [attr.data-tone]="getReliabilityTone(item.reliability_score)"
+                      [title]="'Reliability Score: ' + item.reliability_score">
+                      {{ getReliabilityLabel(item.reliability_score) }} ({{ item.reliability_score > 0 ? '+' : '' }}{{ item.reliability_score }})
+                    </span>
                   </div>
                 </section>
 
@@ -135,7 +144,25 @@
                 <section class="assignment-panel">
                   <span class="meta-label">Assigned Dentist</span>
                   <strong>{{ item.dentist_name || 'Not assigned' }}</strong>
-                  <small *ngIf="item.notes">{{ item.notes }}</small>
+                  <span
+                    *ngIf="item.confirmation_status"
+                    class="confirmation-chip"
+                    [attr.data-status]="item.confirmation_status">
+                    {{ item.confirmation_status }}
+                  </span>
+                  <!-- Mark Complete button — only on Approved appointments -->
+                  <button
+                    *ngIf="item.status === 'Approved'"
+                    class="btn-complete"
+                    [disabled]="completingId === item.id"
+                    (click)="markComplete(item, $event)"
+                    title="Mark as Completed">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="13 4 6 11 3 8"/>
+                    </svg>
+                    {{ completingId === item.id ? 'Saving…' : 'Mark Complete' }}
+                  </button>
+                  <small *ngIf="item.notes && item.status !== 'Approved'">{{ item.notes }}</small>
                 </section>
               </div>
 
@@ -185,4 +212,17 @@
 
     </section>
   </main>
+</div>
+
+<!-- Toast -->
+<div class="appt-toast" *ngIf="toastMessage" [attr.data-type]="toastType">
+  <svg viewBox="0 0 20 20" fill="none" *ngIf="toastType === 'success'">
+    <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M6.5 10l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <svg viewBox="0 0 20 20" fill="none" *ngIf="toastType === 'error'">
+    <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M10 6v5M10 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  {{ toastMessage }}
 </div>

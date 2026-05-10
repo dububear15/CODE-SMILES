@@ -17,26 +17,66 @@ export interface AuthUser {
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
 
+// ── Storage helpers ───────────────────────────────────────────────────────────
+// rememberMe=true  → localStorage (persists across browser restarts)
+// rememberMe=false → sessionStorage (clears on tab close)
+function store(key: string, value: string, remember: boolean): void {
+  if (remember) {
+    localStorage.setItem(key, value);
+  } else {
+    sessionStorage.setItem(key, value);
+  }
+}
+function retrieve(key: string): string | null {
+  return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+}
+function remove(key: string): void {
+  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
+}
+function decodeJwtPayload(token: string): any {
+  const payload = token.split('.')[1];
+  if (!payload) throw new Error('Invalid token');
+  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), '=');
+  return JSON.parse(atob(padded));
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(private api: ApiService, private router: Router) {}
 
-  login(email: string, password: string, role: UserRole): Observable<any> {
+  login(email: string, password: string, role: UserRole, rememberMe = false): Observable<any> {
     return this.api.login(email, password, role).pipe(
       tap((res: AuthUser) => {
-        localStorage.setItem(TOKEN_KEY, res.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(res));
+        store(TOKEN_KEY, res.token, rememberMe);
+        store(USER_KEY, JSON.stringify(res), rememberMe);
         // Fetch and cache avatar after login
         this.api.getUserProfile(res.id).subscribe({
           next: (profile) => {
             if (profile.avatar_url) {
-              localStorage.setItem('user_avatar', profile.avatar_url);
+              store('user_avatar', profile.avatar_url, rememberMe);
             } else {
-              localStorage.removeItem('user_avatar');
+              remove('user_avatar');
             }
           },
           error: () => {}
         });
+      })
+    );
+  }
+
+  googleLogin(credential: string): Observable<any> {
+    return this.api.googleLogin(credential).pipe(
+      tap((res: AuthUser & { avatar_url?: string }) => {
+        // Google sign-in always uses sessionStorage (no rememberMe checkbox shown)
+        store(TOKEN_KEY, res.token, false);
+        store(USER_KEY, JSON.stringify(res), false);
+        if (res.avatar_url) {
+          store('user_avatar', res.avatar_url, false);
+        } else {
+          remove('user_avatar');
+        }
       })
     );
   }
@@ -51,19 +91,35 @@ export class AuthService {
     return this.api.register(data);
   }
 
+  resendVerification(email: string): Observable<any> {
+    return this.api.resendVerification(email);
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.api.forgotPassword(email);
+  }
+
+  validateResetToken(token: string): Observable<any> {
+    return this.api.validateResetToken(token);
+  }
+
+  resetPassword(token: string, new_password: string): Observable<any> {
+    return this.api.resetPassword(token, new_password);
+  }
+
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    localStorage.removeItem('user_avatar');
+    remove(TOKEN_KEY);
+    remove(USER_KEY);
+    remove('user_avatar');
     this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return retrieve(TOKEN_KEY);
   }
 
   getUser(): AuthUser | null {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = retrieve(USER_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as AuthUser;
@@ -73,7 +129,28 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+
+    // Decode JWT payload to check expiry (no library needed — just base64 decode)
+    try {
+      const payload = decodeJwtPayload(token);
+      if (payload.exp && Date.now() / 1000 > payload.exp) {
+        // Token expired — clear session silently
+        remove(TOKEN_KEY);
+        remove(USER_KEY);
+        remove('user_avatar');
+        return false;
+      }
+    } catch {
+      // Malformed token — clear it
+      remove(TOKEN_KEY);
+      remove(USER_KEY);
+      remove('user_avatar');
+      return false;
+    }
+
+    return true;
   }
 
   getRole(): UserRole | null {

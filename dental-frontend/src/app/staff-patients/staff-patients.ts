@@ -16,6 +16,7 @@ export interface Patient {
   lastVisit: string;
   nextAppointment: string;
   registeredDate: string;
+  reliabilityScore: number;
   // raw DB fields
   db_id?: number;
   first_name?: string;
@@ -55,33 +56,41 @@ export class StaffPatientsComponent implements OnInit {
 
   loadPatients() {
     this.isLoading = true;
-    this.api.getPatients().subscribe({
-      next: (data) => {
-        this.patients = data.map((p: any) => ({
-          db_id:           p.id,
-          id:              `CS-${String(p.id).padStart(5, '0')}`,
-          name:            `${p.first_name} ${p.last_name}`,
-          first_name:      p.first_name,
-          last_name:       p.last_name,
-          age:             0,
-          gender:          '',
-          contact:         p.phone || '—',
-          phone:           p.phone || '—',
-          email:           p.email || '—',
-          address:         '—',
-          status:          (p.status === 'Active' ? 'Active' : 'Inactive') as 'Active' | 'Inactive',
-          lastVisit:       '—',
-          nextAppointment: 'No booking',
-          registeredDate:  p.created_at ? p.created_at.split('T')[0] : '—',
-          created_at:      p.created_at,
-        }));
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.isLoading = false;
-        this.cdr.detectChanges();
+    // Fetch both patient list and reliability scores in parallel
+    Promise.all([
+      this.api.getPatients().toPromise(),
+      this.api.getStaffPatientReliability().toPromise(),
+    ]).then(([data, reliabilityData]) => {
+      const reliabilityMap = new Map<number, number>();
+      if (reliabilityData) {
+        for (const r of reliabilityData) {
+          reliabilityMap.set(r.id, r.reliability_score ?? 0);
+        }
       }
+      this.patients = (data || []).map((p: any) => ({
+        db_id:            p.id,
+        id:               `CS-${String(p.id).padStart(5, '0')}`,
+        name:             `${p.first_name} ${p.last_name}`,
+        first_name:       p.first_name,
+        last_name:        p.last_name,
+        age:              0,
+        gender:           '',
+        contact:          p.phone || '—',
+        phone:            p.phone || '—',
+        email:            p.email || '—',
+        address:          '—',
+        status:           (p.status === 'Active' ? 'Active' : 'Inactive') as 'Active' | 'Inactive',
+        lastVisit:        '—',
+        nextAppointment:  'No booking',
+        registeredDate:   p.created_at ? p.created_at.split('T')[0] : '—',
+        created_at:       p.created_at,
+        reliabilityScore: reliabilityMap.get(p.id) ?? 0,
+      }));
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }).catch(() => {
+      this.isLoading = false;
+      this.cdr.detectChanges();
     });
   }
 
@@ -144,22 +153,45 @@ export class StaffPatientsComponent implements OnInit {
     const lastName  = this.form.last_name?.trim()  || this.form.name?.split(' ').slice(1).join(' ') || '';
 
     if (this.editingPatient) {
-      // Local update only for now (no edit endpoint)
-      const idx = this.patients.findIndex(p => p.id === this.editingPatient!.id);
-      if (idx !== -1) {
-        this.patients[idx] = { ...this.patients[idx], ...this.form } as Patient;
-        this.successMessage = `Patient "${this.form.name}" updated.`;
-      }
-      this.closeModal();
-      this.flashSuccess();
+      // Edit existing patient — call API
+      const dbId = this.editingPatient.db_id;
+      if (!dbId) return;
+      this.api.updatePatient(dbId, {
+        first_name: firstName,
+        last_name:  lastName,
+        phone:      this.form.contact?.trim() || undefined,
+      }).subscribe({
+        next: () => {
+          const idx = this.patients.findIndex(p => p.db_id === dbId);
+          if (idx !== -1) {
+            this.patients[idx] = {
+              ...this.patients[idx],
+              name:       `${firstName} ${lastName}`,
+              first_name: firstName,
+              last_name:  lastName,
+              contact:    this.form.contact || this.patients[idx].contact,
+              phone:      this.form.contact || this.patients[idx].phone,
+            };
+          }
+          this.successMessage = `Patient "${firstName} ${lastName}" updated.`;
+          this.closeModal();
+          this.flashSuccess();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.successMessage = err?.error?.message ?? 'Failed to update patient.';
+          this.flashSuccess();
+          this.cdr.detectChanges();
+        },
+      });
     } else {
-      // Save to DB
+      // Add new patient — call API
       this.api.addPatient({ first_name: firstName, last_name: lastName, phone: this.form.contact || '' }).subscribe({
         next: () => {
           this.successMessage = `Patient "${firstName} ${lastName}" registered successfully.`;
           this.closeModal();
           this.flashSuccess();
-          this.loadPatients(); // Reload from DB
+          this.loadPatients();
         },
         error: () => {
           this.successMessage = 'Failed to register patient. Please try again.';
@@ -184,5 +216,21 @@ export class StaffPatientsComponent implements OnInit {
 
   protected dismissAlert(): void {
     this.showSuccessAlert = false;
+  }
+
+  protected getReliabilityLabel(score: number): string {
+    if (score >= 8)  return 'High';
+    if (score >= 3)  return 'Good';
+    if (score >= 0)  return 'Fair';
+    if (score >= -5) return 'Low';
+    return 'Poor';
+  }
+
+  protected getReliabilityTone(score: number): string {
+    if (score >= 8)  return 'mint';
+    if (score >= 3)  return 'blue';
+    if (score >= 0)  return 'amber';
+    if (score >= -5) return 'orange';
+    return 'rose';
   }
 }

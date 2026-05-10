@@ -222,7 +222,7 @@ export class StaffCalendar implements OnInit {
   }
 
   selectDate(day: any): void {}
-  addWalkIn(): void { this.router.navigate(['/staff-requests']); }
+  addWalkIn(): void { this.router.navigate(['/staff-booking']); }
   viewAllAppointments(): void { this.router.navigate(['/staff-appointments']); }
 
   getStatusClass(status: string): string {

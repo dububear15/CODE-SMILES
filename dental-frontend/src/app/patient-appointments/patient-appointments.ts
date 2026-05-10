@@ -19,9 +19,10 @@ export interface PatientAppointment {
   dateMonth: string;
   dateDay: string;
   weekday: string;
-  accent: 'blue' | 'amber' | 'violet' | 'teal';
+  accent: 'blue' | 'amber' | 'violet' | 'teal' | 'red' | 'orange';
   time: string;
-  status: 'Approved' | 'Pending Approval' | 'Completed' | 'Cancelled' | 'Rescheduled';
+  status: string;
+  confirmationStatus: string;
   tab: AppointmentTab;
   description: string;
   patientName: string;
@@ -186,6 +187,7 @@ export class MyAppointments implements OnInit {
       accent,
       time: timeFormatted,
       status,
+      confirmationStatus: a.confirmation_status || 'Not Confirmed',
       tab,
       description: services.length > 1
         ? `${services.join(', ')}`
@@ -204,41 +206,50 @@ export class MyAppointments implements OnInit {
         { label: 'Request submitted', value: a.created_at ? new Date(a.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' },
         ...(a.status === 'Approved' ? [{ label: 'Approved by clinic', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
         ...(a.status === 'Completed' ? [{ label: 'Completed', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
-        ...(a.status === 'Cancelled' ? [{ label: 'Cancelled', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
-        ...(a.status === 'Rescheduled' ? [{ label: 'Rescheduled', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status !== 'Approved' && a.status !== 'Completed' && a.status !== 'Pending' ? [{ label: a.status, value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
       ],
     };
   }
 
-  private mapStatus(dbStatus: string): PatientAppointment['status'] {
-    const map: Record<string, PatientAppointment['status']> = {
-      'Pending':     'Pending Approval',
-      'Approved':    'Approved',
-      'Completed':   'Completed',
-      'Cancelled':   'Cancelled',
-      'Rescheduled': 'Rescheduled',
+  private mapStatus(dbStatus: string): string {
+    const map: Record<string, string> = {
+      'Pending':                         'Pending Approval',
+      'Approved':                        'Approved',
+      'Completed':                       'Completed',
+      'Cancelled by Patient':            'Cancelled by You',
+      'Cancelled by Staff':              'Cancelled by Clinic',
+      'Cancelled by Dentist':            'Cancelled by Dentist',
+      'Rescheduled by Staff':            'Rescheduled by Clinic',
+      'Rescheduled by Dentist':          'Rescheduled by Dentist',
+      'Reschedule Requested by Patient': 'Reschedule Requested',
+      'Reschedule Requested by Dentist': 'Dentist Requested Reschedule',
+      'No-show':                         'No-show',
     };
-    return map[dbStatus] ?? 'Pending Approval';
+    return map[dbStatus] ?? dbStatus;
   }
 
   private mapTab(dbStatus: string, dateStr: string): AppointmentTab {
-    if (dbStatus === 'Pending') return 'pending';
-    if (dbStatus === 'Completed' || dbStatus === 'Cancelled') return 'past';
-    if (dbStatus === 'Rescheduled') return 'pending';
-    // Approved — check if date is in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const apptDate = new Date(`${dateStr}T00:00:00`);
-    return apptDate >= today ? 'upcoming' : 'past';
+    const cancelledOrPast = ['Cancelled by Patient', 'Cancelled by Staff', 'Cancelled by Dentist', 'Completed', 'No-show'];
+    const pendingStatuses = ['Pending', 'Reschedule Requested by Patient', 'Reschedule Requested by Dentist', 'Rescheduled by Staff', 'Rescheduled by Dentist'];
+    if (cancelledOrPast.includes(dbStatus)) return 'past';
+    if (pendingStatuses.includes(dbStatus)) return 'pending';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return new Date(`${dateStr}T00:00:00`) >= today ? 'upcoming' : 'past';
   }
 
-  private mapAccent(dbStatus: string): PatientAppointment['accent'] {
-    const map: Record<string, PatientAppointment['accent']> = {
-      'Approved':    'blue',
-      'Pending':     'amber',
-      'Completed':   'teal',
-      'Cancelled':   'violet',
-      'Rescheduled': 'amber',
+  private mapAccent(dbStatus: string): 'blue' | 'amber' | 'violet' | 'teal' {
+    const map: Record<string, 'blue' | 'amber' | 'violet' | 'teal'> = {
+      'Approved':                        'blue',
+      'Pending':                         'amber',
+      'Completed':                       'teal',
+      'Cancelled by Patient':            'violet',
+      'Cancelled by Staff':              'violet',
+      'Cancelled by Dentist':            'violet',
+      'Rescheduled by Staff':            'amber',
+      'Rescheduled by Dentist':          'amber',
+      'Reschedule Requested by Patient': 'amber',
+      'Reschedule Requested by Dentist': 'amber',
+      'No-show':                         'violet',
     };
     return map[dbStatus] ?? 'blue';
   }
@@ -304,20 +315,18 @@ export class MyAppointments implements OnInit {
 
     this.api.cancelMyAppointment(appt.dbId, this.cancelReason).subscribe({
       next: () => {
-        appt.status = 'Cancelled';
+        appt.status = 'Cancelled by Patient';
         appt.tab = 'past';
         this.showCancelModal = false;
         this.cancelTargetId = null;
         this.cancelReason = '';
-        // Switch to past tab if nothing left in current tab
         if (this.filteredAppointments.length === 0 && this.selectedTab !== 'upcoming') {
           this.selectedTab = 'upcoming';
         }
         this.cdr.detectChanges();
       },
       error: () => {
-        // Still update UI optimistically so the user isn't stuck
-        appt.status = 'Cancelled';
+        appt.status = 'Cancelled by Patient';
         appt.tab = 'past';
         this.showCancelModal = false;
         this.cancelTargetId = null;
@@ -340,5 +349,38 @@ export class MyAppointments implements OnInit {
   protected get cancelTarget(): PatientAppointment | null {
     if (!this.cancelTargetId) return null;
     return this.appointments.find(a => a.id === this.cancelTargetId) ?? null;
+  }
+
+  protected confirmAttendance(appointmentId: string): void {
+    const appt = this.appointments.find(a => a.id === appointmentId);
+    if (!appt) return;
+    this.api.confirmAttendance(appt.dbId).subscribe({
+      next: () => {
+        appt.confirmationStatus = 'Confirmed';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Optimistic update even on error
+        appt.confirmationStatus = 'Confirmed';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  protected requestRescheduleFromReminder(appointmentId: string): void {
+    const appt = this.appointments.find(a => a.id === appointmentId);
+    if (!appt) return;
+    this.api.confirmRescheduleFromReminder(appt.dbId).subscribe({
+      next: () => {
+        appt.confirmationStatus = 'Reschedule Requested';
+        appt.status = 'Reschedule Requested';
+        appt.tab = 'pending';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        appt.confirmationStatus = 'Reschedule Requested';
+        this.cdr.detectChanges();
+      }
+    });
   }
 }
