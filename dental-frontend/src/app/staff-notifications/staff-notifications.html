@@ -32,7 +32,50 @@
       <!-- ── CONTENT LAYOUT ─────────────────────────────────────────────── -->
       <section class="content-layout">
 
-        <!-- ── LEFT: Feed ──────────────────────────────────────────────── -->
+        <!-- Stats 1x4 -->
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Total</span>
+              <strong class="stat-value">{{ notifications.length }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card clickable" (click)="statusFilter = 'needs-action'">
+            <div class="stat-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Needs Action</span>
+              <strong class="stat-value">{{ needsActionCount }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card clickable" (click)="statusFilter = 'unread'">
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Unread</span>
+              <strong class="stat-value">{{ unreadCount }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card clickable" (click)="statusFilter = 'all'; selectedFilter = 'appointments'">
+            <div class="stat-icon red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Urgent</span>
+              <strong class="stat-value">{{ urgentCount }}</strong>
+            </div>
+          </article>
+        </div>
+
+        <!-- ── Feed ──────────────────────────────────────────────── -->
         <div class="feed-section">
 
           <!-- Single filter bar: category tabs + status chips in one row -->
@@ -144,88 +187,6 @@
           </div>
         </div>
 
-        <!-- ── RIGHT: Sidebar ──────────────────────────────────────────── -->
-        <aside class="sidebar-section">
-
-          <!-- Stats 2x2 -->
-          <div class="stats-grid">
-            <article class="stat-card">
-              <div class="stat-icon blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-label">Total</span>
-                <strong class="stat-value">{{ notifications.length }}</strong>
-              </div>
-            </article>
-
-            <article class="stat-card clickable" (click)="statusFilter = 'needs-action'">
-              <div class="stat-icon orange">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-label">Needs Action</span>
-                <strong class="stat-value">{{ needsActionCount }}</strong>
-              </div>
-            </article>
-
-            <article class="stat-card clickable" (click)="statusFilter = 'unread'">
-              <div class="stat-icon green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-label">Unread</span>
-                <strong class="stat-value">{{ unreadCount }}</strong>
-              </div>
-            </article>
-
-            <article class="stat-card clickable" (click)="statusFilter = 'all'; selectedFilter = 'appointments'">
-              <div class="stat-icon red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-label">Urgent</span>
-                <strong class="stat-value">{{ urgentCount }}</strong>
-              </div>
-            </article>
-          </div>
-
-          <!-- Preferences -->
-          <div class="sidebar-card">
-            <div class="card-header">
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-              </div>
-              <h3>Preferences</h3>
-            </div>
-            <div class="pref-list">
-              <div class="pref-item" *ngFor="let pref of preferences">
-                <div class="pref-info">
-                  <strong>{{ pref.title }}</strong>
-                  <span [class.enabled]="pref.enabled" [class.disabled]="!pref.enabled">
-                    {{ pref.enabled ? 'Enabled' : 'Disabled' }}
-                  </span>
-                </div>
-                <button class="pref-toggle" [class.on]="pref.enabled" (click)="togglePreference(pref)">
-                  {{ pref.enabled ? 'Turn Off' : 'Turn On' }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Help Card -->
-          <div class="help-card">
-            <div class="help-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div>
-            <div class="help-content">
-              <h4>Need help reviewing alerts?</h4>
-              <p>Open the help center for staff workflow guidance and escalation steps.</p>
-            </div>
-            <a routerLink="/staff-help-center" class="btn-help">Open Help Center</a>
-          </div>
-
-        </aside>
       </section>
     </div>
   </main>

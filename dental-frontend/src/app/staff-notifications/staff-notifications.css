@@ -122,13 +122,13 @@
    STATS GRID (inside sidebar - 2x2)
 ═══════════════════════════════════════════════════════════════ */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
   gap: 10px;
   flex-shrink: 0;
 }
 
 .stat-card {
+  flex: 1;
   display: flex; align-items: center; gap: 10px;
   background: #fff; border: 1px solid #e0e8f2;
   border-radius: 12px; padding: 12px 14px;
@@ -152,8 +152,8 @@
    CONTENT LAYOUT
 ═══════════════════════════════════════════════════════════════ */
 .content-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
   flex: 1;
   min-height: 0;

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
+import { AvatarService } from '../services/avatar.service';
 import { getDentistInfo } from '../dentist-portal-data';
 
 export interface Appointment {
@@ -42,6 +43,7 @@ export class DentistAppointmentsComponent implements OnInit {
   isLoading = true;
   actionMessage = '';
   treatmentNote = '';
+  avatarUrl: string | null = null;
 
   // Follow-up modal
   showFollowUpModal = false;
@@ -72,9 +74,24 @@ export class DentistAppointmentsComponent implements OnInit {
     private api: ApiService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
+    private avatarService: AvatarService,
   ) {}
 
-  ngOnInit() { this.loadAppointments(); }
+  ngOnInit() {
+  // Load avatar from localStorage or database
+  this.avatarUrl = this.avatarService.getAvatar();
+  if (!this.avatarUrl) {
+    this.avatarService.loadAvatarFromDB().then(() => {
+      // After loading from DB, check localStorage again
+      this.avatarUrl = this.avatarService.getAvatar();
+      this.cdr.detectChanges();
+    }).catch((err: any) => {
+      console.error('Failed to load avatar:', err);
+    });
+  }
+
+  this.loadAppointments();
+}
 
   get displayDate(): string {
     return new Date().toLocaleDateString('en-US', {

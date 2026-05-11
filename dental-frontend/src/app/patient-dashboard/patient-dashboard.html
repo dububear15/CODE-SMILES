@@ -22,7 +22,10 @@
         </button>
 
         <a class="header-user" routerLink="/patient-profile">
-          <div class="header-avatar" aria-hidden="true">{{ initial }}</div>
+          <div class="header-avatar" aria-hidden="true">
+            <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile" class="header-avatar-img" />
+            <span *ngIf="!avatarUrl">{{ initial }}</span>
+          </div>
           <div class="header-user-copy">
             <strong>{{ fullName }}</strong>
             <span>Patient ID: {{ patientId }}</span>
@@ -45,16 +48,28 @@
         </div>
 
         <div class="top-card-body">
-          <div class="top-card-copy">
+          <div class="top-card-copy" *ngIf="nextAppointment; else noAppointment">
             <h3>Next Appointment</h3>
-            <h2>Apr 21 &bull; 2:30 PM</h2>
-            <p>Dr. Lee</p>
-            <small>Orthodontic Adjustment</small>
+            <h2>{{ formatDate(nextAppointment.appointment_date) }} &bull; {{ formatTime(nextAppointment.appointment_time) }}</h2>
+            <p>{{ nextAppointment.dentist_name || 'TBD' }}</p>
+            <small>{{ nextAppointment.treatment || 'General Consultation' }}</small>
           </div>
         </div>
 
-        <a class="card-action-btn" routerLink="/my-appointments">View Details</a>
+        <a class="card-action-btn" *ngIf="nextAppointment" [routerLink]="['/patient-appointments', 'APT-' + nextAppointment.id]">View Details</a>
+        <a class="card-action-btn" *ngIf="!nextAppointment" routerLink="/my-appointments">View Details</a>
       </article>
+
+      <ng-template #noAppointment>
+        <div class="top-card-body">
+          <div class="top-card-copy">
+            <h3>Next Appointment</h3>
+            <h2>No upcoming appointments</h2>
+            <p>Book your first appointment to get started</p>
+            <small>Click below to schedule</small>
+          </div>
+        </div>
+      </ng-template>
 
       <article class="top-card top-card-progress">
         <div class="top-card-head">
@@ -72,11 +87,11 @@
         <div class="top-card-body">
           <div class="top-card-copy">
             <h3>Treatment Progress</h3>
-            <h2>75% Complete</h2>
+            <h2>Start your journey</h2>
             <div class="progress-bar" aria-label="Treatment progress">
-              <div class="progress-fill" style="width: 75%;"></div>
+              <div class="progress-fill" style="width: 0%;"></div>
             </div>
-            <small>Final Adjustment Phase</small>
+            <small>Book an appointment to begin treatment</small>
           </div>
         </div>
 
@@ -98,10 +113,11 @@
         <div class="top-card-body">
           <div class="top-card-copy">
             <h3>Notifications</h3>
-            <h2>2 New Updates</h2>
+            <h2>{{ stats.pending + stats.upcoming }} Updates</h2>
             <ul class="notification-preview-list">
-              <li>Appointment Confirmed</li>
-              <li>Reminder Sent</li>
+              <li *ngIf="stats.pending > 0">{{ stats.pending }} pending appointment(s)</li>
+              <li *ngIf="stats.upcoming > 0">{{ stats.upcoming }} upcoming appointment(s)</li>
+              <li *ngIf="stats.pending === 0 && stats.upcoming === 0">No new notifications</li>
             </ul>
           </div>
         </div>
@@ -146,50 +162,14 @@
         </div>
 
         <div class="appointment-list">
-          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
-            <div class="appointment-date">
-              <span>APR</span>
-              <strong>21</strong>
-            </div>
-
-            <div class="appointment-info">
-              <strong>Orthodontic Adjustment</strong>
-              <span>2:30 PM - 3:30 PM</span>
-              <small>Dr. Lee Sung-Kyung</small>
-            </div>
-
-            <span class="status-pill confirmed">Confirmed</span>
-          </article>
-
-          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
-            <div class="appointment-date">
-              <span>MAY</span>
-              <strong>08</strong>
-            </div>
-
-            <div class="appointment-info">
-              <strong>Progress Review</strong>
-              <span>10:00 AM - 10:45 AM</span>
-              <small>Dr. Lee Sung-Kyung</small>
-            </div>
-
-            <span class="status-pill scheduled">Scheduled</span>
-          </article>
-
-          <article class="appointment-row" routerLink="/my-appointments" tabindex="0">
-            <div class="appointment-date">
-              <span>MAY</span>
-              <strong>29</strong>
-            </div>
-
-            <div class="appointment-info">
-              <strong>Cleaning &amp; Checkup</strong>
-              <span>1:00 PM - 2:00 PM</span>
-              <small>Dr. Kim</small>
-            </div>
-
-            <span class="status-pill scheduled">Scheduled</span>
-          </article>
+          <div class="empty-appointments" *ngIf="stats.upcoming === 0 && stats.pending === 0">
+            <span>📅</span>
+            <p>No upcoming appointments</p>
+            <small>Book your first appointment to get started</small>
+          </div>
+          <div class="appointment-summary" *ngIf="stats.upcoming > 0 || stats.pending > 0">
+            <p>You have {{ stats.upcoming }} upcoming appointment(s) and {{ stats.pending }} pending request(s)</p>
+          </div>
         </div>
 
         <a class="panel-footer-link" routerLink="/my-appointments">View All Appointments</a>

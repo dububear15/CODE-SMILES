@@ -23,10 +23,10 @@
           </button>
 
           <a class="header-user" routerLink="/patient-profile">
-            <div class="header-avatar" aria-hidden="true">L</div>
+            <div class="header-avatar" aria-hidden="true">{{ initial }}</div>
             <div class="header-user-copy">
-              <strong>Laura Martinez</strong>
-              <span>Patient ID: CS-48291</span>
+              <strong>{{ patientProfile.name }}</strong>
+              <span>Patient ID: {{ patientProfile.id }}</span>
             </div>
           </a>
         </div>

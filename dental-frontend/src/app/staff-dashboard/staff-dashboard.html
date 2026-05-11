@@ -16,7 +16,10 @@
           <span>{{ today }}</span>
         </div>
         <div class="sd-profile-chip">
-          <div class="sd-profile-avatar">{{ initial }}</div>
+          <div class="sd-profile-avatar">
+            <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile" class="sd-avatar-img" />
+            <span *ngIf="!avatarUrl">{{ initial }}</span>
+          </div>
           <div class="sd-profile-copy">
             <strong>{{ fullName }}</strong>
             <span>{{ role }}</span>

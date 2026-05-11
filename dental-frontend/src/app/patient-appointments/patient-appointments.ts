@@ -76,6 +76,8 @@ export class MyAppointments implements OnInit {
     id: '—',
   };
 
+  protected initial: string = 'P';
+
   protected readonly clinicPhone = '(555) 123-4567';
 
   protected readonly appointmentTabs: AppointmentTabOption[] = [
@@ -141,6 +143,7 @@ export class MyAppointments implements OnInit {
         name: `${user.first_name} ${user.last_name}`,
         id: `CS-${String(user.id).padStart(5, '0')}`,
       };
+      this.initial = (user?.first_name?.charAt(0) ?? 'P').toUpperCase();
       this.loadAppointments(user.id);
     } else {
       this.isLoading = false;

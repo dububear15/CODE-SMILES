@@ -34,7 +34,6 @@ export class PatientProfileEditComponent implements OnInit {
     private readonly cdr: ChangeDetectorRef,
   ) {
     this.form = this.profileStore.getProfile();
-    this.avatarUrl = this.avatarSvc.getAvatar();
   }
 
   ngOnInit(): void {
@@ -51,6 +50,25 @@ export class PatientProfileEditComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+
+    // Load avatar - first check localStorage, then database
+    this.loadAvatar();
+  }
+
+  private async loadAvatar(): Promise<void> {
+    // First try to get from localStorage
+    this.avatarUrl = this.avatarSvc.getAvatar();
+
+    // If not in localStorage, load from database
+    if (!this.avatarUrl) {
+      try {
+        await this.avatarSvc.loadAvatarFromDB();
+        this.avatarUrl = this.avatarSvc.getAvatar();
+        this.cdr.detectChanges();
+      } catch (err) {
+        console.error('Failed to load avatar from DB:', err);
+      }
+    }
   }
 
   protected saveProfile(): void {

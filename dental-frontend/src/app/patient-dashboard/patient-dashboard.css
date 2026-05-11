@@ -155,6 +155,17 @@
   color: #fff;
   font-weight: 800;
   font-size: 1.06rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.header-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .header-user-copy {
@@ -457,6 +468,43 @@
 
 .appointment-row:first-child {
   border-top: none;
+}
+
+.empty-appointments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  gap: 12px;
+}
+
+.empty-appointments span {
+  font-size: 3rem;
+}
+
+.empty-appointments p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.empty-appointments small {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.appointment-summary {
+  padding: 20px;
+  text-align: center;
+}
+
+.appointment-summary p {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .appointment-date {

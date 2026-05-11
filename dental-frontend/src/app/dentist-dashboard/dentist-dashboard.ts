@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
+import { AvatarService } from '../services/avatar.service';
 import { getDentistInfo } from '../dentist-portal-data';
 
 @Component({
@@ -19,6 +20,7 @@ export class DentistDashboard implements OnInit {
   specialty: string;
   today: string;
   isLoading = true;
+  avatarUrl: string | null = null;
 
   private dbStats = { today: 0, upcoming: 0, completed: 0, patients: 0 };
   private dbRecent: any[] = [];
@@ -30,7 +32,7 @@ export class DentistDashboard implements OnInit {
     { label: 'Create Treatment Plan', icon: '📋', route: '/dentist-treatment-plans', tone: 'amber'  as const },
   ];
 
-  constructor(private auth: AuthService, private api: ApiService, private cdr: ChangeDetectorRef) {
+  constructor(private auth: AuthService, private api: ApiService, private cdr: ChangeDetectorRef, private avatarService: AvatarService) {
     const user     = this.auth.getUser();
     this.fullName  = user ? `Dr. ${user.first_name} ${user.last_name}` : 'Dentist';
     this.initial   = (user?.first_name?.charAt(0) ?? 'D').toUpperCase();
@@ -42,6 +44,18 @@ export class DentistDashboard implements OnInit {
   }
 
   ngOnInit() {
+    // Load avatar from localStorage or database
+    this.avatarUrl = this.avatarService.getAvatar();
+    if (!this.avatarUrl) {
+      this.avatarService.loadAvatarFromDB().then(() => {
+        // After loading from DB, check localStorage again
+        this.avatarUrl = this.avatarService.getAvatar();
+        this.cdr.detectChanges();
+      }).catch((err: any) => {
+        console.error('Failed to load avatar:', err);
+      });
+    }
+
     const user = this.auth.getUser();
     const dentistName = user ? `Dr. ${user.first_name} ${user.last_name}` : '';
     this.api.getDentistDashboardStats(dentistName).subscribe({

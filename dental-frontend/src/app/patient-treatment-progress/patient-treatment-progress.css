@@ -150,6 +150,45 @@
   box-shadow: var(--shadow);
 }
 
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin: 14px 0 0;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.loading-banner,
+.error-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+
+.loading-banner svg,
+.error-banner svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.loading-banner span,
+.error-banner span {
+  font-weight: 600;
+}
+
+.error-banner {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
 .stat-block {
   display: flex;
   align-items: center;
@@ -774,6 +813,25 @@
   border: 1px solid var(--line);
   border-radius: 14px;
   font-size: 0.9rem;
+}
+
+.error-state {
+  padding: 42px 28px;
+  border-radius: 16px;
+  border: 1px solid #facc15;
+  background: #fefce8;
+  color: #92400e;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+
+.error-state h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #7c2d12;
 }
 
 /* ── Footer ──────────────────────────────────────────────────── */

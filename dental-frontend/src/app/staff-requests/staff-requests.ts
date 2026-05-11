@@ -85,13 +85,15 @@ export class StaffRequestsComponent implements OnInit {
   }
 
   /**
-   * Auto-assigns a dentist based on the treatment category.
-   * Looks up DENTIST_ROSTER to find who specialises in that category.
+   * Auto-assigns a dentist based on the treatment/service.
+   * Looks up DENTIST_ROSTER to find who offers that service or category.
    * Falls back to the first dentist if no match found.
    */
   private autoAssignDentist(treatment: string): string {
+    const treatmentLower = treatment.toLowerCase();
     const match = DENTIST_ROSTER.find(d =>
-      d.categories.some(c => c.toLowerCase() === treatment.toLowerCase())
+      d.services.some(s => s.toLowerCase() === treatmentLower) ||
+      d.categories.some(c => c.toLowerCase() === treatmentLower)
     );
     return match?.fullName ?? DENTIST_ROSTER[0].fullName;
   }

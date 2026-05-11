@@ -256,7 +256,11 @@ export class PatientNotificationsComponent implements OnInit {
     switch (action.kind) {
       case 'view-appointment':
       case 'view-details':
-        this.router.navigate(['/patient-appointments']);
+        if (notification.appointmentId) {
+          this.router.navigate(['/patient-appointments', `APT-${notification.appointmentId}`]);
+        } else {
+          this.router.navigate(['/patient-appointments']);
+        }
         return;
       case 'add-calendar':
         this.downloadCalendarInvite(notification);

@@ -38,8 +38,13 @@ const EMPTY_TREATMENT_PLAN: TreatmentPlan = {
   styleUrl: './patient-treatment-plan.css',
 })
 export class PatientTreatmentPlan implements OnInit {
+  protected initial: string = 'P';
+
   protected get patientProfile() {
     const user = this.auth.getUser();
+    if (user) {
+      this.initial = (user?.first_name?.charAt(0) ?? 'P').toUpperCase();
+    }
     return {
       name: user ? `${user.first_name} ${user.last_name}` : 'Patient',
       id:   user ? `CS-${String(user.id).padStart(5, '0')}` : '—',

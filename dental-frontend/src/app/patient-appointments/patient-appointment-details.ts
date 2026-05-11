@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { ApiService } from '../services/api.service';
@@ -18,39 +18,56 @@ export class PatientAppointmentDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected appointment: PatientAppointment | null = null;
   protected isLoading = true;
+  protected loadError = '';
 
   ngOnInit(): void {
     const rawId = this.route.snapshot.paramMap.get('id') ?? '';
     // Route param is "APT-42" — extract the numeric part
-    const numericId = parseInt(rawId.replace(/^APT-/i, ''), 10);
+    const appointmentId = this.normalizeAppointmentId(rawId);
 
-    if (isNaN(numericId)) {
+    if (!appointmentId) {
       this.isLoading = false;
+      this.loadError = 'Invalid appointment ID.';
       return;
     }
 
     const user = this.auth.getUser();
     if (!user?.id) {
       this.isLoading = false;
+      this.loadError = 'Please sign in again to view your appointment details.';
       return;
     }
 
     // Load all appointments for this patient and find the matching one
     this.api.getMyAppointments(user.id).subscribe({
       next: (data) => {
-        const raw = data.find(a => a.id === numericId);
+        const raw = data.find(a =>
+          this.normalizeAppointmentId(a.id) === appointmentId ||
+          this.normalizeAppointmentId(a.appointment_id) === appointmentId ||
+          this.normalizeAppointmentId(a.dbId) === appointmentId
+        );
         if (raw) {
           this.appointment = this.mapDbAppointment(raw);
+        } else {
+          this.loadError = `Appointment ${rawId || appointmentId} was not found in your appointments.`;
         }
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        this.loadError = err?.error?.message || 'Failed to load appointment details.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
+  }
+
+  private normalizeAppointmentId(value: unknown): string {
+    return String(value ?? '').trim().replace(/^APT-/i, '');
   }
 
   private mapDbAppointment(a: any): PatientAppointment {
@@ -88,36 +105,52 @@ export class PatientAppointmentDetailsComponent implements OnInit {
       servicesSummary: services,
       history: [
         { label: 'Request submitted', value: a.created_at ? new Date(a.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' },
-        ...(a.status === 'Approved'     ? [{ label: 'Approved by clinic', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
-        ...(a.status === 'Completed'    ? [{ label: 'Completed',          value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
-        ...(a.status === 'Cancelled'    ? [{ label: 'Cancelled',          value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
-        ...(a.status === 'Rescheduled'  ? [{ label: 'Rescheduled',        value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status === 'Approved' ? [{ label: 'Approved by clinic', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status === 'Completed' ? [{ label: 'Completed', value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
+        ...(a.status !== 'Approved' && a.status !== 'Completed' && a.status !== 'Pending' ? [{ label: a.status, value: a.updated_at ? new Date(a.updated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—' }] : []),
       ],
     };
   }
 
   private mapStatus(dbStatus: string): PatientAppointment['status'] {
     const map: Record<string, PatientAppointment['status']> = {
-      'Pending':     'Pending Approval',
-      'Approved':    'Approved',
-      'Completed':   'Completed',
-      'Cancelled':   'Cancelled',
-      'Rescheduled': 'Rescheduled',
+      'Pending':                         'Pending Approval',
+      'Approved':                        'Approved',
+      'Completed':                       'Completed',
+      'Cancelled by Patient':            'Cancelled by You',
+      'Cancelled by Staff':              'Cancelled by Clinic',
+      'Cancelled by Dentist':            'Cancelled by Dentist',
+      'Rescheduled by Staff':            'Rescheduled by Clinic',
+      'Rescheduled by Dentist':          'Rescheduled by Dentist',
+      'Reschedule Requested by Patient': 'Reschedule Requested',
+      'Reschedule Requested by Dentist': 'Dentist Requested Reschedule',
+      'No-show':                         'No-show',
     };
-    return map[dbStatus] ?? 'Pending Approval';
+    return map[dbStatus] ?? dbStatus;
   }
 
   private mapTab(dbStatus: string, dateStr: string): 'upcoming' | 'pending' | 'past' {
-    if (dbStatus === 'Pending' || dbStatus === 'Rescheduled') return 'pending';
-    if (dbStatus === 'Completed' || dbStatus === 'Cancelled') return 'past';
+    const cancelledOrPast = ['Cancelled by Patient', 'Cancelled by Staff', 'Cancelled by Dentist', 'Completed', 'No-show'];
+    const pendingStatuses = ['Pending', 'Reschedule Requested by Patient', 'Reschedule Requested by Dentist', 'Rescheduled by Staff', 'Rescheduled by Dentist'];
+    if (cancelledOrPast.includes(dbStatus)) return 'past';
+    if (pendingStatuses.includes(dbStatus)) return 'pending';
     const today = new Date(); today.setHours(0, 0, 0, 0);
     return new Date(`${dateStr}T00:00:00`) >= today ? 'upcoming' : 'past';
   }
 
   private mapAccent(dbStatus: string): PatientAppointment['accent'] {
     const map: Record<string, PatientAppointment['accent']> = {
-      'Approved': 'blue', 'Pending': 'amber', 'Completed': 'teal',
-      'Cancelled': 'violet', 'Rescheduled': 'amber',
+      'Approved':                        'blue',
+      'Pending':                         'amber',
+      'Completed':                       'teal',
+      'Cancelled by Patient':            'violet',
+      'Cancelled by Staff':              'violet',
+      'Cancelled by Dentist':            'violet',
+      'Rescheduled by Staff':            'amber',
+      'Rescheduled by Dentist':          'amber',
+      'Reschedule Requested by Patient': 'amber',
+      'Reschedule Requested by Dentist': 'amber',
+      'No-show':                         'violet',
     };
     return map[dbStatus] ?? 'blue';
   }

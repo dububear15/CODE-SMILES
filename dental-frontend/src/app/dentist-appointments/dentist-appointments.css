@@ -103,6 +103,17 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.da-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .da-profile-copy strong { display: block; font-size: 0.82rem; font-weight: 700; color: #0f2540; }

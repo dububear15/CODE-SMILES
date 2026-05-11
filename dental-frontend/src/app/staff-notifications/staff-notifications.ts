@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StaffSidebar } from '../staff-sidebar/staff-sidebar';
 import { ApiService } from '../services/api.service';
@@ -38,16 +37,10 @@ interface FilterChip {
   label: string;
 }
 
-interface PreferenceItem {
-  title: string;
-  enabled: boolean;
-  icon: string;
-}
-
 @Component({
   selector: 'app-staff-notification',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, StaffSidebar],
+  imports: [CommonModule, FormsModule, StaffSidebar],
   templateUrl: './staff-notifications.html',
   styleUrls: ['./staff-notifications.css'],
 })
@@ -79,13 +72,6 @@ export class StaffNotificationsComponent implements OnInit, OnDestroy {
     { key: 'messages',       label: 'Messages'      },
     { key: 'medical-vault',  label: 'Medical Vault' },
     { key: 'clinic-updates', label: 'Clinic Updates'},
-  ];
-
-  preferences: PreferenceItem[] = [
-    { title: 'Email Notifications',    enabled: true,  icon: 'mail'         },
-    { title: 'SMS Notifications',      enabled: true,  icon: 'sms'          },
-    { title: 'Messages from Dentists', enabled: true,  icon: 'message'      },
-    { title: 'Clinic Announcements',   enabled: false, icon: 'announcement' },
   ];
 
   notifications: StaffNotification[] = [];
@@ -235,7 +221,6 @@ export class StaffNotificationsComponent implements OnInit, OnDestroy {
 
   // ── Filters & sort ────────────────────────────────────────────────────────
   setFilter(key: FilterChip['key']): void { this.selectedFilter = key; }
-  togglePreference(pref: PreferenceItem): void { pref.enabled = !pref.enabled; }
   toggleSearch(): void {
     this.showSearch = !this.showSearch;
     if (!this.showSearch) this.searchQuery = '';

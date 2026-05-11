@@ -85,6 +85,39 @@
             </label>
           </div>
         </article>
+
+        <article class="form-card">
+          <div class="card-head"><h2>Preferences & Settings</h2></div>
+          <div class="form-grid">
+
+            
+            <div class="toggle-group full-width" style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+              <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fbff; border: 1px solid #e4edf6; border-radius: 8px;">
+                <div style="display:flex; flex-direction: column;">
+                  <strong style="font-size: 0.9rem; color: #0f2540;">In-App Notifications</strong>
+                  <span style="font-size: 0.8rem; color: #6a8099; font-weight: normal;">Receive alerts inside the dentist portal.</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="form.inAppNotif" style="width: 20px; height: 20px;" />
+              </label>
+
+              <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fbff; border: 1px solid #e4edf6; border-radius: 8px;">
+                <div style="display:flex; flex-direction: column;">
+                  <strong style="font-size: 0.9rem; color: #0f2540;">Email Notifications</strong>
+                  <span style="font-size: 0.8rem; color: #6a8099; font-weight: normal;">Receive alerts to your registered email address.</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="form.emailNotif" style="width: 20px; height: 20px;" />
+              </label>
+
+              <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fbff; border: 1px solid #e4edf6; border-radius: 8px;">
+                <div style="display:flex; flex-direction: column;">
+                  <strong style="font-size: 0.9rem; color: #0f2540;">Show Contact to Patients</strong>
+                  <span style="font-size: 0.8rem; color: #6a8099; font-weight: normal;">Allow patients to see your phone number and email.</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="form.showContactToPatients" style="width: 20px; height: 20px;" />
+              </label>
+            </div>
+          </div>
+        </article>
       </section>
 
       <div class="save-error" *ngIf="saveError">

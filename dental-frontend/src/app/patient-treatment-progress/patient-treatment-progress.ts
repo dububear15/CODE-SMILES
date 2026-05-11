@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { catchError, of } from 'rxjs';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
 import {
   LinkedRecord,
-  PATIENT_TREATMENT_PLANS,
   TreatmentPlan,
 } from './patient-treatment-plan-data';
 
@@ -15,10 +16,10 @@ import {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, PatientSidebarComponent],
   templateUrl: './patient-treatment-progress.html',
-  styleUrl: './patient-treatment-progress.css',
+  styleUrls: ['./patient-treatment-progress.css'],
 })
-export class PatientTreatmentProgress {
-  constructor(private readonly router: Router, private readonly auth: AuthService) {}
+export class PatientTreatmentProgress implements OnInit {
+  constructor(private readonly router: Router, private readonly auth: AuthService, private readonly api: ApiService, private readonly cdr: ChangeDetectorRef) {}
 
   protected get patientProfile() {
     const user = this.auth.getUser();
@@ -28,7 +29,115 @@ export class PatientTreatmentProgress {
     };
   }
 
-  protected readonly treatmentPlans: TreatmentPlan[] = PATIENT_TREATMENT_PLANS;
+  protected treatmentPlans: TreatmentPlan[] = [];
+  protected isLoading = true;
+  protected hasError = false;
+
+  ngOnInit(): void {
+    const user = this.auth.getUser();
+    if (!user?.id) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.api.getMyAppointments(user.id)
+      .pipe(catchError(() => {
+        this.hasError = true;
+        return of([] as any[]);
+      }))
+      .subscribe({
+        next: (appointments) => {
+          this.treatmentPlans = appointments.map((a) => this.appointmentToTreatmentPlan(a));
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.hasError = true;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  private appointmentToTreatmentPlan(a: any): TreatmentPlan {
+    const status = this.mapAppointmentStatus(a.status);
+    const statusClass = this.mapStatusClass(a.status);
+    const progress = statusClass === 'completed' ? 100 : statusClass === 'active' ? 50 : 0;
+    const stepsCompleted = statusClass === 'completed' ? 1 : 0;
+    const totalSteps = 1;
+
+    return {
+      id: `APT-${a.id}`,
+      appointmentId: a.id,
+      title: a.treatment || 'Appointment',
+      shortTitle: a.treatment || 'Appointment',
+      subtitle: `${a.dentist_name || 'TBD'} • ${this.formatDate(a.appointment_date)}`,
+      status: status,
+      statusClass: statusClass,
+      progress: progress,
+      stepsCompleted: stepsCompleted,
+      totalSteps: totalSteps,
+      icon: 'consultation' as const,
+      cardDescription: a.notes || `Appointment for ${a.treatment || 'dental care'}`,
+      nextStepTitle: statusClass === 'pending' ? 'Awaiting Approval' : statusClass === 'active' ? 'Appointment Scheduled' : 'Completed',
+      nextStepDate: this.formatDate(a.appointment_date),
+      nextStepTime: this.formatTime(a.appointment_time),
+      nextStepDoctor: a.dentist_name || 'TBD',
+      nextStepDescription: statusClass === 'pending' ? 'Your appointment request is being reviewed by our staff.' : 
+                          statusClass === 'active' ? 'Your appointment is confirmed and scheduled.' : 
+                          'Appointment completed successfully.',
+      steps: [{
+        order: 1,
+        title: a.treatment || 'Appointment',
+        date: this.formatDate(a.appointment_date),
+        dentist: a.dentist_name || 'TBD',
+        note: a.notes || '',
+        status: status,
+        statusClass: statusClass === 'completed' ? 'completed' : statusClass === 'active' ? 'upcoming' : 'pending',
+        stage: statusClass === 'completed' ? 'done' : statusClass === 'active' ? 'current' : 'next',
+        appointment: {
+          date: this.formatDate(a.appointment_date),
+          time: this.formatTime(a.appointment_time),
+          doctor: a.dentist_name || 'TBD',
+        }
+      }]
+    };
+  }
+
+  private mapAppointmentStatus(status: string): string {
+    const map: Record<string, string> = {
+      'Pending': 'Under Review',
+      'Approved': 'Scheduled',
+      'Completed': 'Completed',
+      'Cancelled by Patient': 'Cancelled',
+      'Cancelled by Staff': 'Cancelled',
+      'Cancelled by Dentist': 'Cancelled',
+      'No-show': 'No-show',
+    };
+    return map[status] || status;
+  }
+
+  private mapStatusClass(status: string): 'active' | 'completed' | 'pending' | 'upcoming' {
+    if (status === 'Approved') return 'active';
+    if (status === 'Completed') return 'completed';
+    if (status === 'Pending') return 'pending';
+    return 'upcoming';
+  }
+
+  private formatDate(dateStr: string): string {
+    if (!dateStr) return '—';
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  }
+
+  private formatTime(timeStr: string): string {
+    if (!timeStr) return '—';
+    const [h, m] = timeStr.split(':').map(Number);
+    return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  }
 
   // ── Search / filter ──────────────────────────────────────────
   protected searchTerm = '';

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-patient-privacy-policy',
@@ -11,6 +12,20 @@ import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
   styleUrl: './patient-privacy-policy.css',
 })
 export class PatientPrivacyPolicy {
+  protected initial: string = 'P';
+
+  protected get patientProfile() {
+    const user = this.auth.getUser();
+    if (user) {
+      this.initial = (user?.first_name?.charAt(0) ?? 'P').toUpperCase();
+    }
+    return {
+      name: user ? `${user.first_name} ${user.last_name}` : 'Patient',
+      id:   user ? `CS-${String(user.id).padStart(5, '0')}` : '—',
+    };
+  }
+
+  constructor(private auth: AuthService) {}
   protected readonly featureCards = [
     {
       title: 'Your Privacy Is Our Priority',

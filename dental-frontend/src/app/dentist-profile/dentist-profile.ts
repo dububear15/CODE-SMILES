@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
@@ -15,7 +15,7 @@ import { getDentistInfo } from '../dentist-portal-data';
   templateUrl: './dentist-profile.html',
   styleUrl: './dentist-profile.css',
 })
-export class DentistProfile {
+export class DentistProfile implements OnInit {
 
   activeTab = 'personal';
   avatarUrl = '';
@@ -48,7 +48,9 @@ export class DentistProfile {
     private api: ApiService,
     private avatarSvc: AvatarService,
     private cdr: ChangeDetectorRef,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     const user = this.auth.getUser();
     if (user) {
       this.applyUserProfile(user);
@@ -70,7 +72,25 @@ export class DentistProfile {
         error: () => {},
       });
     }
+
+    // Load avatar - first check localStorage, then database
+    this.loadAvatar();
+  }
+
+  private async loadAvatar(): Promise<void> {
+    // First try to get from localStorage
     this.avatarUrl = this.avatarSvc.getAvatar();
+
+    // If not in localStorage, load from database
+    if (!this.avatarUrl) {
+      try {
+        await this.avatarSvc.loadAvatarFromDB();
+        this.avatarUrl = this.avatarSvc.getAvatar();
+        this.cdr.detectChanges();
+      } catch (err) {
+        console.error('Failed to load avatar from DB:', err);
+      }
+    }
   }
 
   onPhotoSelect(event: Event): void {

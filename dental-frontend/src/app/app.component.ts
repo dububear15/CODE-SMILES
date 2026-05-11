@@ -122,6 +122,7 @@ export class AppComponent {
           url.startsWith('/dentist-dashboard') ||
           url.startsWith('/dentist-appointments') ||
           url.startsWith('/dentist-schedule') ||
+          url.startsWith('/dentist-calendar') ||
           url.startsWith('/dentist-patients') ||
           url.startsWith('/dentist-medical-vault') ||
           url.startsWith('/dentist-treatment-plans') ||

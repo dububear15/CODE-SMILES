@@ -19,7 +19,10 @@
           <span class="da-notif-badge">3</span>
         </button>
         <div class="da-profile-chip">
-          <div class="da-profile-avatar">{{ dentistInitials }}</div>
+          <div class="da-profile-avatar">
+            <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile" class="da-avatar-img" />
+            <span *ngIf="!avatarUrl">{{ dentistInitials }}</span>
+          </div>
           <div class="da-profile-copy">
             <strong>{{ dentistDisplayName }}</strong>
             <span>{{ dentistSpecialty }}</span>

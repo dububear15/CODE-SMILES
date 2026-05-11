@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DentistSidebar } from '../dentist-sidebar/dentist-sidebar';
@@ -15,7 +15,7 @@ import { getDentistInfo } from '../dentist-portal-data';
   templateUrl: './dentist-profile-edit.html',
   styleUrl: './dentist-profile-edit.css',
 })
-export class DentistProfileEditComponent {
+export class DentistProfileEditComponent implements OnInit {
   protected isSaving = false;
   protected saveError = '';
   protected showSuccessModal = false;
@@ -33,6 +33,10 @@ export class DentistProfileEditComponent {
     licenseNumber: 'PRC-DEN-2012-08741',
     clinic: 'Code Smiles Dental Clinic — Main Branch',
     education: 'Doctor of Dental Medicine',
+    theme: 'system',
+    inAppNotif: true,
+    emailNotif: true,
+    showContactToPatients: false,
   };
 
   protected dentistId = 'CS-1023';
@@ -43,7 +47,9 @@ export class DentistProfileEditComponent {
     private readonly api: ApiService,
     private readonly avatarSvc: AvatarService,
     private readonly cdr: ChangeDetectorRef,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     const user = this.auth.getUser();
     if (user) {
       this.form.firstName = user.first_name || '';
@@ -67,7 +73,25 @@ export class DentistProfileEditComponent {
         error: () => {},
       });
     }
+
+    // Load avatar - first check localStorage, then database
+    this.loadAvatar();
+  }
+
+  private async loadAvatar(): Promise<void> {
+    // First try to get from localStorage
     this.avatarUrl = this.avatarSvc.getAvatar();
+
+    // If not in localStorage, load from database
+    if (!this.avatarUrl) {
+      try {
+        await this.avatarSvc.loadAvatarFromDB();
+        this.avatarUrl = this.avatarSvc.getAvatar();
+        this.cdr.detectChanges();
+      } catch (err) {
+        console.error('Failed to load avatar from DB:', err);
+      }
+    }
   }
 
   protected saveProfile(): void {
@@ -153,6 +177,9 @@ export class DentistProfileEditComponent {
       this.form.email = cached.email || this.form.email;
       this.form.phone = cached.phone || this.form.phone;
       this.form.gender = cached.gender || this.form.gender;
+      this.form.inAppNotif = cached.inAppNotif ?? this.form.inAppNotif;
+      this.form.emailNotif = cached.emailNotif ?? this.form.emailNotif;
+      this.form.showContactToPatients = cached.showContactToPatients ?? this.form.showContactToPatients;
     } catch {}
   }
 
@@ -163,6 +190,9 @@ export class DentistProfileEditComponent {
       email: this.form.email,
       phone: this.form.phone,
       gender: this.form.gender,
+      inAppNotif: this.form.inAppNotif,
+      emailNotif: this.form.emailNotif,
+      showContactToPatients: this.form.showContactToPatients,
     }));
   }
 }

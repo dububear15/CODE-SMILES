@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PatientSidebarComponent } from '../patient-sidebar/patient-sidebar';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
+import { AvatarService } from '../services/avatar.service';
+import { filter } from 'rxjs/operators';
+import { NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -18,6 +21,7 @@ export class PatientDashboardComponent implements OnInit {
   protected patientId: string;
   protected initial: string;
   protected isLoading = true;
+  protected avatarUrl: string | null = null;
 
   protected stats = { pending: 0, upcoming: 0, completed: 0 };
   protected nextAppointment: any = null;
@@ -29,24 +33,52 @@ export class PatientDashboardComponent implements OnInit {
     { label: 'Review aftercare notes before your next adjustment.',        done: false },
   ];
 
-  constructor(private auth: AuthService, private api: ApiService) {
+  constructor(private auth: AuthService, private api: ApiService, private avatarService: AvatarService, private cdr: ChangeDetectorRef, private router: Router) {
     const user = this.auth.getUser();
     this.firstName  = user?.first_name ?? 'Patient';
     this.fullName   = user ? `${user.first_name} ${user.last_name}` : 'Patient';
     this.patientId  = user ? `CS-${user.id.toString().padStart(5, '0')}` : 'CS-00000';
     this.initial    = (user?.first_name?.charAt(0) ?? 'P').toUpperCase();
+
+    // Listen for navigation events to refresh dashboard data when navigating to dashboard
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd && this.router.url === '/patient-dashboard')
+    ).subscribe(() => {
+      this.loadDashboardData();
+    });
   }
 
   ngOnInit() {
+    // Load avatar from localStorage or database
+    this.avatarUrl = this.avatarService.getAvatar();
+    if (!this.avatarUrl) {
+      this.avatarService.loadAvatarFromDB().then(() => {
+        // After loading from DB, check localStorage again
+        this.avatarUrl = this.avatarService.getAvatar();
+        this.cdr.detectChanges();
+      }).catch((err: any) => {
+        console.error('Failed to load avatar:', err);
+      });
+    }
+
+    this.loadDashboardData();
+  }
+
+  private loadDashboardData(): void {
     const user = this.auth.getUser();
     if (!user?.id) { this.isLoading = false; return; }
+    this.isLoading = true;
     this.api.getPatientDashboardStats(user.id).subscribe({
       next: (data) => {
         this.stats = { pending: data.pending, upcoming: data.upcoming, completed: data.completed };
         this.nextAppointment = data.nextAppointment || null;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

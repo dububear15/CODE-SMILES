@@ -12,33 +12,51 @@
       </header>
 
       <section class="content-layout">
-
-        <!-- Left: Requests List -->
-        <div class="requests-section">
-          <div class="section-header">
-            <h2>Approval Queue <span class="badge">{{ filteredRequests.length }}</span></h2>
-          </div>
-
-          <!-- Search + Filter bar -->
-          <div class="filter-bar">
-            <div class="search-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input
-                type="text"
-                [(ngModel)]="searchTerm"
-                placeholder="Search patient name or treatment..."
-                class="search-input"
-              />
-              <button *ngIf="searchTerm" (click)="searchTerm=''" class="clear-btn">✕</button>
+        <!-- Stats Row -->
+        <section class="stats-row">
+          <article class="stat-card">
+            <div class="stat-icon orange"></div>
+            <div class="stat-content">
+              <span class="stat-label">Pending</span>
+              <strong class="stat-value">{{ pendingCount }}</strong>
             </div>
-            <select [(ngModel)]="sortBy" class="filter-select">
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="az">Patient A → Z</option>
-              <option value="za">Patient Z → A</option>
-              <option value="date_asc">Appt Date ↑</option>
-              <option value="date_desc">Appt Date ↓</option>
-            </select>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon green"></div>
+            <div class="stat-content">
+              <span class="stat-label">Approved</span>
+              <strong class="stat-value">{{ approvedCount }}</strong>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon red"></div>
+            <div class="stat-content">
+              <span class="stat-label">Changed</span>
+              <strong class="stat-value">{{ changedCount }}</strong>
+            </div>
+          </article>
+        </section>
+
+        <!-- Requests List -->
+        <div class="requests-section">
+          <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f0f4fa;">
+            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #1a2e47;">Approval Queue <span class="badge" style="background: #eaf2ff; color: #4d8fe1; padding: 2px 8px; border-radius: 999px; font-size: 0.8rem; margin-left: 8px;">{{ filteredRequests.length }}</span></h2>
+            
+            <div class="filter-bar" style="margin: 0;">
+              <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search requests..." class="search-input" />
+                <button *ngIf="searchTerm" (click)="searchTerm=''" class="clear-btn">✕</button>
+              </div>
+              <select [(ngModel)]="sortBy" class="filter-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="az">Patient A → Z</option>
+                <option value="za">Patient Z → A</option>
+                <option value="date_asc">Appt Date ↑</option>
+                <option value="date_desc">Appt Date ↓</option>
+              </select>
+            </div>
           </div>
 
           <!-- Loading -->
@@ -101,47 +119,6 @@
           </div>
         </div>
 
-        <!-- Right: Sidebar -->
-        <aside class="sidebar-section">
-          <section class="stats-row">
-            <article class="stat-card">
-              <div class="stat-icon orange"></div>
-              <div class="stat-content">
-                <span class="stat-label">Pending</span>
-                <strong class="stat-value">{{ pendingCount }}</strong>
-              </div>
-            </article>
-            <article class="stat-card">
-              <div class="stat-icon green"></div>
-              <div class="stat-content">
-                <span class="stat-label">Approved</span>
-                <strong class="stat-value">{{ approvedCount }}</strong>
-              </div>
-            </article>
-            <article class="stat-card">
-              <div class="stat-icon red"></div>
-              <div class="stat-content">
-                <span class="stat-label">Changed</span>
-                <strong class="stat-value">{{ changedCount }}</strong>
-              </div>
-            </article>
-          </section>
-
-          <div class="sidebar-card">
-            <h3>Decision Guide</h3>
-            <div class="guide-items">
-              <div class="guide-item">
-                <strong>Assign a dentist when approving.</strong>
-                <p>Select the right dentist based on the service category.</p>
-              </div>
-              <div class="guide-item">
-                <strong>Reschedule if slot conflicts.</strong>
-                <p>Suggest a new date and time if the requested slot is unavailable.</p>
-              </div>
-            </div>
-          </div>
-        </aside>
-
       </section>
     </section>
   </main>
@@ -198,25 +175,21 @@
         </div>
       </div>
 
-      <!-- Dentist assignment — editable -->
+      <!-- Dentist assignment — auto-assigned -->
       <div class="modal-section">
-        <h3>Assign Dentist <span class="required">*</span></h3>
-        <div class="dentist-assign-wrap">
-          <select [(ngModel)]="assignedDentist" class="dentist-select">
-            <option value="" disabled>Select a dentist…</option>
-            <option *ngFor="let d of dentistOptions" [value]="d">{{ d }}</option>
-          </select>
-          <span class="auto-hint" *ngIf="assignedDentist">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="13 4 6 11 3 8"/></svg>
-            Selected
-          </span>
+        <h3>Assigned Dentist</h3>
+        <div class="dentist-display">
+          <div class="dentist-info">
+            <strong>{{ assignedDentist }}</strong>
+            <span class="auto-badge">Auto-assigned</span>
+          </div>
         </div>
-        <p class="assign-note">Auto-suggested based on treatment. You can change this before approving.</p>
+        <p class="assign-note">Automatically assigned based on treatment specialty.</p>
       </div>
 
       <div class="modal-actions">
         <button class="btn-secondary" (click)="closeDetails()">Cancel</button>
-        <button class="btn-approve" (click)="requestApprove(selectedRequest)" [disabled]="!assignedDentist">
+        <button class="btn-approve" (click)="requestApprove(selectedRequest)">
           Approve Appointment
         </button>
       </div>

@@ -25,6 +25,7 @@ export interface TreatmentStep {
 
 export interface TreatmentPlan {
   id: string;
+  appointmentId?: number;
   title: string;
   shortTitle: string;
   subtitle: string;

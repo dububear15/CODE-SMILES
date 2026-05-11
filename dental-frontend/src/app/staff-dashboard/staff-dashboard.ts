@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { StaffSidebar } from '../staff-sidebar/staff-sidebar';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
+import { AvatarService } from '../services/avatar.service';
 import { DENTIST_ROSTER } from '../dentist-portal-data';
 
 @Component({
@@ -19,6 +20,7 @@ export class StaffDashboard implements OnInit {
   role: string;
   today: string;
   isLoading = true;
+  avatarUrl: string | null = null;
 
   private dbStats = { total: 0, pending: 0, approved: 0, cancelled: 0, today: 0, patients: 0 };
   private dbRecent: any[] = [];
@@ -34,6 +36,7 @@ export class StaffDashboard implements OnInit {
     private auth: AuthService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private avatarService: AvatarService,
   ) {
     const user = this.auth.getUser();
     this.fullName = user ? `${user.first_name} ${user.last_name}` : 'Staff';
@@ -47,6 +50,18 @@ export class StaffDashboard implements OnInit {
 
   ngOnInit() {
     const todayStr = new Date().toISOString().split('T')[0];
+
+    // Load avatar from localStorage or database
+    this.avatarUrl = this.avatarService.getAvatar();
+    if (!this.avatarUrl) {
+      this.avatarService.loadAvatarFromDB().then(() => {
+        // After loading from DB, check localStorage again
+        this.avatarUrl = this.avatarService.getAvatar();
+        this.cdr.detectChanges();
+      }).catch((err: any) => {
+        console.error('Failed to load avatar:', err);
+      });
+    }
 
     // Load dashboard stats
     this.api.getStaffDashboardStats().subscribe({

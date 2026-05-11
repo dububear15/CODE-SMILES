@@ -1,9 +1,7 @@
-<div class="dentist-shell rx-shell" style="display:flex; flex:1; min-height:0; overflow:hidden;">
+<div class="dentist-shell rx-shell">
   <app-dentist-sidebar></app-dentist-sidebar>
 
   <main class="rx-main">
-
-    <!-- ── Header ──────────────────────────────────────── -->
     <header class="rx-header">
       <div>
         <h1 class="rx-title">Prescriptions</h1>
@@ -12,259 +10,218 @@
       <a class="rx-back-btn" routerLink="/dentist-dashboard">← Dashboard</a>
     </header>
 
-    <!-- ── Body ────────────────────────────────────────── -->
-    <div class="rx-body">
-
-      <!-- LEFT: Prescription list -->
-      <aside class="rx-list-col">
-        <div class="rx-list-top">
-          <div class="rx-search-wrap">
-            <span>🔍</span>
-            <input class="rx-search" type="text" placeholder="Search prescriptions…" [(ngModel)]="searchQuery" />
-          </div>
-          <select class="rx-select" [(ngModel)]="filterStatus">
-            <option *ngFor="let s of statusOptions" [value]="s">{{ s === 'All' ? 'All Status' : s }}</option>
-          </select>
+    <section class="rx-card">
+      <div class="rx-toolbar">
+        <div class="rx-search-wrap">
+          <span>🔍</span>
+          <input class="rx-search" type="text" placeholder="Search by patient name or prescription ID..." [(ngModel)]="searchQuery" />
         </div>
+        <select class="rx-select" [(ngModel)]="filterStatus">
+          <option *ngFor="let s of statusOptions" [value]="s">{{ s === 'All' ? 'All Status' : s }}</option>
+        </select>
+      </div>
 
-        <div class="rx-list-label">{{ filtered.length }} prescriptions</div>
-
-        <div class="rx-prescription-list">
-          <div class="rx-rx-item"
-               *ngFor="let rx of filtered"
-               [class.active]="selectedRx?.id === rx.id"
-               (click)="selectRx(rx)">
-            <div class="rx-avatar">{{ rx.initials }}</div>
-            <div class="rx-item-info">
-              <strong>{{ rx.patient }}</strong>
-              <span>{{ rx.id }} · {{ rx.date }}</span>
-              <span class="rx-item-condition">{{ rx.condition }}</span>
-              <div class="rx-item-meds" *ngIf="rx.medications.length > 0">
-                <span *ngFor="let m of rx.medications.slice(0,2)" class="rx-med-chip">{{ m.name }}</span>
-                <span class="rx-med-more" *ngIf="rx.medications.length > 2">+{{ rx.medications.length - 2 }}</span>
-              </div>
-              <span class="rx-no-med" *ngIf="rx.medications.length === 0">No medication — care advice only</span>
-            </div>
-            <div class="rx-item-right">
-              <span class="rx-status-pill" [attr.data-status]="statusTone(rx.status)">{{ rx.status }}</span>
-              <span class="rx-allergy-flag" *ngIf="hasAllergy(rx)" title="Allergy noted">⚠</span>
-            </div>
-          </div>
-          <div class="rx-list-empty" *ngIf="filtered.length === 0">No prescriptions found.</div>
+      <div class="rx-card-head">
+        <div>
+          <p class="rx-kicker">PRESCRIPTION DIRECTORY</p>
+          <h2>{{ filtered.length }} Prescriptions</h2>
         </div>
-      </aside>
+        <span class="rx-count-chip">{{ filterStatus }}</span>
+      </div>
 
-      <!-- RIGHT: Prescription detail -->
-      <section class="rx-detail-col">
+      <div class="rx-list-empty" *ngIf="!isLoading && filtered.length === 0">
+        No prescriptions found.
+      </div>
 
-        <!-- Empty state -->
-        <div class="rx-empty-state" *ngIf="!selectedRx">
-          <span>💊</span>
-          <strong>Select a prescription</strong>
-          <p>Choose a prescription from the list to view patient info, medication details, and post-treatment care.</p>
-        </div>
-
-        <!-- Detail -->
-        <div class="rx-detail" *ngIf="selectedRx">
-
-          <!-- Banner -->
-          <div class="rx-banner">
-            <div class="rx-banner-left">
-              <div class="rx-avatar rx-avatar-lg">{{ selectedRx.initials }}</div>
-              <div class="rx-banner-info">
-                <h2>{{ selectedRx.patient }}</h2>
-                <span>{{ selectedRx.id }} · {{ selectedRx.age }} yrs · {{ selectedRx.gender }}</span>
-                <div class="rx-banner-sub">
-                  <span>🦷 {{ selectedRx.condition }}</span>
-                  <span>👨‍⚕️ {{ selectedRx.dentist }}</span>
-                  <span>📅 {{ selectedRx.date }}</span>
-                </div>
-              </div>
+      <div class="rx-patient-grid" *ngIf="filtered.length > 0">
+        <button class="rx-patient-card"
+                type="button"
+                *ngFor="let rx of filtered"
+                [class.active]="selectedRx?.id === rx.id"
+                (click)="selectRx(rx)">
+          <div class="rx-avatar">{{ rx.initials }}</div>
+          <div class="rx-item-info">
+            <strong>{{ rx.patient }}</strong>
+            <span>{{ rx.id }} · {{ rx.date }}</span>
+            <span class="rx-item-condition">{{ rx.condition }}</span>
+            <div class="rx-item-meds" *ngIf="rx.medications.length > 0">
+              <span *ngFor="let m of rx.medications.slice(0,2)" class="rx-med-chip">{{ m.name }}</span>
+              <span class="rx-med-more" *ngIf="rx.medications.length > 2">+{{ rx.medications.length - 2 }}</span>
             </div>
-            <div class="rx-banner-right">
-              <span class="rx-status-pill" [attr.data-status]="statusTone(selectedRx.status)">{{ selectedRx.status }}</span>
-              <div class="rx-allergy-banner" *ngIf="hasAllergy(selectedRx)">
-                <span>⚠</span>
-                <span>Allergy: {{ selectedRx.allergies.join(', ') }}</span>
-              </div>
-            </div>
+            <span class="rx-no-med" *ngIf="rx.medications.length === 0">No medication — care advice only</span>
           </div>
-
-          <!-- Tabs -->
-          <div class="rx-tabs">
-            <button *ngFor="let tab of tabs" type="button"
-                    [class.active]="activeTab === tab.key"
-                    (click)="setTab(tab.key)">{{ tab.label }}</button>
+          <div class="rx-item-right">
+             <span class="rx-status-pill" [attr.data-status]="statusTone(rx.status)">{{ rx.status }}</span>
+             <span class="rx-allergy-flag" *ngIf="hasAllergy(rx)" title="Allergy noted">⚠</span>
           </div>
+        </button>
+      </div>
+    </section>
 
-          <!-- Tab content -->
-          <div class="rx-tab-content">
-
-            <!-- PATIENT INFO -->
-            <div *ngIf="activeTab === 'patient'" class="rx-pane">
-              <div class="rx-section-title">Patient Information</div>
-              <div class="rx-info-grid">
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Patient Name</span>
-                  <strong>{{ selectedRx.patient }}</strong>
-                </div>
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Age / Gender</span>
-                  <strong>{{ selectedRx.age }} yrs · {{ selectedRx.gender }}</strong>
-                </div>
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Prescription Date</span>
-                  <strong>{{ selectedRx.date }}</strong>
-                </div>
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Prescribing Dentist</span>
-                  <strong>{{ selectedRx.dentist }}</strong>
-                </div>
-              </div>
-
-              <div class="rx-section-title">Diagnosis & Treatment Reference</div>
-              <div class="rx-two-col">
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Diagnosis</span>
-                  <p>{{ selectedRx.diagnosis }}</p>
-                </div>
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Dental Condition / Reason</span>
-                  <p>{{ selectedRx.condition }}</p>
-                </div>
-              </div>
-
-              <div class="rx-section-title">Allergies & Medical Conditions</div>
-              <div class="rx-two-col">
-                <div class="rx-info-card" [class.rx-allergy-card]="hasAllergy(selectedRx)">
-                  <span class="rx-info-label">Known Allergies</span>
-                  <div class="rx-allergy-list">
-                    <span *ngFor="let a of selectedRx.allergies" class="rx-allergy-tag" [class.warning]="a !== 'None reported'">
-                      {{ a !== 'None reported' ? '⚠ ' : '✓ ' }}{{ a }}
-                    </span>
-                  </div>
-                </div>
-                <div class="rx-info-card">
-                  <span class="rx-info-label">Medical Conditions</span>
-                  <div class="rx-condition-list">
-                    <span *ngFor="let c of selectedRx.medicalConditions" class="rx-condition-tag">{{ c }}</span>
-                  </div>
-                </div>
-              </div>
+    <section class="rx-card rx-detail-card" *ngIf="selectedRx; else selectRxState">
+      <div class="rx-detail-head">
+        <div class="rx-banner-left">
+          <div class="rx-avatar rx-avatar-lg">{{ selectedRx.initials }}</div>
+          <div class="rx-banner-info">
+            <h2>{{ selectedRx.patient }}</h2>
+            <span>{{ selectedRx.id }} · {{ selectedRx.age }} yrs · {{ selectedRx.gender }}</span>
+            <div class="rx-banner-tags">
+              <span class="rx-tag" *ngIf="hasAllergy(selectedRx)">⚠ Allergy: {{ selectedRx.allergies.join(', ') }}</span>
             </div>
-
-            <!-- MEDICATION DETAILS -->
-            <div *ngIf="activeTab === 'medication'" class="rx-pane">
-              <div class="rx-section-title">Prescribed Medications</div>
-
-              <div class="rx-no-med-block" *ngIf="selectedRx.medications.length === 0">
-                <span>💊</span>
-                <strong>No medication prescribed</strong>
-                <p>This prescription contains care advice and post-treatment instructions only.</p>
-              </div>
-
-              <div class="rx-med-list">
-                <div class="rx-med-card" *ngFor="let m of selectedRx.medications; let i = index">
-                  <div class="rx-med-header">
-                    <div class="rx-med-icon">💊</div>
-                    <div>
-                      <strong class="rx-med-name">{{ m.name }}</strong>
-                      <span class="rx-med-num">Medication {{ i + 1 }} of {{ selectedRx.medications.length }}</span>
-                    </div>
-                  </div>
-
-                  <div class="rx-med-grid">
-                    <div class="rx-med-field">
-                      <span class="rx-info-label">Dosage</span>
-                      <strong>{{ m.dosage }}</strong>
-                    </div>
-                    <div class="rx-med-field">
-                      <span class="rx-info-label">Frequency</span>
-                      <strong>{{ m.frequency }}</strong>
-                    </div>
-                    <div class="rx-med-field">
-                      <span class="rx-info-label">Duration</span>
-                      <strong>{{ m.duration }}</strong>
-                    </div>
-                  </div>
-
-                  <div class="rx-med-instructions">
-                    <span class="rx-info-label">📋 Instructions</span>
-                    <p>{{ m.instructions }}</p>
-                  </div>
-
-                  <div class="rx-med-warnings" *ngIf="m.warnings">
-                    <span>⚠ Warning</span>
-                    <p>{{ m.warnings }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- NOTES & CARE -->
-            <div *ngIf="activeTab === 'notes'" class="rx-pane">
-              <div class="rx-section-title">Prescription Notes</div>
-              <div class="rx-notes-card">
-                <p>{{ selectedRx.notes }}</p>
-              </div>
-
-              <div class="rx-section-title">Post-Treatment Care Recommendations</div>
-              <div class="rx-care-list">
-                <div class="rx-care-item" *ngFor="let c of selectedRx.postCare">
-                  <span class="rx-care-dot">✓</span>
-                  <span>{{ c }}</span>
-                </div>
-                <div class="rx-care-empty" *ngIf="selectedRx.postCare.length === 0">
-                  No post-treatment care instructions recorded.
-                </div>
-              </div>
-            </div>
-
-            <!-- HISTORY -->
-            <div *ngIf="activeTab === 'history'" class="rx-pane">
-              <div class="rx-section-title">Prescription History</div>
-              <div class="rx-history-empty" *ngIf="selectedRx.history.length === 0">
-                No previous prescriptions on file for this patient.
-              </div>
-              <div class="rx-history-list">
-                <div class="rx-history-card" *ngFor="let h of selectedRx.history">
-                  <div class="rx-history-head">
-                    <div>
-                      <strong>💊 {{ h.medication }}</strong>
-                      <span class="rx-history-dosage">{{ h.dosage }}</span>
-                    </div>
-                    <div class="rx-history-right">
-                      <span class="rx-status-pill" [attr.data-status]="statusTone(h.status)">{{ h.status }}</span>
-                      <span class="rx-history-date">{{ h.date }}</span>
-                    </div>
-                  </div>
-                  <p class="rx-history-reason">{{ h.reason }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- ATTACHMENTS -->
-            <div *ngIf="activeTab === 'attachments'" class="rx-pane">
-              <div class="rx-section-title">Supporting Attachments</div>
-              <div class="rx-attach-empty" *ngIf="selectedRx.attachments.length === 0">
-                No attachments on file.
-              </div>
-              <div class="rx-attach-list">
-                <div class="rx-attach-card" *ngFor="let a of selectedRx.attachments">
-                  <div class="rx-attach-icon">{{ attachIcon(a.type) }}</div>
-                  <div class="rx-attach-info">
-                    <strong>{{ a.name }}</strong>
-                    <span>{{ a.type }} · {{ a.date }} · {{ a.size }}</span>
-                  </div>
-                  <button class="rx-attach-btn" type="button" title="Download">↓</button>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
+        <span class="rx-status-pill" [attr.data-status]="statusTone(selectedRx.status)">{{ selectedRx.status }}</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="rx-tabs">
+        <button *ngFor="let tab of tabs" type="button"
+                [class.active]="activeTab === tab.key"
+                (click)="setTab(tab.key)">{{ tab.label }}</button>
+      </div>
+
+      <div class="rx-tab-content">
+        <!-- PATIENT INFO -->
+        <div *ngIf="activeTab === 'patient'" class="rx-pane">
+          <div class="rx-section-title">Patient Information</div>
+          <div class="rx-info-grid">
+            <div class="rx-info-card">
+              <span>Patient Name</span>
+              <strong>{{ selectedRx.patient }}</strong>
+            </div>
+            <div class="rx-info-card">
+              <span>Age / Gender</span>
+              <strong>{{ selectedRx.age }} yrs · {{ selectedRx.gender }}</strong>
+            </div>
+            <div class="rx-info-card">
+              <span>Prescription Date</span>
+              <strong>{{ selectedRx.date }}</strong>
+            </div>
+            <div class="rx-info-card">
+              <span>Prescribing Dentist</span>
+              <strong>{{ selectedRx.dentist }}</strong>
+            </div>
+          </div>
+
+          <div class="rx-section-title">Diagnosis & Treatment Reference</div>
+          <div class="rx-info-grid">
+            <div class="rx-info-card wide">
+              <span>Diagnosis</span>
+              <strong>{{ selectedRx.diagnosis }}</strong>
+            </div>
+            <div class="rx-info-card wide">
+              <span>Dental Condition / Reason</span>
+              <strong>{{ selectedRx.condition }}</strong>
+            </div>
+          </div>
+
+          <div class="rx-section-title">Allergies & Medical Conditions</div>
+          <div class="rx-info-grid">
+            <div class="rx-info-card wide" [class.rx-allergy-card]="hasAllergy(selectedRx)">
+              <span>Known Allergies</span>
+              <strong>{{ selectedRx.allergies.join(', ') || 'None' }}</strong>
+            </div>
+            <div class="rx-info-card wide">
+              <span>Medical Conditions</span>
+              <strong>{{ selectedRx.medicalConditions.join(', ') || 'None' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- MEDICATION DETAILS -->
+        <div *ngIf="activeTab === 'medication'" class="rx-pane">
+          <div class="rx-section-title">Prescribed Medications</div>
+          <div class="rx-list-empty" *ngIf="selectedRx.medications.length === 0">
+            <span>💊 No medication prescribed</span>
+          </div>
+
+          <div class="rx-history-list">
+            <div class="rx-history-card" *ngFor="let m of selectedRx.medications; let i = index">
+              <div class="rx-history-head">
+                <div>
+                  <strong>{{ m.name }}</strong>
+                  <span class="rx-history-tooth">Medication {{ i + 1 }}</span>
+                </div>
+              </div>
+              <div class="rx-med-grid">
+                <div class="rx-med-field">
+                  <span>Dosage:</span> <strong>{{ m.dosage }}</strong>
+                </div>
+                <div class="rx-med-field">
+                  <span>Frequency:</span> <strong>{{ m.frequency }}</strong>
+                </div>
+                <div class="rx-med-field">
+                  <span>Duration:</span> <strong>{{ m.duration }}</strong>
+                </div>
+              </div>
+              <div class="rx-med-instructions" *ngIf="m.instructions">
+                <span class="rx-info-label">📋 Instructions:</span> {{ m.instructions }}
+              </div>
+              <div class="rx-med-warnings" *ngIf="m.warnings !== '—' && m.warnings">
+                <span>⚠ Warning:</span> {{ m.warnings }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTES & CARE -->
+        <div *ngIf="activeTab === 'notes'" class="rx-pane">
+          <div class="rx-section-title">Prescription Notes</div>
+          <div class="rx-notes-card">
+            <p>{{ selectedRx.notes || 'No notes provided.' }}</p>
+          </div>
+
+          <div class="rx-section-title">Post-Treatment Care Recommendations</div>
+          <div class="rx-care-list">
+            <div class="rx-care-item" *ngFor="let c of selectedRx.postCare">
+              <span class="rx-care-dot">✓</span>
+              <span>{{ c }}</span>
+            </div>
+            <div class="rx-list-empty" *ngIf="selectedRx.postCare.length === 0">
+              No post-treatment care instructions recorded.
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div *ngIf="activeTab === 'history'" class="rx-pane">
+          <div class="rx-section-title">Prescription History</div>
+          <div class="rx-list-empty" *ngIf="selectedRx.history.length === 0">
+            No previous prescriptions on file for this patient.
+          </div>
+          <div class="rx-history-list">
+            <div class="rx-history-card" *ngFor="let h of selectedRx.history">
+              <div class="rx-history-head">
+                <div>
+                  <strong>💊 {{ h.medication }}</strong>
+                  <span class="rx-history-tooth">{{ h.dosage }}</span>
+                </div>
+                <div class="rx-item-right" style="text-align:right">
+                  <span class="rx-status-pill" [attr.data-status]="statusTone(h.status)">{{ h.status }}</span>
+                  <span class="rx-history-date" style="display:block;margin-top:4px">{{ h.date }}</span>
+                </div>
+              </div>
+              <p class="rx-history-reason" style="margin-top:8px">{{ h.reason }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ATTACHMENTS -->
+        <div *ngIf="activeTab === 'attachments'" class="rx-pane">
+          <div class="rx-section-title">Supporting Attachments</div>
+          <div class="rx-list-empty" *ngIf="selectedRx.attachments.length === 0">
+            No attachments on file.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <ng-template #selectRxState>
+      <section class="rx-card rx-simple-empty">
+        <div class="rx-empty-icon">💊</div>
+        <strong>Select a prescription</strong>
+        <p>Choose a prescription card above to view patient info, medication details, and post-treatment care.</p>
       </section>
-    </div>
-
+    </ng-template>
   </main>
 </div>
